@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "aurathreads",
-    "slug": "aurathreads",
+    "name": "AuraThreads",
+    "slug": "AuraThreads",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
