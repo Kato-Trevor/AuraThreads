@@ -39,8 +39,8 @@ const RootLayout = () => {
             {/* Logo section - compact */}
             <View className="items-center flex-row justify-center mb-2">
               <View className="bg-white rounded-full p-2 shadow-md mr-2">
-                <View className="bg-secondary-100 rounded-full p-1">
-                  <Ionicons name="leaf-outline" size={24} color="#F032DA" />
+                <View className="bg-secondary-100 rounded-full p-2">
+                  <Ionicons name="leaf-outline" size={24} color="#FFE4E1" />
                 </View>
               </View>
               <View>

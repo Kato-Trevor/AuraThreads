@@ -108,7 +108,7 @@ const Login = () => {
                 <View className="w-full items-center mt-6">
                   <View className="bg-white rounded-full p-2 shadow-md mb-4">
                     <View className="bg-secondary-100 rounded-full p-2">
-                      <Ionicons name="leaf-outline" size={28} color="#F032DA" />
+                      <Ionicons name="leaf-outline" size={28} color="#FFE4E1" />
                     </View>
                   </View>
                   <Text className="text-3xl font-pbold text-center">
