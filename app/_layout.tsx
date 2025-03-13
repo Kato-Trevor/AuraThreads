@@ -11,6 +11,7 @@ import { ToastProvider } from "@/components/ToastProvider";
 import * as SplashScreen from "expo-splash-screen";
 import React, { useEffect } from "react";
 import "react-native-reanimated";
+import { StatusBar } from "react-native";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -47,6 +48,7 @@ export default function RootLayout() {
     <ToastProvider>
       {/* <GlobalProvider> */}
       <ThemeProvider value={DefaultTheme}>
+        <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
         <Stack
           screenOptions={{
             headerShown: false,
