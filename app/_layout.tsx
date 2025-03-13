@@ -6,7 +6,7 @@ import {
 import Toast from "react-native-toast-message";
 import { Stack } from "expo-router";
 import { useFonts } from "expo-font";
-// import GlobalProvider from "@/context/GlobalProvider";
+import GlobalProvider from "@/context/GlobalProvider";
 import { ToastProvider } from "@/components/ToastProvider";
 import * as SplashScreen from "expo-splash-screen";
 import React, { useEffect } from "react";
@@ -46,24 +46,24 @@ export default function RootLayout() {
 
   return (
     <ToastProvider>
-      {/* <GlobalProvider> */}
-      <ThemeProvider value={DefaultTheme}>
-        <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
-        <Stack
-          screenOptions={{
-            headerShown: false,
-          }}
-        >
-          <Stack.Screen name="index" options={{ headerShown: false }} />
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-          {/* <Stack.Screen
+      <GlobalProvider>
+        <ThemeProvider value={DefaultTheme}>
+          <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
+          <Stack
+            screenOptions={{
+              headerShown: false,
+            }}
+          >
+            <Stack.Screen name="index" options={{ headerShown: false }} />
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+            {/* <Stack.Screen
             name="search/[query]"
             options={{ headerShown: false }}
           /> */}
-        </Stack>
-      </ThemeProvider>
-      {/* </GlobalProvider> */}
+          </Stack>
+        </ThemeProvider>
+      </GlobalProvider>
       <Toast />
     </ToastProvider>
   );

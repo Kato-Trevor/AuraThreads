@@ -27,10 +27,40 @@ import ButtonLoadAnimation from "@/components/LoadButtonAnimation";
 import { images } from "@/constants";
 import { useToast } from "@/components/ToastProvider";
 import { createUser } from "@/lib/appwrite/auth";
+import { useGlobalContext } from "@/context/GlobalProvider";
 
 const { width, height } = Dimensions.get("window");
 
+const studentValidationSchema = Yup.object().shape({
+  username: Yup.string()
+    .min(3, "Username must be at least 3 characters")
+    .required("Username is required"),
+  password: Yup.string()
+    .min(6, "Password must be at least 6 characters")
+    .required("Password is required"),
+  email: Yup.string()
+    .email("Invalid email address")
+    .required("Email is required"),
+});
+
+const counselorValidationSchema = Yup.object().shape({
+  username: Yup.string()
+    .min(3, "Username must be at least 3 characters")
+    .required("Username is required"),
+  password: Yup.string()
+    .min(6, "Password must be at least 6 characters")
+    .required("Password is required"),
+  email: Yup.string()
+    .email("Invalid email address")
+    .required("Email is required"),
+  phone: Yup.string()
+    .min(10, "Phone number must be at least 10 digits")
+    .required("Phone number is required"),
+  qualification: Yup.string().required("Qualification is required"),
+});
+
 const Signup = () => {
+  const { setUser, setIsLoggedIn } = useGlobalContext();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeTab, setActiveTab] = useState("student");
   const { showToast } = useToast();
@@ -99,34 +129,6 @@ const Signup = () => {
     });
   };
 
-  const studentValidationSchema = Yup.object().shape({
-    username: Yup.string()
-      .min(3, "Username must be at least 3 characters")
-      .required("Username is required"),
-    password: Yup.string()
-      .min(6, "Password must be at least 6 characters")
-      .required("Password is required"),
-    email: Yup.string()
-      .email("Invalid email address")
-      .required("Email is required"),
-  });
-
-  const counselorValidationSchema = Yup.object().shape({
-    username: Yup.string()
-      .min(3, "Username must be at least 3 characters")
-      .required("Username is required"),
-    password: Yup.string()
-      .min(6, "Password must be at least 6 characters")
-      .required("Password is required"),
-    email: Yup.string()
-      .email("Invalid email address")
-      .required("Email is required"),
-    phone: Yup.string()
-      .min(10, "Phone number must be at least 10 digits")
-      .required("Phone number is required"),
-    qualification: Yup.string().required("Qualification is required"),
-  });
-
   const handleSubmit = async (values: {
     username: string;
     password: string;
@@ -142,7 +144,11 @@ const Signup = () => {
         email: values.email,
         role: (activeTab === "student") ? "student" : "counselor",
       }
+      
       const result = await createUser(userData);
+      setUser(result);
+      setIsLoggedIn(true);
+      showToast("Account created successfully", "success");
 
       setIsSubmitting(false);
       router.replace("/home");

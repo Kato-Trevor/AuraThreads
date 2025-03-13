@@ -1,72 +1,59 @@
-import { useToast } from "@/components/ToastProvider";
-// import { initializeFirebase, getCurrentUser } from "@/lib/firebase/firebase";
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 
-const GlobalContext = createContext({});
+import { getCurrentUser } from "../lib/appwrite/auth";
+
+const GlobalContext = createContext<{
+  isLoggedIn: boolean;
+  setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
+  user: any;
+  setUser: React.Dispatch<React.SetStateAction<any>>;
+  isLoading: boolean;
+}>({
+  isLoggedIn: false,
+  setIsLoggedIn: () => {},
+  user: null,
+  setUser: () => {},
+  isLoading: true,
+});
 
 export const useGlobalContext = () => useContext(GlobalContext);
 
-const GlobalProvider = ({ children }: any) => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [emailVerified, setEmailVerified] = useState(false);
+  const [user, setUser] = useState<null | any>(null);
+  const [isLoading, setLoading] = useState(true);
 
-  // const { auth, app } = initializeFirebase();
-
-  // const resetState = () => {
-  //   setIsLoggedIn(false);
-  //   setUser(null);
-  //   setLoading(false);
-  // };
-
-  // useEffect(() => {
-  //   const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-  //     setLoading(true);
-
-  //     if (firebaseUser && firebaseUser?.emailVerified) {
-  //       setEmailVerified(true);
-  //       try {
-  //         const user = await getCurrentUser(auth);
-
-  //         if (user) {
-  //           setUser(user);
-  //           setIsLoggedIn(true);
-  //         } else {
-  //           resetState();
-  //         }
-  //       } catch (error) {
-  //         Alert.alert("Error", error.message);
-  //         resetState();
-  //       }
-  //     } else {
-  //       resetState();
-  //     }
-  //     setLoading(false);
-  //   });
-
-  //   return () => unsubscribe();
-  // }, [auth]);
+  useEffect(() => {
+    getCurrentUser()
+      .then((res) => {
+        if (res) {
+          setIsLoggedIn(true);
+          setUser(res);
+        } else {
+          setIsLoggedIn(false);
+          setUser(null);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
 
   return (
-    // <GlobalContext.Provider
-    //   value={
-    //     {
-    //       // auth,
-    //       // app,
-    //       // isLoggedIn,
-    //       // setIsLoggedIn,
-    //       // user,
-    //       // setUser,
-    //       // loading,
-    //       // setLoading,
-    //       // emailVerified,
-    //     }
-    //   }
-    // >
-    //   {children}
-    // </GlobalContext.Provider>
-    <></>
+    <GlobalContext.Provider
+      value={{
+        isLoggedIn,
+        setIsLoggedIn,
+        user,
+        setUser,
+        isLoading,
+      }}
+    >
+      {children}
+    </GlobalContext.Provider>
   );
 };
 

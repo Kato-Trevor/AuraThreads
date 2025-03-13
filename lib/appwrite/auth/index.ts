@@ -1,10 +1,21 @@
 import {
   ID,
+  account,
   Query,
   avatars,
   databases,
   appwriteConfig,
 } from "@/lib/appwrite/config";
+
+export async function getAccount() {
+  try {
+    const currentAccount = await account.get();
+    console.log('fetched account is', currentAccount);
+    return currentAccount;
+  } catch (error: any) {
+    throw new Error(error);
+  }
+}
 
 export const createUser = async (data: UserModel) => {
   try {
@@ -21,47 +32,29 @@ export const createUser = async (data: UserModel) => {
 
     return newUser;
   } catch (error: any) {
-    throw new Error(error.message || "An error occurred during user creation");
+    throw new Error(error);
   }
 };
 
-export const updateUser = async (userId: string, data: UserModel) => {
+export const getCurrentUser = async () => {
   try {
-    const avatarUrl = data.name
-      ? avatars.getInitials(data.name)
-      : avatars.getInitials(`${data.firstName} ${data.lastName}`);
+    const currentAccount = await getAccount();
+    console.log("currentAccount is here", currentAccount);
+    if (!currentAccount) throw Error;
 
-    const updatedUser = await databases.updateDocument(
+    const currentUser = await databases.listDocuments(
       appwriteConfig.databaseId,
       appwriteConfig.userCollectionId,
-      userId,
-      {
-        name: data.name ? data.name : `${data.firstName} ${data.lastName}`,
-        email: data.email,
-        avatar: avatarUrl,
-        phoneNumber: data.phoneNumber,
-        gender: data.gender,
-        dob: data.dob,
-      }
+      [Query.equal("accountId", currentAccount.$id)]
     );
+    
+    console.log("currentUser is here", currentUser);
+    if (!currentUser) throw Error;
 
-    return updatedUser;
-  } catch (error: any) {
-    throw new Error(error.message || "An error occurred during user update");
-  }
-};
-
-export const getUser = async (email: string) => {
-  try {
-    const response = await databases.listDocuments(
-      appwriteConfig.databaseId,
-      appwriteConfig.userCollectionId,
-      [Query.equal("email", email)]
-    );
-
-    return response.documents[0];
-  } catch (error: any) {
-    throw new Error(error.message || "An error occurred during user retrieval");
+    return currentUser.documents[0];
+  } catch (error) {
+    console.log(error);
+    return null;
   }
 };
 
