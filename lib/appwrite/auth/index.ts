@@ -6,32 +6,16 @@ import {
   appwriteConfig,
 } from "@/lib/appwrite/config";
 
-interface UserData {
-  id?: string;
-  dob?: string;
-  email: string;
-  name?: string;
-  gender?: string;
-  password?: string;
-  lastName?: string;
-  firstName?: string;
-  phoneNumber?: string;
-}
-
-export const createUser = async (data: UserData) => {
+export const createUser = async (data: UserModel) => {
   try {
-    const avatarUrl = data.name
-      ? avatars.getInitials(data.name)
-      : avatars.getInitials(`${data.firstName} ${data.lastName}`);
-
     const newUser = await databases.createDocument(
       appwriteConfig.databaseId,
       appwriteConfig.userCollectionId,
       ID.unique(),
       {
-        name: data.name ? data.name : `${data.firstName} ${data.lastName}`,
+        username: data.username,
         email: data.email,
-        avatar: avatarUrl,
+        role: data.role,
       }
     );
 
@@ -41,7 +25,7 @@ export const createUser = async (data: UserData) => {
   }
 };
 
-export const updateUser = async (userId: string, data: UserData) => {
+export const updateUser = async (userId: string, data: UserModel) => {
   try {
     const avatarUrl = data.name
       ? avatars.getInitials(data.name)

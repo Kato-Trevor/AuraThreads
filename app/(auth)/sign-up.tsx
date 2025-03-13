@@ -26,6 +26,7 @@ import CustomButton from "@/components/CustomButton";
 import ButtonLoadAnimation from "@/components/LoadButtonAnimation";
 import { images } from "@/constants";
 import { useToast } from "@/components/ToastProvider";
+import { createUser } from "@/lib/appwrite/auth";
 
 const { width, height } = Dimensions.get("window");
 
@@ -135,18 +136,18 @@ const Signup = () => {
   }) => {
     setIsSubmitting(true);
 
-    // Placeholder for future authentication logic
     try {
-      // Signup logic will be implemented later
-      console.log("Signup attempt with:", values.username);
+      const userData = {
+        username: values.username,
+        email: values.email,
+        role: (activeTab === "student") ? "student" : "counselor",
+      }
+      const result = await createUser(userData);
 
-      // Simulate API call delay
-      setTimeout(() => {
-        setIsSubmitting(false);
-      }, 1500);
-
+      setIsSubmitting(false);
       router.replace("/home");
     } catch (error: any) {
+      console.log("An error occurred: ", error);
       showToast("An error occurred", "error");
       setIsSubmitting(false);
     }
