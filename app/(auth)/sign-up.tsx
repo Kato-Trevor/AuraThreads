@@ -26,10 +26,41 @@ import CustomButton from "@/components/CustomButton";
 import ButtonLoadAnimation from "@/components/LoadButtonAnimation";
 import { images } from "@/constants";
 import { useToast } from "@/components/ToastProvider";
+import { createUser } from "@/lib/appwrite/auth";
+import { useGlobalContext } from "@/context/GlobalProvider";
 
 const { width, height } = Dimensions.get("window");
 
+const studentValidationSchema = Yup.object().shape({
+  username: Yup.string()
+    .min(3, "Username must be at least 3 characters")
+    .required("Username is required"),
+  password: Yup.string()
+    .min(6, "Password must be at least 6 characters")
+    .required("Password is required"),
+  email: Yup.string()
+    .email("Invalid email address")
+    .required("Email is required"),
+});
+
+const counselorValidationSchema = Yup.object().shape({
+  username: Yup.string()
+    .min(3, "Username must be at least 3 characters")
+    .required("Username is required"),
+  password: Yup.string()
+    .min(6, "Password must be at least 6 characters")
+    .required("Password is required"),
+  email: Yup.string()
+    .email("Invalid email address")
+    .required("Email is required"),
+  phone: Yup.string()
+    .min(10, "Phone number must be at least 10 digits")
+    .required("Phone number is required"),
+  qualification: Yup.string().required("Qualification is required"),
+});
+
 const Signup = () => {
+  const { setUser, setIsLoggedIn } = useGlobalContext();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeTab, setActiveTab] = useState("student");
   const { showToast } = useToast();
@@ -98,55 +129,30 @@ const Signup = () => {
     });
   };
 
-  const studentValidationSchema = Yup.object().shape({
-    username: Yup.string()
-      .min(3, "Username must be at least 3 characters")
-      .required("Username is required"),
-    password: Yup.string()
-      .min(6, "Password must be at least 6 characters")
-      .required("Password is required"),
-    email: Yup.string()
-      .email("Invalid email address")
-      .required("Email is required"),
-  });
-
-  const counselorValidationSchema = Yup.object().shape({
-    username: Yup.string()
-      .min(3, "Username must be at least 3 characters")
-      .required("Username is required"),
-    password: Yup.string()
-      .min(6, "Password must be at least 6 characters")
-      .required("Password is required"),
-    email: Yup.string()
-      .email("Invalid email address")
-      .required("Email is required"),
-    phone: Yup.string()
-      .min(10, "Phone number must be at least 10 digits")
-      .required("Phone number is required"),
-    qualification: Yup.string().required("Qualification is required"),
-  });
-
   const handleSubmit = async (values: {
     username: string;
     password: string;
     email: string;
-    phone?: string;
-    qualification?: string;
   }) => {
     setIsSubmitting(true);
 
-    // Placeholder for future authentication logic
     try {
-      // Signup logic will be implemented later
-      console.log("Signup attempt with:", values.username);
-
-      // Simulate API call delay
-      setTimeout(() => {
-        setIsSubmitting(false);
-      }, 1500);
+      const userData = {
+        username: values.username,
+        email: values.email,
+        password: values.password,
+        role: (activeTab === "student") ? "student" : "counselor",
+      }
+      
+      const result = await createUser(userData);
+      setUser(result);
+      setIsLoggedIn(true);
+      showToast("Account created successfully", "success");
+      setIsSubmitting(false);
 
       router.replace("/home");
     } catch (error: any) {
+      console.log("An error occurred: ", error);
       showToast("An error occurred", "error");
       setIsSubmitting(false);
     }
@@ -198,7 +204,7 @@ const Signup = () => {
                 >
                   <View className="bg-white rounded-full p-3 shadow-lg mb-4">
                     <View className="bg-secondary-100 rounded-full p-3">
-                      <Ionicons name="leaf-outline" size={32} color="#F032DA" />
+                      <Ionicons name="leaf-outline" size={32} color="#FFE4E1" />
                     </View>
                   </View>
                   <Text className="text-3xl font-pbold text-center">
@@ -213,85 +219,10 @@ const Signup = () => {
                 </Animated.View>
 
                 {/* Enhanced Tabs */}
-                <Animated.View
-                  className="flex-row justify-center items-center mt-6"
-                  style={{
-                    opacity: tabsAnim,
-                    transform: [
-                      {
-                        translateY: tabsAnim.interpolate({
-                          inputRange: [0, 1],
-                          outputRange: [10, 0],
-                        }),
-                      },
-                    ],
-                  }}
-                >
-                  <TouchableOpacity
-                    onPress={() => handleTabChange("student")}
-                    className={`px-6 py-3 rounded-full ${
-                      activeTab === "student"
-                        ? "bg-secondary shadow-md"
-                        : "bg-gray-100 border border-gray-200"
-                    }`}
-                    style={{
-                      elevation: activeTab === "student" ? 3 : 0,
-                      shadowColor: "#F032DA",
-                      shadowOffset: {
-                        width: 0,
-                        height: activeTab === "student" ? 3 : 0,
-                      },
-                      shadowOpacity: activeTab === "student" ? 0.3 : 0,
-                      shadowRadius: activeTab === "student" ? 4 : 0,
-                    }}
-                  >
-                    <Text
-                      className={`font-psemibold ${
-                        activeTab === "student" ? "text-white" : "text-gray-600"
-                      }`}
-                    >
-                      <Ionicons
-                        name="school-outline"
-                        size={16}
-                        color={activeTab === "student" ? "#fff" : "#666"}
-                      />{" "}
-                      Student
-                    </Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={() => handleTabChange("counselor")}
-                    className={`px-6 py-3 rounded-full ml-4 ${
-                      activeTab === "counselor"
-                        ? "bg-secondary shadow-md"
-                        : "bg-gray-100 border border-gray-200"
-                    }`}
-                    style={{
-                      elevation: activeTab === "counselor" ? 3 : 0,
-                      shadowColor: "#F032DA",
-                      shadowOffset: {
-                        width: 0,
-                        height: activeTab === "counselor" ? 3 : 0,
-                      },
-                      shadowOpacity: activeTab === "counselor" ? 0.3 : 0,
-                      shadowRadius: activeTab === "counselor" ? 4 : 0,
-                    }}
-                  >
-                    <Text
-                      className={`font-psemibold ${
-                        activeTab === "counselor"
-                          ? "text-white"
-                          : "text-gray-600"
-                      }`}
-                    >
-                      <Ionicons
-                        name="medical-outline"
-                        size={16}
-                        color={activeTab === "counselor" ? "#fff" : "#666"}
-                      />{" "}
-                      Counselor
-                    </Text>
-                  </TouchableOpacity>
-                </Animated.View>
+                <TabSelector
+                  activeTab={activeTab}
+                  handleTabChange={handleTabChange}
+                />
 
                 {/* Enhanced Signup Form */}
                 <Animated.View
@@ -305,7 +236,7 @@ const Signup = () => {
                     shadowRadius: 8,
                     elevation: 5,
                   }}
-                  className="w-full mt-6"
+                  className="w-full mt-2"
                 >
                   <View className="bg-white rounded-3xl p-6 shadow-md w-full">
                     <View className="mb-4">
@@ -520,3 +451,88 @@ const Signup = () => {
 };
 
 export default Signup;
+
+const TabSelector = ({ activeTab, handleTabChange }: any) => {
+  const tabsAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.timing(tabsAnim, {
+      toValue: 1,
+      duration: 400,
+      useNativeDriver: true,
+    }).start();
+  }, []);
+
+  return (
+    <Animated.View
+      className="w-full"
+      style={{
+        opacity: tabsAnim,
+        transform: [
+          {
+            translateY: tabsAnim.interpolate({
+              inputRange: [0, 1],
+              outputRange: [10, 0],
+            }),
+          },
+        ],
+      }}
+    >
+      <View className="flex-row justify-center items-center bg-gray-100 rounded-lg p-1">
+        <TouchableOpacity
+          onPress={() => handleTabChange("student")}
+          className={`flex-1 py-3 ${
+            activeTab === "student"
+              ? "bg-secondary rounded-lg shadow-sm"
+              : "bg-transparent"
+          }`}
+          style={{
+            elevation: activeTab === "student" ? 2 : 0,
+          }}
+        >
+          <View className="flex-row justify-center items-center">
+            <Ionicons
+              name="school-outline"
+              size={18}
+              color={activeTab === "student" ? "#fff" : "#666"}
+            />
+            <Text
+              className={`font-psemibold ml-2 ${
+                activeTab === "student" ? "text-white" : "text-gray-600"
+              }`}
+            >
+              Student
+            </Text>
+          </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() => handleTabChange("counselor")}
+          className={`flex-1 py-3 ${
+            activeTab === "counselor"
+              ? "bg-secondary rounded-lg shadow-sm"
+              : "bg-transparent"
+          }`}
+          style={{
+            elevation: activeTab === "counselor" ? 2 : 0,
+          }}
+        >
+          <View className="flex-row justify-center items-center">
+            <Ionicons
+              name="medical-outline"
+              size={18}
+              color={activeTab === "counselor" ? "#fff" : "#666"}
+            />
+            <Text
+              className={`font-psemibold ml-2 ${
+                activeTab === "counselor" ? "text-white" : "text-gray-600"
+              }`}
+            >
+              Counselor
+            </Text>
+          </View>
+        </TouchableOpacity>
+      </View>
+    </Animated.View>
+  );
+};

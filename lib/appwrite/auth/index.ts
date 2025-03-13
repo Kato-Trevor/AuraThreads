@@ -1,83 +1,81 @@
 import {
   ID,
+  account,
   Query,
-  avatars,
   databases,
   appwriteConfig,
 } from "@/lib/appwrite/config";
 
-interface UserData {
-  id?: string;
-  dob?: string;
-  email: string;
-  name?: string;
-  gender?: string;
-  password?: string;
-  lastName?: string;
-  firstName?: string;
-  phoneNumber?: string;
+export async function getAccount() {
+  try {
+    const currentAccount = await account.get();
+    console.log('fetched account is', currentAccount);
+    return currentAccount;
+  } catch (error: any) {
+    throw new Error(error);
+  }
 }
 
-export const createUser = async (data: UserData) => {
+export const signIn = async (email: string, password: string) => {
   try {
-    const avatarUrl = data.name
-      ? avatars.getInitials(data.name)
-      : avatars.getInitials(`${data.firstName} ${data.lastName}`);
+    const session = await account.createEmailPasswordSession(email, password);
+
+    return session;
+  } catch (error: any) {
+    throw new Error(error);
+  }
+}
+
+export const createUser = async (data: UserModel) => {
+  const { email, password, username, role } = data;
+  try {
+    const newAccount = await account.create(
+      ID.unique(),
+      email,
+      password,
+      username
+    );
+
+    if(!newAccount) throw new Error;
+
+    await signIn(email, password);
 
     const newUser = await databases.createDocument(
       appwriteConfig.databaseId,
       appwriteConfig.userCollectionId,
       ID.unique(),
       {
-        name: data.name ? data.name : `${data.firstName} ${data.lastName}`,
-        email: data.email,
-        avatar: avatarUrl,
+        accountId: newAccount.$id,
+        email,
+        username,
+        role,
       }
     );
 
     return newUser;
-  } catch (error: any) {
-    throw new Error(error.message || "An error occurred during user creation");
+  } catch (error: any){
+    console.log(error);
+    throw new Error(error)
   }
 };
 
-export const updateUser = async (userId: string, data: UserData) => {
+export const getCurrentUser = async () => {
   try {
-    const avatarUrl = data.name
-      ? avatars.getInitials(data.name)
-      : avatars.getInitials(`${data.firstName} ${data.lastName}`);
+    const currentAccount = await getAccount();
+    if (!currentAccount) throw Error;
 
-    const updatedUser = await databases.updateDocument(
+    const currentUser = await databases.listDocuments(
       appwriteConfig.databaseId,
       appwriteConfig.userCollectionId,
-      userId,
-      {
-        name: data.name ? data.name : `${data.firstName} ${data.lastName}`,
-        email: data.email,
-        avatar: avatarUrl,
-        phoneNumber: data.phoneNumber,
-        gender: data.gender,
-        dob: data.dob,
-      }
+      [Query.equal("accountId", currentAccount.$id)]
     );
+    
+    if (!currentUser) throw Error;
 
-    return updatedUser;
-  } catch (error: any) {
-    throw new Error(error.message || "An error occurred during user update");
-  }
-};
-
-export const getUser = async (email: string) => {
-  try {
-    const response = await databases.listDocuments(
-      appwriteConfig.databaseId,
-      appwriteConfig.userCollectionId,
-      [Query.equal("email", email)]
-    );
-
-    return response.documents[0];
-  } catch (error: any) {
-    throw new Error(error.message || "An error occurred during user retrieval");
+    return currentUser.documents[0];
+  } catch (error) {
+    console.log(error);
+    return null;
   }
 };
 
@@ -94,3 +92,13 @@ export const deleteUser = async (userId: string) => {
     throw new Error(error.message || "An error occurred during user deletion");
   }
 };
+
+export async function signOut() {
+  try {
+    const session = await account.deleteSession("current");
+
+    return session;
+  } catch (error: any) {
+    throw new Error(error);
+  }
+}
