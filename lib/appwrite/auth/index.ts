@@ -2,7 +2,6 @@ import {
   ID,
   account,
   Query,
-  avatars,
   databases,
   appwriteConfig,
 } from "@/lib/appwrite/config";
@@ -17,29 +16,52 @@ export async function getAccount() {
   }
 }
 
-export const createUser = async (data: UserModel) => {
+export const signIn = async (email: string, password: string) => {
   try {
+    const session = await account.createEmailPasswordSession(email, password);
+
+    return session;
+  } catch (error: any) {
+    throw new Error(error);
+  }
+}
+
+export const createUser = async (data: UserModel) => {
+  const { email, password, username, role } = data;
+  try {
+    const newAccount = await account.create(
+      ID.unique(),
+      email,
+      password,
+      username
+    );
+
+    if(!newAccount) throw new Error;
+
+    await signIn(email, password);
+
     const newUser = await databases.createDocument(
       appwriteConfig.databaseId,
       appwriteConfig.userCollectionId,
       ID.unique(),
       {
-        username: data.username,
-        email: data.email,
-        role: data.role,
+        accountId: newAccount.$id,
+        email,
+        username,
+        role,
       }
     );
 
     return newUser;
-  } catch (error: any) {
-    throw new Error(error);
+  } catch (error: any){
+    console.log(error);
+    throw new Error(error)
   }
 };
 
 export const getCurrentUser = async () => {
   try {
     const currentAccount = await getAccount();
-    console.log("currentAccount is here", currentAccount);
     if (!currentAccount) throw Error;
 
     const currentUser = await databases.listDocuments(
@@ -48,7 +70,6 @@ export const getCurrentUser = async () => {
       [Query.equal("accountId", currentAccount.$id)]
     );
     
-    console.log("currentUser is here", currentUser);
     if (!currentUser) throw Error;
 
     return currentUser.documents[0];
@@ -71,3 +92,13 @@ export const deleteUser = async (userId: string) => {
     throw new Error(error.message || "An error occurred during user deletion");
   }
 };
+
+export async function signOut() {
+  try {
+    const session = await account.deleteSession("current");
+
+    return session;
+  } catch (error: any) {
+    throw new Error(error);
+  }
+}

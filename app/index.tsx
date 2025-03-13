@@ -2,18 +2,21 @@ import React from "react";
 import { images } from "@/constants";
 import { useToast } from "@/components/ToastProvider";
 import CustomButton from "@/components/CustomButton";
-import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { router } from "expo-router";
+import { Redirect, router } from "expo-router";
 import { Text, View, Image, Dimensions } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
+import { useGlobalContext } from "@/context/GlobalProvider";
 
 const { width, height } = Dimensions.get("window");
 
 const RootLayout = () => {
   const { showToast } = useToast();
+  const { isLoading, isLoggedIn } = useGlobalContext();
+
+  if(!isLoading && isLoggedIn) return <Redirect href="/(tabs)/home"/>
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>

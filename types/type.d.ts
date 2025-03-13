@@ -2,6 +2,7 @@ declare interface UserModel {
   id?: string;
   anonymousId? : string;
   email: string;
+  password: string;
   username: string;
   gender?: string;
   lastName?: string;
@@ -9,5 +10,5 @@ declare interface UserModel {
   phoneNumber?: string;
   identificationNumber?: string;
   affiliation?: string;
-  role?: string;
+  role: string;
 }

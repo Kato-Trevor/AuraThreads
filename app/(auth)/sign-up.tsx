@@ -133,8 +133,6 @@ const Signup = () => {
     username: string;
     password: string;
     email: string;
-    phone?: string;
-    qualification?: string;
   }) => {
     setIsSubmitting(true);
 
@@ -142,6 +140,7 @@ const Signup = () => {
       const userData = {
         username: values.username,
         email: values.email,
+        password: values.password,
         role: (activeTab === "student") ? "student" : "counselor",
       }
       
@@ -149,8 +148,8 @@ const Signup = () => {
       setUser(result);
       setIsLoggedIn(true);
       showToast("Account created successfully", "success");
-
       setIsSubmitting(false);
+
       router.replace("/home");
     } catch (error: any) {
       console.log("An error occurred: ", error);

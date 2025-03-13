@@ -23,12 +23,23 @@ import { Link, router } from "expo-router";
 import FormField from "@/components/FormField";
 import CustomButton from "@/components/CustomButton";
 import ButtonLoadAnimation from "@/components/LoadButtonAnimation";
-import { images } from "@/constants";
 import { useToast } from "@/components/ToastProvider";
+import { getCurrentUser, signIn } from "@/lib/appwrite/auth";
+import { useGlobalContext } from "@/context/GlobalProvider";
 
 const { width, height } = Dimensions.get("window");
 
+const validationSchema = Yup.object().shape({
+  email: Yup.string()
+    .email("Invalid email address")
+    .required("Email is required"),
+  password: Yup.string()
+    .min(6, "Password must be at least 6 characters")
+    .required("Password is required"),
+});
+
 const Login = () => {
+  const { setUser, setIsLoggedIn } = useGlobalContext();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { showToast } = useToast();
 
@@ -52,33 +63,23 @@ const Login = () => {
     ]).start();
   }, []);
 
-  const validationSchema = Yup.object().shape({
-    username: Yup.string()
-      .min(3, "Username must be at least 3 characters")
-      .required("Username is required"),
-    password: Yup.string()
-      .min(6, "Password must be at least 6 characters")
-      .required("Password is required"),
-  });
-
   const handleSubmit = async (values: {
-    username: string;
+    email: string;
     password: string;
   }) => {
+    console.log("pressed");
     setIsSubmitting(true);
 
-    // Placeholder for future authentication logic
     try {
-      // Login logic will be implemented later
-      console.log("Login attempt with:", values.username);
-
-      // Simulate API call delay
-      setTimeout(() => {
-        setIsSubmitting(false);
-      }, 1500);
+      await signIn(values.email, values.password);
+      const result = await getCurrentUser();
+      setUser(result);
+      setIsLoggedIn(true);
+      setIsSubmitting(false);
 
       router.replace("/home");
     } catch (error: any) {
+      console.error("Error logging in:", error);
       showToast("An error occurred", "error");
       setIsSubmitting(false);
     }
@@ -132,7 +133,7 @@ const Login = () => {
                 >
                   <View className="bg-white rounded-2xl p-6 shadow-md w-full">
                     <Formik
-                      initialValues={{ username: "", password: "" }}
+                      initialValues={{ email: "", password: "" }}
                       validationSchema={validationSchema}
                       onSubmit={(values) => handleSubmit(values)}
                     >
@@ -145,15 +146,15 @@ const Login = () => {
                       }) => (
                         <>
                           <FormField
-                            title="Username"
-                            value={values.username}
-                            handleChangeText={handleChange("username")}
-                            placeholder="Enter your username"
+                            title="Email"
+                            value={values.email}
+                            handleChangeText={handleChange("email")}
+                            placeholder="Enter your email"
                             otherStyles="mb-1"
                           />
-                          {touched.username && errors.username && (
+                          {touched.email && errors.email && (
                             <Text className="text-red-500 text-sm mb-3">
-                              {errors.username}
+                              {errors.email}
                             </Text>
                           )}
 
