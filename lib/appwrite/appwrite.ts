@@ -37,3 +37,17 @@ export async function getAllPostsFromDB(){
     throw new Error(error);
   }
 }
+
+export async function getPostFromDB(postId: string){
+  try {
+    const post = await databases.getDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.postCollectionId,
+      postId
+    );
+
+    return post;
+  } catch (error: any) {
+    throw new Error(error);
+  }
+}
