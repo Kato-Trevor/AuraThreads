@@ -2,7 +2,8 @@ import React from "react";
 import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { StatusBar } from "expo-status-bar";
-import { View, Text } from "react-native";
+import { router } from "expo-router";
+import { View, Text, TouchableOpacity } from "react-native";
 
 const TabIcon = ({
   iconName,
@@ -95,6 +96,12 @@ const TabsLayout = () => {
           }}
         />
       </Tabs>
+      <TouchableOpacity
+        className="absolute bottom-28 right-5 bg-secondary rounded-full w-16 h-16 justify-center items-center shadow-lg"
+        onPress={() => router.push("/create-post")}
+      >
+        <Ionicons name="add" size={24} color="#FFFFFF" />
+      </TouchableOpacity>
     </>
   );
 };

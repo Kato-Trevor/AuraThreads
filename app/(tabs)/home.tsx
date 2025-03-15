@@ -1,18 +1,38 @@
-import { StyleSheet, Text, View } from "react-native";
-import React from "react";
+import { FlatList, Text, View } from "react-native";
+import React, { useEffect, useState } from "react";
 import { useGlobalContext } from "@/context/GlobalProvider";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { getAllPostsFromDB } from "@/lib/appwrite/appwrite";
 
 const home = () => {
   const { user } = useGlobalContext();
-  console.log("user from home is here", user);
-  
+  const [posts, setPosts] = useState<any>([]);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const fetchedPosts = await getAllPostsFromDB();
+        setPosts(fetchedPosts);
+      } catch (error) {
+        console.error("Error fetching posts:", error);
+      }
+    };
+    fetchPosts();
+  }, []);
+
   return (
-    <View>
-      <Text>home</Text>
-    </View>
+    <SafeAreaView>
+      <FlatList
+        data={posts}
+        keyExtractor={(item) => item.$id}
+        renderItem={({ item }) => (
+          <View className="p-4 mb-4 bg-gray-100 rounded-lg">
+            <Text className="text-lg text-gray-800">{item.content}</Text>
+          </View>
+        )}
+      />
+    </SafeAreaView>
   );
 };
 
 export default home;
-
-const styles = StyleSheet.create({});
