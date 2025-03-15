@@ -49,18 +49,12 @@ export default function RootLayout() {
       <GlobalProvider>
         <ThemeProvider value={DefaultTheme}>
           <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
-          <Stack
-            screenOptions={{
-              headerShown: false,
-            }}
-          >
+          <Stack>
             <Stack.Screen name="index" options={{ headerShown: false }} />
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="create-post" options={{ headerShown: false }} />
+            <Stack.Screen name="search-songs" options={{ headerShown: false }} />
+            <Stack.Screen name="(tabs)" />
             <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-            {/* <Stack.Screen
-            name="search/[query]"
-            options={{ headerShown: false }}
-          /> */}
           </Stack>
         </ThemeProvider>
       </GlobalProvider>
