@@ -69,6 +69,7 @@ const createPost = () => {
         </TouchableOpacity>
         <TouchableOpacity
           onPress={handlePostCreation}
+          disabled={postContent === ""}
           className="bg-secondary py-2 px-4 rounded"
         >
           <Text className="text-white text-lg">Post</Text>
