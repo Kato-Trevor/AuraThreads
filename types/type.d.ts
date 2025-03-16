@@ -1,5 +1,5 @@
 declare interface UserModel {
-  id?: string;
+  $id?: string;
   anonymousId? : string;
   email: string;
   password: string;
@@ -11,4 +11,12 @@ declare interface UserModel {
   identificationNumber?: string;
   affiliation?: string;
   role: string;
+}
+
+declare interface PostModel {
+  $id?: string;
+  userId: UserModel;
+  content: string;
+  createdAt?: string;
+  updatedAt?: string;
 }

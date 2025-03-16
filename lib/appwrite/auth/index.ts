@@ -79,6 +79,20 @@ export const getCurrentUser = async () => {
   }
 };
 
+export const getUserById = async (userId: string) => {
+  try {
+    const user = await databases.getDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.userCollectionId,
+      userId
+    );
+
+    return user;
+  } catch (error: any) {
+    throw new Error(error);
+  }
+};
+
 export const deleteUser = async (userId: string) => {
   try {
     const response = await databases.deleteDocument(

@@ -1,9 +1,9 @@
-import { FlatList, Text } from "react-native";
+import { FlatList } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useGlobalContext } from "@/context/GlobalProvider";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getAllPostsFromDB } from "@/lib/appwrite/appwrite";
-import { Link } from "expo-router";
+import Post from "@/components/Post";
 
 const home = () => {
   const { user } = useGlobalContext();
@@ -21,22 +21,18 @@ const home = () => {
     fetchPosts();
   }, []);
 
+  const renderPost = ({ item }: { item: any }) => {
+    return (
+      <Post post={item}/>
+    );
+  };
+
   return (
     <SafeAreaView>
       <FlatList
         data={posts}
         keyExtractor={(item) => item.$id}
-        renderItem={({ item }) => (
-          <Link 
-            className="p-4 mb-4 bg-gray-100 rounded-lg"
-            href={{
-              pathname: '/threads/[id]',
-              params: { id: `${item.$id}` },
-            }}
-          >
-            <Text className="text-lg text-gray-800">{item.content}</Text>
-          </Link >
-        )}
+        renderItem={renderPost}
       />
     </SafeAreaView>
   );
