@@ -52,7 +52,7 @@ export async function getPostFromDB(postId: string){
   }
 }
 
-export async function addResponseToDB(responseContent: string, postId: string){
+export async function addResponseToDB(responseContent: string, postId: string, userId: string){
   try {
     const newResponse = await databases.createDocument(
       appwriteConfig.databaseId,
@@ -61,6 +61,7 @@ export async function addResponseToDB(responseContent: string, postId: string){
       {
         content: responseContent,
         postId,
+        userId,
       }
     );
 

@@ -18,8 +18,11 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useToast } from "@/components/ToastProvider";
+import { useGlobalContext } from "@/context/GlobalProvider";
+import Post from "@/components/Post";
 
 export default function Thread() {
+  const { user } = useGlobalContext();
   const { id: postId } = useLocalSearchParams();
   const [post, setPost] = useState<any>(null);
   const [response, setResponse] = useState<string>("");
@@ -58,7 +61,7 @@ export default function Thread() {
     if (!response.trim()) return;
 
     try {
-      await addResponseToDB(response, `${postId}`);
+      await addResponseToDB(response, `${postId}`, user.$id);
       showToast("Response created successfully!", "success");
       setResponse("");
       await fetchResponsesToPost();
@@ -87,6 +90,7 @@ export default function Thread() {
       keyboardVerticalOffset={90}
     >
       <SafeAreaView className="flex-1">
+
         {/* Post at the top */}
         <View className="flex-1">
           {post && (
@@ -113,14 +117,7 @@ export default function Thread() {
               data={fetchedResponses}
               keyExtractor={(item) => item.$id}
               renderItem={({ item }) => (
-                <View className="p-3 bg-gray-100 rounded-lg mt-3 mx-4">
-                  <Text className="text-base text-gray-800">
-                    {item.content}
-                  </Text>
-                  <Text className="text-xs text-gray-500 mt-1 text-right">
-                    {new Date(item.$createdAt).toLocaleDateString()}
-                  </Text>
-                </View>
+                <Post post={item} />
               )}
               className="flex-1"
               contentContainerStyle={{
@@ -130,6 +127,7 @@ export default function Thread() {
             />
           )}
         </View>
+
         {/* Input field at the bottom */}
         <View className="flex-row p-3 border-t border-gray-200 bg-white items-center">
           <TextInput

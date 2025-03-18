@@ -17,6 +17,14 @@ declare interface PostModel {
   $id?: string;
   userId: UserModel;
   content: string;
-  createdAt?: string;
+  $createdAt?: string;
+  updatedAt?: string;
+}
+
+declare interface ResponseModel {
+  $id?: string;
+  userId: UserModel;
+  content: string;
+  $createdAt?: string;
   updatedAt?: string;
 }
