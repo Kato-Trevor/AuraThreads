@@ -25,6 +25,10 @@ declare interface ResponseModel {
   $id?: string;
   userId: UserModel;
   content: string;
+  likes: number;
+  dislikes: number;
+  likedBy: any[];
+  dislikedBy: any[];
   $createdAt?: string;
   updatedAt?: string;
 }
