@@ -19,7 +19,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useToast } from "@/components/ToastProvider";
 import { useGlobalContext } from "@/context/GlobalProvider";
-import Post from "@/components/Post";
+import Response from "@/components/Response";
 
 export default function Thread() {
   const { user } = useGlobalContext();
@@ -117,7 +117,7 @@ export default function Thread() {
               data={fetchedResponses}
               keyExtractor={(item) => item.$id}
               renderItem={({ item }) => (
-                <Post post={item} />
+                <Response response={item} />
               )}
               className="flex-1"
               contentContainerStyle={{
