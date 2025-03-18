@@ -7,11 +7,11 @@ const getInitials = (username: string) => {
   return initials;
 };
 
-const Avatar = ({ username }: { username: string }) => {
+const Avatar = ({ username, className }: { username: string, className?: string }) => {
   const initials = getInitials(username);
 
   return (
-    <View className="bg-gray-400 rounded-full w-12 h-12 justify-center items-center">
+    <View className={`bg-gray-400 rounded-full w-12 h-12 justify-center items-center ${className}`}>
       <Text className="text-white text-lg font-bold">{initials}</Text>
     </View>
   );

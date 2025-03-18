@@ -37,3 +37,49 @@ export async function getAllPostsFromDB(){
     throw new Error(error);
   }
 }
+
+export async function getPostFromDB(postId: string){
+  try {
+    const post = await databases.getDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.postCollectionId,
+      postId
+    );
+
+    return post;
+  } catch (error: any) {
+    throw new Error(error);
+  }
+}
+
+export async function addResponseToDB(responseContent: string, postId: string){
+  try {
+    const newResponse = await databases.createDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.responsesCollectionId,
+      ID.unique(),
+      {
+        content: responseContent,
+        postId,
+      }
+    );
+
+    return newResponse;
+  } catch (error: any) {
+    throw new Error(error);
+  }
+}
+
+export async function getResponsesToPost(postId: string){
+  try {
+    const responses = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.responsesCollectionId,
+      [Query.equal("postId", postId)]
+    );
+
+    return responses.documents;
+  } catch (error: any) {
+    throw new Error(error);
+  }
+}
