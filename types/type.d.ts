@@ -24,11 +24,17 @@ declare interface PostModel {
 declare interface ResponseModel {
   $id?: string;
   userId: UserModel;
+  postId: PostModel;
   content: string;
-  likes: number;
-  dislikes: number;
-  likedBy: any[];
-  dislikedBy: any[];
+  $createdAt?: string;
+  updatedAt?: string;
+}
+
+declare interface ReactionModel {
+  $id?: string;
+  madeBy: UserModel;
+  reactedTo: ResponseModel;
+  reactionType: "like" | "dislike";
   $createdAt?: string;
   updatedAt?: string;
 }

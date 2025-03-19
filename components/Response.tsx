@@ -1,13 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import Avatar from "./Avatar";
 import { formatDistanceToNow } from "date-fns";
 import { Ionicons } from "@expo/vector-icons";
 import {
-  addDislikeToResponse,
-  addLikeToResponse,
-  removeDislikeFromResponse,
-  removeLikeFromResponse,
+  addReaction,
+  removeReaction,
+  getReaction,
+  getLikeCount,
+  getDislikeCount,
+  updateReaction,
 } from "@/lib/appwrite/appwrite";
 import { useGlobalContext } from "@/context/GlobalProvider";
 
@@ -17,48 +19,138 @@ const Response = ({ response }: { response: ResponseModel }) => {
     addSuffix: true,
   });
 
-  const isLiked = () => {
-    if (response.likedBy.some((userFromDB: any) => userFromDB.$id === user.$id)) {
-      return true;
-    }
-    return false;
-  };
+  const [reaction, setReaction] = useState<any>();
+  const [likeCount, setLikeCount] = useState(0);
+  const [dislikeCount, setDislikeCount] = useState(0);
+  const [liked, setLiked] = useState(false);
+  const [disliked, setDisliked] = useState(false);
 
-  const isDisLiked = () => {
-    if (response.dislikedBy.some((userFromDB: any) => userFromDB.$id === user.$id)) {
-      return true;
-    }
-    return false;
-  };
+  useEffect(() => {
+    const fetchReaction = async () => {
+      try {
+        const fetchedReaction = await getReaction(user.$id, response.$id!);
+        setReaction(fetchedReaction);
+      } catch (error) {
+        console.error("Error fetching reaction:", error);
+      }
+    };
 
-  const [liked, setLiked] = useState(isLiked);
-  const [disliked, setDisliked] = useState(isDisLiked);
+    fetchReaction();
+  }, [user.$id, response.$id]);
+
+  useEffect(() => {
+    if (reaction) {
+      setLiked(reaction.reactionType === "like");
+      setDisliked(reaction.reactionType === "dislike");
+    }
+  }, [reaction]);
+
+  useEffect(() => {
+    const fetchLikeCount = async () => {
+      try {
+        const fetchedLikeCount = await getLikeCount(response.$id!);
+        setLikeCount(fetchedLikeCount);
+      } catch (error) {
+        console.error("Error fetching like count:", error);
+      }
+    };
+
+    fetchLikeCount();
+  }, [response.$id]);
+
+  useEffect(() => {
+    const fetchDislikeCount = async () => {
+      try {
+        const fetchedDislikeCount = await getDislikeCount(response.$id!);
+        setDislikeCount(fetchedDislikeCount);
+      } catch (error) {
+        console.error("Error fetching dislike count:", error);
+      }
+    };
+
+    fetchDislikeCount();
+  }, [response.$id]);
 
   const handleLike = async () => {
+    const initialLiked = liked;
+    const initialDisliked = disliked;
+    const initialLikeCount = likeCount;
+    const initialDislikeCount = dislikeCount;
+
     try {
-      setLiked(true);
-      if (disliked) {
-        setDisliked(false);
-        await removeDislikeFromResponse(response.$id!, user.$id);
+      if (liked) {
+        setLiked(false);
+        setLikeCount(likeCount - 1);
+        await removeReaction(reaction.$id);
+        setReaction(null);
+      } else {
+        setLiked(true);
+        setLikeCount(likeCount + 1);
+        if (disliked) {
+          setDisliked(false);
+          setDislikeCount(dislikeCount - 1);
+        }
+        if (!reaction) {
+          const createdReaction = await addReaction(
+            response.$id!,
+            user.$id,
+            "like"
+          );
+          setReaction(createdReaction);
+        } else {
+          const updatedReaction = await updateReaction(reaction.$id, "like");
+          setReaction(updatedReaction);
+        }
       }
-      await addLikeToResponse(response.$id!, user.$id);
     } catch (error) {
-      console.error("Error liking response:", error);
-      setLiked(false);
+      console.error("Error handling like", error);
+
+      setLiked(initialLiked);
+      setDisliked(initialDisliked);
+      setLikeCount(initialLikeCount);
+      setDislikeCount(initialDislikeCount);
     }
   };
 
   const handleDislike = async () => {
+    const initialLiked = liked;
+    const initialDisliked = disliked;
+    const initialLikeCount = likeCount;
+    const initialDislikeCount = dislikeCount;
+
     try {
-      setDisliked(true);
-      if (liked) {
-        setLiked(false);
-        await removeLikeFromResponse(response.$id!, user.$id);
+      if (disliked) {
+        setDisliked(false);
+        setDislikeCount(dislikeCount - 1);
+        await removeReaction(reaction.$id);
+        setReaction(null);
+      } else {
+        setDisliked(true);
+        setDislikeCount(dislikeCount + 1);
+        if (liked) {
+          setLiked(false);
+          setLikeCount(likeCount - 1);
+        }
+        if (!reaction) {
+          const createdReaction = await addReaction(
+            response.$id!,
+            user.$id,
+            "dislike"
+          );
+          setReaction(createdReaction);
+        } else {
+          const updatedReaction = await updateReaction(reaction.$id, "dislike");
+          setReaction(updatedReaction);
+        }
       }
-      await addDislikeToResponse(response.$id!, user.$id);
     } catch (error) {
-      console.error("Error disliking response:", error);
-      setDisliked(false);
+      console.error("Error handling like", error);
+
+      // Revert all states back to their initial values
+      setLiked(initialLiked);
+      setDisliked(initialDisliked);
+      setLikeCount(initialLikeCount);
+      setDislikeCount(initialDislikeCount);
     }
   };
 
@@ -73,21 +165,23 @@ const Response = ({ response }: { response: ResponseModel }) => {
         <Text className="text-lg text-gray-800 mt-1">{response.content}</Text>
         <View className="flex-row justify-start mt-2 space-x-4">
           <TouchableOpacity className="mr-4" onPress={handleLike}>
-            <View className="p-1">
+            <View className="p-1 flex-row items-center gap-2">
               <Ionicons
                 name={liked ? "thumbs-up" : "thumbs-up-outline"}
                 size={15}
                 color={liked ? "#F032DA" : "gray"}
               />
+              <Text>{likeCount}</Text>
             </View>
           </TouchableOpacity>
           <TouchableOpacity onPress={handleDislike}>
-            <View className="p-1">
+            <View className="p-1 flex-row items-center gap-2">
               <Ionicons
                 name={disliked ? "thumbs-down" : "thumbs-down-outline"}
                 size={15}
                 color={disliked ? "#F032DA" : "gray"}
               />
+              <Text>{dislikeCount}</Text>
             </View>
           </TouchableOpacity>
         </View>

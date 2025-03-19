@@ -21,6 +21,7 @@ export const appwriteConfig = {
   postCollectionId: "67cef75e000f65a9714b",
   responsesCollectionId: "67cef94300024a0db8ef",
   moodsCollectionId: "67cef98a00360b795eb3",
+  reactionsCollectionId: "67da7da70000bd42f55d",
 };
 
 export const client = new Client()
