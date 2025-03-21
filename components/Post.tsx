@@ -1,14 +1,25 @@
 import { Link } from "expo-router";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text } from "react-native";
 import Avatar from "./Avatar";
 import { formatDistanceToNow } from "date-fns";
 import { Ionicons } from "@expo/vector-icons";
+import { getResponsesToPost } from "@/lib/appwrite/appwrite";
 
 const Post = ({ post }: { post: PostModel | ResponseModel }) => {
   const timeAgo = formatDistanceToNow(new Date(`${post.$createdAt}`), {
     addSuffix: true,
   });
+
+  const [responses, setResponses] = useState<any>([]);
+
+  useEffect(() => {
+    const fetchResponses = async () => {
+      const responses = await getResponsesToPost(`${post.$id}`);
+      setResponses(responses);
+    };
+    fetchResponses();
+  }, []);
 
   return (
     <Link
@@ -25,8 +36,11 @@ const Post = ({ post }: { post: PostModel | ResponseModel }) => {
           <Text className="text-xs text-gray-500 text-right">{timeAgo}</Text>
         </View>
         <Text className="text-lg text-gray-800 mt-1">{post.content}</Text>
-        <View className="flex-row justify-start mt-2">
+        <View className="flex-row justify-start mt-2 items-center gap-2">
           <Ionicons name="chatbubble-outline" size={15} color="gray" />
+          <Text className="text-xs text-gray-500 text-right">
+            {responses.length ? responses.length : null}
+          </Text>
         </View>
       </View>
     </Link>
