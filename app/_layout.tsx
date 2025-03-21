@@ -65,6 +65,13 @@ export default function RootLayout() {
                 headerTitle: () => <AppHeader />,
               }}
             />
+            <Stack.Screen
+              name="threads/[id]"
+              options={{
+                headerTitle: "Post",
+                headerTitleAlign: "center",
+              }}
+            />
           </Stack>
         </ThemeProvider>
       </GlobalProvider>
