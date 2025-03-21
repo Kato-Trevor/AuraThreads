@@ -11,7 +11,9 @@ import { ToastProvider } from "@/components/ToastProvider";
 import * as SplashScreen from "expo-splash-screen";
 import React, { useEffect } from "react";
 import "react-native-reanimated";
-import { StatusBar } from "react-native";
+import { StatusBar, View } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import AppHeader from "@/components/AppHeader";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -52,9 +54,17 @@ export default function RootLayout() {
           <Stack>
             <Stack.Screen name="index" options={{ headerShown: false }} />
             <Stack.Screen name="create-post" options={{ headerShown: false }} />
-            <Stack.Screen name="search-songs" options={{ headerShown: false }} />
-            <Stack.Screen name="(tabs)" />
+            <Stack.Screen
+              name="search-songs"
+              options={{ headerShown: false }}
+            />
             <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+            <Stack.Screen
+              name="(tabs)"
+              options={{
+                headerTitle: () => <AppHeader />,
+              }}
+            />
           </Stack>
         </ThemeProvider>
       </GlobalProvider>
