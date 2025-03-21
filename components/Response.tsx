@@ -171,7 +171,7 @@ const Response = ({ response }: { response: ResponseModel }) => {
                 size={15}
                 color={liked ? "#F032DA" : "gray"}
               />
-              <Text>{likeCount}</Text>
+              <Text>{likeCount ? likeCount : null}</Text>
             </View>
           </TouchableOpacity>
           <TouchableOpacity onPress={handleDislike}>
@@ -181,7 +181,7 @@ const Response = ({ response }: { response: ResponseModel }) => {
                 size={15}
                 color={disliked ? "#F032DA" : "gray"}
               />
-              <Text>{dislikeCount}</Text>
+              <Text>{dislikeCount ? dislikeCount : null}</Text>
             </View>
           </TouchableOpacity>
         </View>
