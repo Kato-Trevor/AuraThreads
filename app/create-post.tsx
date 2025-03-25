@@ -14,6 +14,7 @@ import { addPostToDB } from "@/lib/appwrite/appwrite";
 import { topics } from "@/constants/constants";
 import TopicsList from "@/components/TopicsList";
 import SongsList from "@/components/SongsList";
+import { formatTopic } from "@/utils/stringHelpers";
 
 const createPost = () => {
   const { user } = useGlobalContext();
@@ -28,7 +29,7 @@ const createPost = () => {
 
   const handlePostCreation = async () => {
     try {
-      await addPostToDB(postContent, user.$id, selectedTopic);
+      await addPostToDB(postContent, user.$id, formatTopic(selectedTopic));
       showToast("Post created successfully!", "success");
       router.replace("/home");
     } catch (error: any) {

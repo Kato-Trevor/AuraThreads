@@ -19,6 +19,7 @@ declare interface PostModel {
   content: string;
   $createdAt?: string;
   updatedAt?: string;
+  topic: string;
 }
 
 declare interface ResponseModel {
