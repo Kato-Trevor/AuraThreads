@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-const SearchSongs = () => {
+const SongsList = () => {
   const [searchQuery, setSearchQuery] = useState("");
 
   const renderSong = ({ item }: { item: any }) => (
@@ -28,12 +28,12 @@ const SearchSongs = () => {
   );
 
   return (
-    <SafeAreaView className="flex-1 p-4 bg-white">
+    <SafeAreaView className="flex-1 bg-white">
       <View className="flex-row items-center p-3 mb-4 bg-[#E7ECF0] rounded-lg">
         <Ionicons name="search" size={24} color="gray" className="mr-2" />
         <TextInput
           className="flex-1 text-lg"
-          placeholder="Search for a song"
+          placeholder="What song resonates with you?"
           value={searchQuery}
           onChangeText={setSearchQuery}
         />
@@ -47,4 +47,4 @@ const SearchSongs = () => {
   );
 };
 
-export default SearchSongs;
+export default SongsList;
