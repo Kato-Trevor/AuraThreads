@@ -6,18 +6,18 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 
 const data = [
-  { value: "JavaScript", count: 38 },
-  { value: "React", count: 30 },
-  { value: "Nodejs", count: 28 },
-  { value: "Express.js", count: 25 },
-  { value: "HTML5", count: 33 },
-  { value: "MongoDB", count: 18 },
-  { value: "CSS3", count: 20 },
-  { value: "TypeScript", count: 22 },
-  { value: "Python", count: 15 },
-  { value: "AWS", count: 10 },
-  { value: "Firebase", count: 8 },
-  { value: "Docker", count: 5 },
+  { value: "Depression", count: 38 },
+  { value: "Anxiety", count: 30 },
+  { value: "PTSD", count: 28 },
+  { value: "Bipolar Disorder", count: 25 },
+  { value: "OCD", count: 33 },
+  { value: "Schizophrenia", count: 18 },
+  { value: "ADHD", count: 20 },
+  { value: "Eating Disorders", count: 22 },
+  { value: "Autism", count: 15 },
+  { value: "Substance Abuse", count: 10 },
+  { value: "Insomnia", count: 8 },
+  { value: "Stress", count: 5 },
 ];
 
 const trending = () => {
