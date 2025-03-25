@@ -34,6 +34,20 @@ export async function getAllPostsFromDB() {
   }
 }
 
+export async function getPostsByTopic(topic: string) {
+  try {
+    const posts = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.postCollectionId,
+      [Query.equal("topic", topic)]
+    );
+
+    return posts.documents;
+  } catch (error: any) {
+    throw new Error(error);
+  }
+}
+
 export async function getPostFromDB(postId: string) {
   try {
     const post = await databases.getDocument(

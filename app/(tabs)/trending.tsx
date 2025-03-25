@@ -1,34 +1,45 @@
 import { Text, View, StyleSheet } from "react-native";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { TagCloud } from "react-tagcloud/rn";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
-
-const data = [
-  { value: "Depression", count: 38 },
-  { value: "Anxiety", count: 30 },
-  { value: "PTSD", count: 28 },
-  { value: "Bipolar Disorder", count: 25 },
-  { value: "OCD", count: 33 },
-  { value: "Schizophrenia", count: 18 },
-  { value: "ADHD", count: 20 },
-  { value: "Eating Disorders", count: 22 },
-  { value: "Autism", count: 15 },
-  { value: "Substance Abuse", count: 10 },
-  { value: "Insomnia", count: 8 },
-  { value: "Stress", count: 5 },
-];
+import { topics } from "@/constants/constants";
+import { getPostsByTopic } from "@/lib/appwrite/appwrite";
+import { formatTopic } from "@/utils/stringHelpers";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 const trending = () => {
   const bottomSheetRef = useRef<BottomSheet>(null);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [generatedTopics, setGeneratedTopics] = useState<
+    { value: string; count: number }[]
+  >([]);
+
+  useEffect(() => {
+    const fetchTopicsWithCounts = async () => {
+      setIsLoading(true);
+      const result = await generateTopicsWithCounts(topics); 
+      setGeneratedTopics(result); 
+      setIsLoading(false); 
+    };
+
+    fetchTopicsWithCounts();
+  }, []);
 
   const handleTagPress = (tag: any) => {
     setSelectedTag(tag.value);
     bottomSheetRef.current?.expand();
   };
 
+  if (isLoading) {
+    return (
+      <SafeAreaView className="flex-1 justify-center items-center">
+        <LoadingSpinner visible={true} />
+      </SafeAreaView>
+    );
+  }
   return (
     <GestureHandlerRootView className="flex-1">
       <SafeAreaView className="flex-1">
@@ -36,7 +47,7 @@ const trending = () => {
           <TagCloud
             minSize={12}
             maxSize={35}
-            tags={data}
+            tags={generatedTopics}
             disableRandomColor={false}
             onPress={handleTagPress}
           />
@@ -74,3 +85,20 @@ const styles = StyleSheet.create({
     padding: 20,
   },
 });
+
+export const generateTopicsWithCounts = async (
+  topics: string[]
+): Promise<{ value: string; count: number }[]> => {
+  const topicsWithCounts = await Promise.all(
+    topics.map(async (topic) => {
+      const formattedTopic = formatTopic(topic);
+      const posts = await getPostsByTopic(formattedTopic);
+      return {
+        value: formattedTopic,
+        count: posts?.length,
+      };
+    })
+  );
+
+  return topicsWithCounts;
+};
