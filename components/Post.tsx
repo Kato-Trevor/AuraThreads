@@ -28,7 +28,7 @@ const Post = ({ post }: { post: PostModel }) => {
         params: { id: `${post.$id}` },
       }}
     >
-      <View className="p-4 bg-gray-100 rounded-lg flex-row items-start">
+      <View className="p-4 rounded-lg flex-row items-start">
         <Avatar username={post.userId.username} />
         <View className="flex-1 px-1 ml-2">
           <View className="flex-row justify-between">

@@ -20,6 +20,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useToast } from "@/components/ToastProvider";
 import { useGlobalContext } from "@/context/GlobalProvider";
 import Response from "@/components/Response";
+import { formatDistanceToNow } from "date-fns";
+import Avatar from "@/components/Avatar";
 
 export default function Thread() {
   const { user } = useGlobalContext();
@@ -30,6 +32,12 @@ export default function Thread() {
   const [isLoading, setIsLoading] = useState(true);
   const { showToast } = useToast();
   const flatListRef = useRef<FlatList>(null);
+
+  const timeAgo = post?.$createdAt
+    ? formatDistanceToNow(new Date(post.$createdAt), {
+        addSuffix: true,
+      })
+    : "Unknown time";
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -89,67 +97,72 @@ export default function Thread() {
       className="flex-1 bg-white"
       keyboardVerticalOffset={90}
     >
-      <SafeAreaView className="flex-1">
-
-        {/* Post at the top */}
-        <View className="flex-1">
-          {post && (
-            <View className="p-4 bg-gray-50">
-              <Text className="text-base font-bold mb-2 text-gray-600">
-                Original Post
-              </Text>
-              <Text className="text-lg text-gray-800 mb-3">{post.content}</Text>
-              <View className="h-px bg-gray-200 mt-2" />
+      {/* Post at the top */}
+      <View className="flex-1">
+        {post && (
+          <View className="px-8 py-3 flex-column items-start gap-3 mb-2">
+            <View className="flex-row items-center justify-center gap-2">
+              <Avatar username={post.userId.username} />
+              <View className="flex-column items-start gap-1">
+                <Text className="text-gray-500">{post.userId.username}</Text>
+                {/* <Text className="text-gray-500">music here</Text> */}
+              </View>
             </View>
-          )}
+            <Text className="text-lg text-gray-800 w-full">{post.content}</Text>
+            <Text className="text-xs text-gray-500 text-right">{timeAgo}</Text>
+            <View className="h-[0.5px] bg-gray-200 w-full" />
+          </View>
+        )}
 
-          {/* Responses in the middle */}
-          <Text className="text-base font-bold mt-3 ml-4 text-gray-600">
-            Responses
+        {/* Responses in the middle */}
+        <Text className="pl-4 mb-4">
+          <Text className="text-base font-bold text-gray-600">
+            {fetchedResponses.length}
+          </Text>{" "}
+          <Text className="text-base text-gray-500"> Responses</Text>
+        </Text>
+        <View className="h-[0.5px] bg-gray-200 w-full" />
+
+        {fetchedResponses.length === 0 ? (
+          <Text className="p-4 italic text-gray-500 text-center">
+            No responses yet. Be the first to respond!
           </Text>
-          {fetchedResponses.length === 0 ? (
-            <Text className="p-4 italic text-gray-500 text-center">
-              No responses yet. Be the first to respond!
-            </Text>
-          ) : (
-            <FlatList
-              ref={flatListRef}
-              data={fetchedResponses}
-              keyExtractor={(item) => item.$id}
-              renderItem={({ item }) => (
-                <Response response={item} />
-              )}
-              className="flex-1"
-              contentContainerStyle={{
-                paddingHorizontal: 0,
-                paddingBottom: 16,
-              }}
-            />
-          )}
-        </View>
-
-        {/* Input field at the bottom */}
-        <View className="flex-row p-3 border-t border-gray-200 bg-white items-center">
-          <TextInput
-            className="flex-1 bg-gray-100 rounded-full px-4 py-2 text-base max-h-24"
-            placeholder="Post a response"
-            value={response}
-            onChangeText={setResponse}
-            multiline
+        ) : (
+          <FlatList
+            ref={flatListRef}
+            data={fetchedResponses}
+            keyExtractor={(item) => item.$id}
+            renderItem={({ item }) => <Response response={item} />}
+            className="flex-1"
+            contentContainerStyle={{
+              paddingHorizontal: 0,
+              paddingBottom: 16,
+            }}
           />
-          <TouchableOpacity
-            onPress={createResponse}
-            className="ml-3 p-2"
-            disabled={!response.trim()}
-          >
-            <Ionicons
-              name="send"
-              size={24}
-              color={response.trim() ? "#F032DA" : "#cccccc"}
-            />
-          </TouchableOpacity>
-        </View>
-      </SafeAreaView>
+        )}
+      </View>
+
+      {/* Input field at the bottom */}
+      <View className="flex-row p-3 border-t border-gray-200 bg-white items-center">
+        <TextInput
+          className="flex-1 bg-gray-100 rounded-full px-4 py-2 text-base max-h-24"
+          placeholder="Post a response"
+          value={response}
+          onChangeText={setResponse}
+          multiline
+        />
+        <TouchableOpacity
+          onPress={createResponse}
+          className="ml-3 p-2"
+          disabled={!response.trim()}
+        >
+          <Ionicons
+            name="send"
+            size={24}
+            color={response.trim() ? "#F032DA" : "#cccccc"}
+          />
+        </TouchableOpacity>
+      </View>
     </KeyboardAvoidingView>
   );
 }

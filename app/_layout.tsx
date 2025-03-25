@@ -59,6 +59,7 @@ export default function RootLayout() {
               name="(tabs)"
               options={{
                 headerTitle: () => <AppHeader />,
+                headerShadowVisible: false,
               }}
             />
             <Stack.Screen
