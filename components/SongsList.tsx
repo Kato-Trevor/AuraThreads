@@ -14,6 +14,21 @@ const SongsList = () => {
   const [isPlaying, setIsPlaying] = useState(false);
 
   useEffect(() => {
+    // Request audio permissions and set audio mode
+    const setupAudio = async () => {
+      await Audio.requestPermissionsAsync();
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: false,
+        staysActiveInBackground: true,
+        playsInSilentModeIOS: true,
+        shouldDuckAndroid: true,
+      });
+    };
+
+    setupAudio();
+  }, []);
+
+  useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       if (searchQuery.trim() !== "") {
         handleSearch();
@@ -33,15 +48,28 @@ const SongsList = () => {
     }
   };
 
+  const stopCurrentSound = async () => {
+    try {
+      if (currentSound) {
+        await currentSound.stopAsync();
+        await currentSound.unloadAsync();
+      }
+    } catch (error) {
+      console.log("Error stopping current sound:", error);
+    } finally {
+      setCurrentSound(null);
+      setIsPlaying(false);
+      setSelectedSong(null);
+    }
+  };
+
   const handleSongPress = useCallback(async (song: Song) => {
     try {
       // If the same song is pressed
       if (selectedSong?.id === song.id) {
         // If currently playing, stop the song
         if (isPlaying && currentSound) {
-          await currentSound.stopAsync();
-          setIsPlaying(false);
-          setSelectedSong(null);
+          await stopCurrentSound();
         } else {
           // If not playing, start the song
           await playSound(song);
@@ -49,26 +77,20 @@ const SongsList = () => {
       } else {
         // If a different song is pressed
         // Stop the current song if it's playing
-        if (currentSound) {
-          await currentSound.stopAsync();
-        }
+        await stopCurrentSound();
         
         // Play the new song
         await playSound(song);
       }
     } catch (error) {
       console.error("Error handling song playback:", error);
+      setError("Could not play the song");
     }
   }, [currentSound, isPlaying, selectedSong]);
 
   // Play sound function
   const playSound = async (song: Song) => {
     try {
-      // Unload any existing sound
-      if (currentSound) {
-        await currentSound.unloadAsync();
-      }
-
       // Create and play new sound
       const { sound } = await Audio.Sound.createAsync(
         { uri: song.preview },
@@ -79,6 +101,7 @@ const SongsList = () => {
       sound.setOnPlaybackStatusUpdate(async (status) => {
         if (status.isLoaded && status.didJustFinish) {
           await sound.unloadAsync();
+          setCurrentSound(null);
           setIsPlaying(false);
           setSelectedSong(null);
         }
