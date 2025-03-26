@@ -11,11 +11,13 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { searchSongs } from "@/services/search-songs";
+import SongItem from "./SongItem";
 
 const SongsList = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [songs, setSongs] = useState(null);
   const [error, setError] = useState<string | null>(null);
+  const [selectedSong, setSelectedSong] = useState<Song | null>(null);
 
   // Debounce logic
   useEffect(() => {
@@ -39,16 +41,11 @@ const SongsList = () => {
   };
 
   const renderSong = ({ item }: { item: Song }) => (
-    <TouchableOpacity className="flex-row items-center p-4 bg-gray-100 rounded-lg mb-2">
-      <Image
-        source={{ uri: item.md5_image }}
-        className="w-12 h-12 rounded-lg mr-4"
-      />
-      <View className="flex-1">
-        <Text className="text-lg font-semibold">{item.title}</Text>
-        <Text className="text-gray-500">{item.artist.name}</Text>
-      </View>
-    </TouchableOpacity>
+    <SongItem
+      song={item}
+      onPress={setSelectedSong}
+      isActive={item.id === selectedSong?.id}
+    />
   );
 
   return (
