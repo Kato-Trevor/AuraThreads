@@ -16,7 +16,7 @@ import TopicsList from "@/components/TopicsList";
 import SongsList from "@/components/SongsList";
 import { formatTopic } from "@/utils/stringHelpers";
 
-const createPost = () => {
+const CreatePost = () => {
   const { user } = useGlobalContext();
   const { showToast } = useToast();
   const [postContent, setPostContent] = useState("");
@@ -115,4 +115,4 @@ const createPost = () => {
   );
 };
 
-export default createPost;
+export default CreatePost;

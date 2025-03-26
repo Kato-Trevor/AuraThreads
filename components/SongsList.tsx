@@ -1,25 +1,18 @@
-import { songs } from "@/mocks/mock-data";
-import React, { useEffect, useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
-import {
-  View,
-  Text,
-  TextInput,
-  FlatList,
-  Image,
-  TouchableOpacity,
-} from "react-native";
+import React, { useEffect, useState, useCallback } from "react";
+import { View, Text, TextInput, FlatList } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { Audio } from "expo-av";
 import { searchSongs } from "@/services/search-songs";
 import SongItem from "./SongItem";
 
 const SongsList = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [songs, setSongs] = useState(null);
+  const [songs, setSongs] = useState<Song[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [selectedSong, setSelectedSong] = useState<Song | null>(null);
+  const [currentSound, setCurrentSound] = useState<Audio.Sound | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
 
-  // Debounce logic
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       if (searchQuery.trim() !== "") {
@@ -40,11 +33,81 @@ const SongsList = () => {
     }
   };
 
+  const handleSongPress = useCallback(async (song: Song) => {
+    try {
+      // If the same song is pressed
+      if (selectedSong?.id === song.id) {
+        // If currently playing, stop the song
+        if (isPlaying && currentSound) {
+          await currentSound.stopAsync();
+          setIsPlaying(false);
+          setSelectedSong(null);
+        } else {
+          // If not playing, start the song
+          await playSound(song);
+        }
+      } else {
+        // If a different song is pressed
+        // Stop the current song if it's playing
+        if (currentSound) {
+          await currentSound.stopAsync();
+        }
+        
+        // Play the new song
+        await playSound(song);
+      }
+    } catch (error) {
+      console.error("Error handling song playback:", error);
+    }
+  }, [currentSound, isPlaying, selectedSong]);
+
+  // Play sound function
+  const playSound = async (song: Song) => {
+    try {
+      // Unload any existing sound
+      if (currentSound) {
+        await currentSound.unloadAsync();
+      }
+
+      // Create and play new sound
+      const { sound } = await Audio.Sound.createAsync(
+        { uri: song.preview },
+        { shouldPlay: true }
+      );
+
+      // Set up playback status listener
+      sound.setOnPlaybackStatusUpdate(async (status) => {
+        if (status.isLoaded && status.didJustFinish) {
+          await sound.unloadAsync();
+          setIsPlaying(false);
+          setSelectedSong(null);
+        }
+      });
+
+      setCurrentSound(sound);
+      setSelectedSong(song);
+      setIsPlaying(true);
+    } catch (error) {
+      console.error("Error playing sound:", error);
+      setError("Could not play the song");
+    }
+  };
+
+  // Cleanup sound on component unmount
+  useEffect(() => {
+    return () => {
+      if (currentSound) {
+        currentSound.unloadAsync();
+      }
+    };
+  }, [currentSound]);
+
+  // Render song item
   const renderSong = ({ item }: { item: Song }) => (
     <SongItem
       song={item}
-      onPress={setSelectedSong}
-      isActive={item.id === selectedSong?.id}
+      onPress={() => handleSongPress(item)}
+      isActive={item.id === selectedSong?.id && isPlaying}
     />
   );
 
