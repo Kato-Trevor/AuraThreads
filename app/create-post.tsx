@@ -22,6 +22,8 @@ const CreatePost = () => {
   const [postContent, setPostContent] = useState("");
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedTopic, setSelectedTopic] = useState("");
+  const [selectedSong, setSelectedSong] = useState<Song | null>(null);
+  console.log('selectedSong is', selectedSong?.title_short);
 
   const handleCancel = () => {
     router.back();
@@ -109,7 +111,7 @@ const CreatePost = () => {
         />
       )}
 
-      {currentStep === 3 && <SongsList />}
+      {currentStep === 3 && <SongsList selectedSong={selectedSong} onSongSelect={setSelectedSong} />}
       
     </SafeAreaView>
   );

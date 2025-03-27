@@ -5,11 +5,15 @@ import { Audio } from "expo-av";
 import { searchSongs } from "@/services/search-songs";
 import SongItem from "./SongItem";
 
-const SongsList = () => {
+interface SongListProps {
+  selectedSong: Song | null;
+  onSongSelect: (item: Song | null) => void;
+}
+
+const SongsList: React.FC<SongListProps> = ({ selectedSong, onSongSelect }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [songs, setSongs] = useState<Song[] | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [selectedSong, setSelectedSong] = useState<Song | null>(null);
   const [currentSound, setCurrentSound] = useState<Audio.Sound | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
 
@@ -59,34 +63,13 @@ const SongsList = () => {
     } finally {
       setCurrentSound(null);
       setIsPlaying(false);
-      setSelectedSong(null);
     }
   };
 
-  const handleSongPress = useCallback(async (song: Song) => {
-    try {
-      // If the same song is pressed
-      if (selectedSong?.id === song.id) {
-        // If currently playing, stop the song
-        if (isPlaying && currentSound) {
-          await stopCurrentSound();
-        } else {
-          // If not playing, start the song
-          await playSound(song);
-        }
-      } else {
-        // If a different song is pressed
-        // Stop the current song if it's playing
-        await stopCurrentSound();
-        
-        // Play the new song
-        await playSound(song);
-      }
-    } catch (error) {
-      console.error("Error handling song playback:", error);
-      setError("Could not play the song");
-    }
-  }, [currentSound, isPlaying, selectedSong]);
+  const handleSongSelect = useCallback((song: Song | null) => {
+    stopCurrentSound();
+    onSongSelect(song);
+  }, [onSongSelect]);
 
   // Play sound function
   const playSound = async (song: Song) => {
@@ -103,12 +86,10 @@ const SongsList = () => {
           await sound.unloadAsync();
           setCurrentSound(null);
           setIsPlaying(false);
-          setSelectedSong(null);
         }
       });
 
       setCurrentSound(sound);
-      setSelectedSong(song);
       setIsPlaying(true);
     } catch (error) {
       console.error("Error playing sound:", error);
@@ -129,8 +110,11 @@ const SongsList = () => {
   const renderSong = ({ item }: { item: Song }) => (
     <SongItem
       song={item}
-      onPress={() => handleSongPress(item)}
-      isActive={item.id === selectedSong?.id && isPlaying}
+      onSelect={handleSongSelect}
+      onPlay={playSound}
+      onPause={stopCurrentSound}
+      isSelected={item.id === selectedSong?.id}
+      isPlaying={item.id === selectedSong?.id && isPlaying}
     />
   );
 
