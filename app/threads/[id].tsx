@@ -15,13 +15,15 @@ import {
   getResponsesToPost,
 } from "@/lib/appwrite/appwrite";
 import LoadingSpinner from "@/components/LoadingSpinner";
-import { Ionicons } from "@expo/vector-icons";
+import { Feather, Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useToast } from "@/components/ToastProvider";
 import { useGlobalContext } from "@/context/GlobalProvider";
 import Response from "@/components/Response";
 import { formatDistanceToNow } from "date-fns";
 import Avatar from "@/components/Avatar";
+import getSongById from "@/services/get-song";
+import { Audio } from "expo-av";
 
 export default function Thread() {
   const { user } = useGlobalContext();
@@ -29,7 +31,10 @@ export default function Thread() {
   const [post, setPost] = useState<any>(null);
   const [response, setResponse] = useState<string>("");
   const [fetchedResponses, setFetchedResponses] = useState<any>([]);
+  const [song, setSong] = useState<any>();
+  const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [currentSound, setCurrentSound] = useState<Audio.Sound | null>(null);
   const { showToast } = useToast();
   const flatListRef = useRef<FlatList>(null);
 
@@ -62,6 +67,62 @@ export default function Thread() {
       setFetchedResponses(fetchedResponses);
     } catch (error) {
       console.error("Error fetching responses:", error);
+    }
+  };
+
+  useEffect(() => {
+    const fetchSong = async () => {
+      if (post?.songId) {
+        const song = await getSongById(post?.songId);
+        setSong(song);
+      }
+    };
+    fetchSong();
+  }, [post?.songId]);
+
+  useEffect(() => {
+    return () => {
+      if (currentSound) {
+        currentSound.unloadAsync();
+      }
+    };
+  }, [currentSound]);
+
+  const stopSound = async () => {
+    try {
+      if (currentSound) {
+        await currentSound.stopAsync();
+        await currentSound.unloadAsync();
+      }
+    } catch (error) {
+      console.log("Error stopping current sound:", error);
+    } finally {
+      setCurrentSound(null);
+      setIsPlaying(false);
+    }
+  };
+
+  const playSound = async () => {
+    try {
+      // Create and play new sound
+      const { sound } = await Audio.Sound.createAsync(
+        { uri: song.preview },
+        { shouldPlay: true }
+      );
+
+      // Set up playback status listener
+      sound.setOnPlaybackStatusUpdate(async (status) => {
+        if (status.isLoaded && status.didJustFinish) {
+          await sound.unloadAsync();
+          setCurrentSound(null);
+          setIsPlaying(false);
+        }
+      });
+
+      setCurrentSound(sound);
+      setIsPlaying(true);
+    } catch (error) {
+      console.error("Error playing sound:", error);
     }
   };
 
@@ -101,11 +162,28 @@ export default function Thread() {
       <View className="flex-1">
         {post && (
           <View className="px-8 py-3 flex-column items-start gap-3 mb-2">
-            <View className="flex-row items-center justify-center gap-2">
+            <View className="flex-row items-center gap-2">
               <Avatar username={post.userId.username} />
               <View className="flex-column items-start gap-1">
-                <Text className="text-gray-500">{post.userId.username}</Text>
-                {/* <Text className="text-gray-500">music here</Text> */}
+                <Text className="text-gray-500">@{post.userId.username}</Text>
+                {post.songId && (
+                  <TouchableOpacity
+                    onPress={() => {
+                      isPlaying ? stopSound() : playSound();
+                    }}
+                  >
+                    <View className="flex-row justify-start items-center">
+                      <Feather
+                        name={isPlaying ? "volume-2" : "volume-x"}
+                        size={20}
+                        color="black"
+                      />
+                      <Text className="text-xs text-gray-500 ml-1">
+                        {song?.artist?.name} • {song?.title_short}
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                )}
               </View>
             </View>
             <Text className="text-lg text-gray-800 w-full">{post.content}</Text>
