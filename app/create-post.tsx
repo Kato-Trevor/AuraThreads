@@ -23,7 +23,6 @@ const CreatePost = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedTopic, setSelectedTopic] = useState("");
   const [selectedSong, setSelectedSong] = useState<Song | null>(null);
-  console.log('selectedSong is', selectedSong?.title_short);
 
   const handleCancel = () => {
     router.back();
@@ -31,7 +30,7 @@ const CreatePost = () => {
 
   const handlePostCreation = async () => {
     try {
-      await addPostToDB(postContent, user.$id, formatTopic(selectedTopic));
+      await addPostToDB(postContent, user.$id, formatTopic(selectedTopic), selectedSong?.id);
       showToast("Post created successfully!", "success");
       router.replace("/home");
     } catch (error: any) {

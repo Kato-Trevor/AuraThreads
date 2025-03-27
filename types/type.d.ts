@@ -21,6 +21,7 @@ declare interface PostModel {
   $createdAt?: string;
   updatedAt?: string;
   topic: string;
+  songId?: number;
 }
 
 declare interface ResponseModel {

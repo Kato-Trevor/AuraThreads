@@ -1,7 +1,7 @@
 export * from "@/lib/appwrite/auth";
 import { ID, databases, appwriteConfig, Query } from "@/lib/appwrite/config";
 
-export async function addPostToDB(postContent: string, userId: string, topic: string) {
+export async function addPostToDB(postContent: string, userId: string, topic: string, songId?: number) {
   try {
     const newPost = await databases.createDocument(
       appwriteConfig.databaseId,
@@ -11,6 +11,7 @@ export async function addPostToDB(postContent: string, userId: string, topic: st
         content: postContent,
         userId,
         topic,
+        songId,
       }
     );
 
