@@ -1,7 +1,7 @@
 export * from "@/lib/appwrite/auth";
 import { ID, databases, appwriteConfig, Query } from "@/lib/appwrite/config";
 
-export async function addPostToDB(postContent: string, userId: string) {
+export async function addPostToDB(postContent: string, userId: string, topic: string, songId?: number) {
   try {
     const newPost = await databases.createDocument(
       appwriteConfig.databaseId,
@@ -10,6 +10,8 @@ export async function addPostToDB(postContent: string, userId: string) {
       {
         content: postContent,
         userId,
+        topic,
+        songId,
       }
     );
 
@@ -25,6 +27,20 @@ export async function getAllPostsFromDB() {
       appwriteConfig.databaseId,
       appwriteConfig.postCollectionId,
       [Query.orderDesc("$createdAt")]
+    );
+
+    return posts.documents;
+  } catch (error: any) {
+    throw new Error(error);
+  }
+}
+
+export async function getPostsByTopic(topic: string) {
+  try {
+    const posts = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.postCollectionId,
+      [Query.equal("topic", topic)]
     );
 
     return posts.documents;
