@@ -4,6 +4,7 @@ import { useGlobalContext } from "@/context/GlobalProvider";
 import { getAllPostsFromDB } from "@/lib/appwrite/appwrite";
 import Post from "@/components/Post";
 import MoodLogModal from "@/components/MoodLog";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const home = () => {
   const { user } = useGlobalContext();
