@@ -16,7 +16,7 @@ import { useGlobalContext } from "@/context/GlobalProvider";
 
 const MoodAnalyticsScreen = () => {
   const { user } = useGlobalContext();
-  const [moodData, setMoodData] = useState([]);
+  const [moodData, setMoodData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [timeRange, setTimeRange] = useState("weekly"); // 'weekly', 'monthly', 'yearly'
   const [error, setError] = useState<any>(null);
@@ -42,7 +42,9 @@ const MoodAnalyticsScreen = () => {
   };
 
   useEffect(() => {
-    fetchMoodData();
+    if (timeRange) {
+      fetchMoodData();
+    }
   }, [timeRange]);
 
   const fetchMoodData = async () => {
@@ -50,74 +52,73 @@ const MoodAnalyticsScreen = () => {
       setIsLoading(true);
       setError(null);
 
-      // Replace with actual data fetching logic
       const response = await getMoodLogs(user.$id);
-
-      // Process the data based on time range
       const processedData = processDataByTimeRange(response, timeRange);
       setMoodData(processedData);
-    } catch (err) {
-      setError("Failed to load mood data. Please try again.");
+    } catch (err: any) {
+      if (err.message) {
+        setError(`Failed to load mood data: ${err.message}`);
+      } else {
+        setError("Failed to load mood data. Please try again.");
+      }
       console.error(err);
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Sample data processing function
-  const processDataByTimeRange = (data: any, range: any) => {
-    // This is a mock function - implement your actual data processing logic
-    // For demo purposes, returning sample data
-    return {
-      labels:
-        range === "weekly"
-          ? ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-          : range === "monthly"
-          ? ["Week 1", "Week 2", "Week 3", "Week 4"]
-          : ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-      datasets: [
-        {
-          data:
-            range === "weekly"
-              ? [2, 1, 3, 4, 3, 4, 2] // 1=sad, 2=angry, 3=neutral, 4=happy, 5=excited
-              : range === "monthly"
-              ? [3, 4, 2, 5]
-              : [2, 3, 4, 5, 3, 4],
-          color: () => "#FDF2F8", // secondary-100 bg color
-          strokeWidth: 3,
-        },
-      ],
-      moodCounts: {
-        sad: range === "weekly" ? 1 : range === "monthly" ? 3 : 5,
-        angry: range === "weekly" ? 2 : range === "monthly" ? 1 : 3,
-        neutral: range === "weekly" ? 2 : range === "monthly" ? 1 : 4,
-        happy: range === "weekly" ? 3 : range === "monthly" ? 2 : 6,
-        excited: range === "weekly" ? 1 : range === "monthly" ? 1 : 2,
-      },
+  const processDataByTimeRange = (data: any, range: string) => {
+    const now = new Date();
+    const labels: string[] = [];
+    const moodCounts = {
+      sad: 0,
+      angry: 0,
+      neutral: 0,
+      happy: 0,
+      excited: 0,
     };
-  };
+    const moodValues: number[] = [];
 
-  // Get mood name from numeric value
-  const getMoodName = (value: any) => {
-    const moods = ["sad", "angry", "neutral", "happy", "excited"];
-    return moods[value - 1] || "neutral";
-  };
+    data.forEach((log: any) => {
+      const logDate = new Date(log.$createdAt);
+      const moodValue = Object.keys(moodColors).indexOf(log.mood) + 1;
 
-  // Calculate most frequent mood
-  const getMostFrequentMood = () => {
-    if (!moodData.moodCounts) return "neutral";
+      if (range === "weekly") {
+        const dayOfWeek = logDate.getDay();
+        if (!labels.includes(dayOfWeek.toString()))
+          labels.push(dayOfWeek.toString());
+        moodValues[dayOfWeek] = moodValue;
+      } else if (range === "monthly") {
+        const weekOfMonth = Math.ceil(logDate.getDate() / 7);
+        if (!labels.includes(`Week ${weekOfMonth}`))
+          labels.push(`Week ${weekOfMonth}`);
+        moodValues[weekOfMonth - 1] = moodValue;
+      } else if (range === "yearly") {
+        const month = logDate.getMonth();
+        if (!labels.includes(month.toString())) labels.push(month.toString());
+        moodValues[month] = moodValue;
+      }
 
-    let maxCount = 0;
-    let mostFrequentMood = "neutral";
-
-    Object.entries(moodData.moodCounts).forEach(([mood, count]) => {
-      if (count > maxCount) {
-        maxCount = count;
-        mostFrequentMood = mood;
+      if (log.mood in moodCounts) {
+        moodCounts[log.mood as keyof typeof moodCounts]++;
       }
     });
 
-    return mostFrequentMood;
+    return {
+      labels: labels.map((label: any) =>
+        range === "weekly"
+          ? ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"][label]
+          : label
+      ),
+      datasets: [
+        {
+          data: moodValues,
+          color: () => "#FDF2F8",
+          strokeWidth: 3,
+        },
+      ],
+      moodCounts,
+    };
   };
 
   const chartConfig = {
@@ -140,10 +141,34 @@ const MoodAnalyticsScreen = () => {
     },
   };
 
+  // Calculate most frequent mood
+  const getMostFrequentMood = (): keyof typeof moodIcons => {
+    if (!moodData || !moodData.moodCounts) return "neutral";
+
+    let maxCount = 0;
+    let mostFrequentMood: keyof typeof moodColors = "neutral";
+
+    Object.entries(moodData.moodCounts).forEach(([mood, count]) => {
+      if (typeof count === "number" && count > maxCount) {
+        maxCount = count;
+        mostFrequentMood = mood as keyof typeof moodColors;
+      }
+    });
+
+    return mostFrequentMood;
+  };
+
+  function getTotalMoods() {
+    if (!moodData || !moodData.moodCounts) return 0;
+
+    return Object.values(moodData.moodCounts).reduce(
+      (total: number, count) => total + (typeof count === "number" ? count : 0),
+      0 as number
+    );
+  }
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
-      {" "}
-      {/* bg-primary (white) */}
       <ScrollView className="flex-1">
         {/* Header */}
         <View className="px-6 pt-4 pb-2">
@@ -154,12 +179,9 @@ const MoodAnalyticsScreen = () => {
             Track your emotional patterns over time
           </Text>
         </View>
-
         {/* Time Range Selector */}
         <View className="flex-row justify-center px-6 py-3">
           <View className="flex-row bg-pink-50 rounded-full p-1">
-            {" "}
-            {/* secondary-50 */}
             <TouchableOpacity
               onPress={() => setTimeRange("weekly")}
               className={`px-4 py-1.5 rounded-full ${
@@ -204,7 +226,6 @@ const MoodAnalyticsScreen = () => {
             </TouchableOpacity>
           </View>
         </View>
-
         {/* Chart */}
         <View className="px-4 py-3">
           {isLoading ? (
@@ -228,8 +249,6 @@ const MoodAnalyticsScreen = () => {
             </View>
           ) : (
             <View className="bg-pink-50 rounded-xl p-4 shadow-sm">
-              {" "}
-              {/* secondary-50 */}
               <Text className="text-base font-pbold text-gray-800 mb-2">
                 Mood Trends
               </Text>
@@ -301,8 +320,8 @@ const MoodAnalyticsScreen = () => {
             </View>
           )}
         </View>
-
-        {/* Insights */}
+        backgroundColor: moodColors[getMostFrequentMood() as keyof typeof
+        moodColors],
         {!isLoading && !error && moodData && (
           <View className="px-4 py-3">
             <View className="bg-white rounded-xl border border-pink-100 p-5 shadow-sm">
@@ -323,7 +342,7 @@ const MoodAnalyticsScreen = () => {
                     }}
                   >
                     <MaterialCommunityIcons
-                      name={moodIcons[getMostFrequentMood()]}
+                      name={moodIcons[getMostFrequentMood()] as any}
                       size={24}
                       color="white"
                     />
@@ -354,24 +373,27 @@ const MoodAnalyticsScreen = () => {
                     <View className="flex-row justify-between items-center mb-1">
                       <View className="flex-row items-center">
                         <MaterialCommunityIcons
-                          name={moodIcons[mood]}
+                          name={
+                            moodIcons[mood as keyof typeof moodIcons] as any
+                          }
                           size={18}
-                          color={moodColors[mood]}
+                          color={moodColors[mood as keyof typeof moodColors]}
                         />
                         <Text className="ml-2 text-sm font-pmedium text-gray-700 capitalize">
                           {mood}
                         </Text>
                       </View>
                       <Text className="text-sm text-gray-500">
-                        {count} {count === 1 ? "time" : "times"}
+                        {count as number} {count === 1 ? "time" : "times"}
                       </Text>
                     </View>
                     <View className="bg-gray-200 h-2 rounded-full overflow-hidden">
                       <View
                         className="h-full rounded-full"
                         style={{
-                          backgroundColor: moodColors[mood],
-                          width: `${(count / getTotalMoods()) * 100}%`,
+                          backgroundColor:
+                            moodColors[mood as keyof typeof moodColors],
+                          width: `${(Number(count) / getTotalMoods()) * 100}%`,
                         }}
                       />
                     </View>
@@ -380,7 +402,6 @@ const MoodAnalyticsScreen = () => {
             </View>
           </View>
         )}
-
         {/* Recommendations */}
         {!isLoading && !error && (
           <View className="px-4 py-3 mb-6">
@@ -442,15 +463,6 @@ const MoodAnalyticsScreen = () => {
       </ScrollView>
     </SafeAreaView>
   );
-
-  // Helper function to calculate total moods
-  function getTotalMoods() {
-    if (!moodData.moodCounts) return 0;
-    return Object.values(moodData.moodCounts).reduce(
-      (sum, count) => sum + count,
-      0
-    );
-  }
 };
 
 export default MoodAnalyticsScreen;

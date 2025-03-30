@@ -11,7 +11,7 @@ export const getMoodLogs = async (userId: string) => {
     const moodLogs = await databases.listDocuments(
       appwriteConfig.databaseId,
       appwriteConfig.moodsCollectionId,
-      [Query.equal("userId", userId)]
+      [Query.equal("user", userId)]
     );
 
     return moodLogs.documents;
