@@ -9,7 +9,7 @@ import {
 export async function getAccount() {
   try {
     const currentAccount = await account.get();
-    console.log('fetched account is', currentAccount);
+    console.log("fetched account is", currentAccount);
     return currentAccount;
   } catch (error: any) {
     throw new Error(error);
@@ -24,7 +24,7 @@ export const signIn = async (email: string, password: string) => {
   } catch (error: any) {
     throw new Error(error);
   }
-}
+};
 
 export const createUser = async (data: UserModel) => {
   const { email, password, username, role } = data;
@@ -36,7 +36,7 @@ export const createUser = async (data: UserModel) => {
       username
     );
 
-    if(!newAccount) throw new Error;
+    if (!newAccount) throw new Error();
 
     await signIn(email, password);
 
@@ -53,9 +53,9 @@ export const createUser = async (data: UserModel) => {
     );
 
     return newUser;
-  } catch (error: any){
+  } catch (error: any) {
     console.log(error);
-    throw new Error(error)
+    throw new Error(error);
   }
 };
 
@@ -69,7 +69,7 @@ export const getCurrentUser = async () => {
       appwriteConfig.userCollectionId,
       [Query.equal("accountId", currentAccount.$id)]
     );
-    
+
     if (!currentUser) throw Error;
 
     return currentUser.documents[0];
