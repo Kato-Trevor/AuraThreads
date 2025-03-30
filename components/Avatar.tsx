@@ -11,7 +11,7 @@ const Avatar = ({ username, className }: { username: string, className?: string 
   const initials = getInitials(username);
 
   return (
-    <View className={`bg-gray-400 rounded-full w-12 h-12 justify-center items-center ${className}`}>
+    <View className={`bg-gray-400 rounded-full w-10 h-10 justify-center items-center ${className}`}>
       <Text className="text-white text-lg font-bold">{initials}</Text>
     </View>
   );

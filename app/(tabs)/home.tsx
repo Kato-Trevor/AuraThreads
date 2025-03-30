@@ -1,7 +1,6 @@
 import { FlatList, TouchableOpacity, Text } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useGlobalContext } from "@/context/GlobalProvider";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { getAllPostsFromDB } from "@/lib/appwrite/appwrite";
 import Post from "@/components/Post";
 import MoodLogModal from "@/components/MoodLog";
