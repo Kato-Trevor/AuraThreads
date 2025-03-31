@@ -1,23 +1,26 @@
-import { FlatList, TouchableOpacity, Text } from "react-native";
+import { FlatList, TouchableOpacity, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
-import { useGlobalContext } from "@/context/GlobalProvider";
 import { getAllPostsFromDB } from "@/lib/appwrite/appwrite";
 import Post from "@/components/Post";
 import MoodLogModal from "@/components/MoodLog";
 import { SafeAreaView } from "react-native-safe-area-context";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 const home = () => {
-  const { user } = useGlobalContext();
   const [posts, setPosts] = useState<any>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
+        setIsLoading(true);
         const fetchedPosts = await getAllPostsFromDB();
         setPosts(fetchedPosts);
+        setIsLoading(false);
       } catch (error) {
         console.error("Error fetching posts:", error);
+        setIsLoading(false);
       }
     };
     fetchPosts();
@@ -27,8 +30,16 @@ const home = () => {
     return <Post post={item} />;
   };
 
+  if (isLoading) {
+    return (
+      <SafeAreaView className="flex-1 justify-center items-center">
+        <LoadingSpinner visible={true} />
+      </SafeAreaView>
+    );
+  }
+
   return (
-    <SafeAreaView>
+    <View>
       <TouchableOpacity onPress={() => setIsModalVisible(true)}>
         <Text>Log Your Mood</Text>
       </TouchableOpacity>
@@ -47,7 +58,7 @@ const home = () => {
           console.log("Mood logged successfully");
         }}
       />
-    </SafeAreaView>
+    </View>
   );
 };
 
