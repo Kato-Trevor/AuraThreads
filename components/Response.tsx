@@ -160,7 +160,7 @@ const Response = ({ response }: { response: ResponseModel }) => {
         <Avatar username={response.userId.username} />
         <View className="flex-1 px-2">
           <View className="flex-row justify-between">
-            <Text className="text-gray-500">{response.userId.username}</Text>
+            <Text className="text-gray-500">@{response.userId.username}</Text>
             <Text className="text-xs text-gray-500 text-right">{timeAgo}</Text>
           </View>
           <Text className="text-lg text-gray-800 mt-1">{response.content}</Text>
