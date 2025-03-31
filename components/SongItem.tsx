@@ -1,11 +1,10 @@
 import { Ionicons } from "@expo/vector-icons";
-import React, { useState } from "react";
+import React from "react";
 import {
   View,
   Text,
   Image,
   TouchableOpacity,
-  ActivityIndicator,
 } from "react-native";
 
 interface SongItemProps {
@@ -25,8 +24,6 @@ const SongItem: React.FC<SongItemProps> = ({
   onPlay,
   onPause,
 }) => {
-  const [isLoading, setIsLoading] = useState(false);
-
   return (
     <View
       className={`flex-row items-center p-4 rounded-lg mb-2 ${
@@ -50,9 +47,7 @@ const SongItem: React.FC<SongItemProps> = ({
         </View>
       </TouchableOpacity>
 
-      {isLoading ? (
-        <ActivityIndicator size="small" color="#F032DA" />
-      ) : (
+      {isSelected && (
         <TouchableOpacity
           onPress={() => {
             isPlaying ? onPause() : onPlay(song);
