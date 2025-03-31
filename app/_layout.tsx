@@ -69,6 +69,14 @@ export default function RootLayout() {
                 headerTitleAlign: "center",
               }}
             />
+            <Stack.Screen
+              name="search-post/[query]"
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="analytics/index"
+              options={{ headerShown: false }}
+            />
           </Stack>
         </ThemeProvider>
       </GlobalProvider>

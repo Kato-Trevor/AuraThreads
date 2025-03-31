@@ -1,12 +1,15 @@
-import { FlatList } from "react-native";
+import { FlatList, TouchableOpacity, Text } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useGlobalContext } from "@/context/GlobalProvider";
 import { getAllPostsFromDB } from "@/lib/appwrite/appwrite";
 import Post from "@/components/Post";
+import MoodLogModal from "@/components/MoodLog";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const home = () => {
   const { user } = useGlobalContext();
   const [posts, setPosts] = useState<any>([]);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -25,11 +28,26 @@ const home = () => {
   };
 
   return (
-    <FlatList
-      data={posts}
-      keyExtractor={(item) => item.$id}
-      renderItem={renderPost}
-    />
+    <SafeAreaView>
+      <TouchableOpacity onPress={() => setIsModalVisible(true)}>
+        <Text>Log Your Mood</Text>
+      </TouchableOpacity>
+
+      <FlatList
+        data={posts}
+        keyExtractor={(item) => item.$id}
+        renderItem={renderPost}
+      />
+
+      <MoodLogModal
+        visible={isModalVisible}
+        onClose={() => setIsModalVisible(false)}
+        onSuccess={() => {
+          // Optional: Refresh mood logs or other data
+          console.log("Mood logged successfully");
+        }}
+      />
+    </SafeAreaView>
   );
 };
 

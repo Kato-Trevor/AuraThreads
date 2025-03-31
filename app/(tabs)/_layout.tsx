@@ -99,7 +99,7 @@ const TabsLayout = () => {
       </Tabs>
       <TouchableOpacity
         className="absolute bottom-28 right-5 bg-secondary rounded-full w-16 h-16 justify-center items-center shadow-lg"
-        onPress={() => router.push("/create-post")}
+        onPress={() => router.push("/analytics")}
       >
         <Ionicons name="add" size={24} color="#FFFFFF" />
       </TouchableOpacity>

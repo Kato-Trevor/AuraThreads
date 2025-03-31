@@ -81,7 +81,7 @@ const LoadingSpinner = ({ visible }: { visible: boolean }) => {
           flex: 1,
           justifyContent: "center",
           alignItems: "center",
-          backgroundColor: "rgba(0, 0, 0, 0.5)",
+          backgroundColor: "rgba(0, 0, 0, 0.6)",
           flexDirection: "column",
         }}
       >
@@ -90,13 +90,13 @@ const LoadingSpinner = ({ visible }: { visible: boolean }) => {
             style={{
               width: 30,
               height: 30,
-              backgroundColor: "#FF9C01",
+              backgroundColor: "#F032DA",
               borderRadius: 15,
               transform: [
                 { scale: scaleBall1 },
                 { translateX: translateXBall1 },
               ],
-              shadowColor: "#FF8E01",
+              shadowColor: "#B620A7",
               shadowOpacity: 0.5,
               shadowRadius: 10,
               elevation: 5,
@@ -108,13 +108,13 @@ const LoadingSpinner = ({ visible }: { visible: boolean }) => {
             style={{
               width: 30,
               height: 30,
-              backgroundColor: "#FF8E01",
+              backgroundColor: "#F032DA",
               borderRadius: 15,
               transform: [
                 { scale: scaleBall2 },
                 { translateX: translateXBall2 },
               ],
-              shadowColor: "#FF9C01",
+              shadowColor: "#B620A7",
               shadowOpacity: 0.5,
               shadowRadius: 10,
               elevation: 5,
