@@ -32,7 +32,7 @@ const CreatePost = () => {
     try {
       await addPostToDB(postContent, user.$id, formatTopic(selectedTopic), selectedSong?.id);
       showToast("Post created successfully!", "success");
-      router.replace("/home");
+      router.back();
     } catch (error: any) {
       console.log("Error creating post:", error);
       showToast("Failed to create post", "error");
