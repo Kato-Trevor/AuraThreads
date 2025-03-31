@@ -53,7 +53,20 @@ const MoodAnalyticsScreen = () => {
       setError(null);
 
       const response = await getMoodLogs(user.$id);
+      console.log("Raw mood data:", response); // Debug log
+
+      if (!response || response.length === 0) {
+        // Handle the empty data case
+        setMoodData({
+          labels: [],
+          datasets: [{ data: [], color: () => "#FDF2F8", strokeWidth: 3 }],
+          moodCounts: { sad: 0, angry: 0, neutral: 0, happy: 0, excited: 0 },
+        });
+        return;
+      }
+
       const processedData = processDataByTimeRange(response, timeRange);
+      console.log("Processed mood data:", processedData); // Debug log
       setMoodData(processedData);
     } catch (err: any) {
       if (err.message) {
@@ -68,7 +81,6 @@ const MoodAnalyticsScreen = () => {
   };
 
   const processDataByTimeRange = (data: any, range: string) => {
-    const now = new Date();
     const labels: string[] = [];
     const moodCounts = {
       sad: 0,
@@ -77,39 +89,84 @@ const MoodAnalyticsScreen = () => {
       happy: 0,
       excited: 0,
     };
-    const moodValues: number[] = [];
 
+    // Initialize with proper ordering for days, weeks, months
+    let orderedLabels: string[] = [];
+    let moodValuesMap: { [key: string]: number | null } = {};
+
+    if (range === "weekly") {
+      // Initialize all days of the week
+      orderedLabels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+      // Initialize with null
+      orderedLabels.forEach((day) => {
+        moodValuesMap[day] = null;
+      });
+    } else if (range === "monthly") {
+      // Initialize all weeks of the month
+      orderedLabels = ["Week 1", "Week 2", "Week 3", "Week 4", "Week 5"];
+      orderedLabels.forEach((week) => {
+        moodValuesMap[week] = null;
+      });
+    } else if (range === "yearly") {
+      // Initialize all months
+      orderedLabels = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+      ];
+      orderedLabels.forEach((month) => {
+        moodValuesMap[month] = null;
+      });
+    }
+
+    // Process the actual data
     data.forEach((log: any) => {
       const logDate = new Date(log.$createdAt);
       const moodValue = Object.keys(moodColors).indexOf(log.mood) + 1;
 
+      let label = "";
+
       if (range === "weekly") {
         const dayOfWeek = logDate.getDay();
-        if (!labels.includes(dayOfWeek.toString()))
-          labels.push(dayOfWeek.toString());
-        moodValues[dayOfWeek] = moodValue;
+        label = orderedLabels[dayOfWeek];
       } else if (range === "monthly") {
         const weekOfMonth = Math.ceil(logDate.getDate() / 7);
-        if (!labels.includes(`Week ${weekOfMonth}`))
-          labels.push(`Week ${weekOfMonth}`);
-        moodValues[weekOfMonth - 1] = moodValue;
+        label = `Week ${weekOfMonth}`;
       } else if (range === "yearly") {
         const month = logDate.getMonth();
-        if (!labels.includes(month.toString())) labels.push(month.toString());
-        moodValues[month] = moodValue;
+        label = orderedLabels[month];
       }
 
+      // Update the moodValue (use average if multiple entries on same day/week/month)
+      if (label) {
+        // Count how many entries we have for this label
+        const entriesCount = moodValuesMap[label] === null ? 0 : 1;
+        // Update with average
+        moodValuesMap[label] =
+          (moodValuesMap[label] || 0) * entriesCount + moodValue;
+        moodValuesMap[label] = (moodValuesMap[label] ?? 0) / (entriesCount + 1);
+      }
+
+      // Update mood counts
       if (log.mood in moodCounts) {
         moodCounts[log.mood as keyof typeof moodCounts]++;
       }
     });
 
+    // Convert the map to an array in the correct order
+    const moodValues = orderedLabels.map((label) => moodValuesMap[label]);
+
     return {
-      labels: labels.map((label: any) =>
-        range === "weekly"
-          ? ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"][label]
-          : label
-      ),
+      labels: orderedLabels,
       datasets: [
         {
           data: moodValues,
@@ -248,7 +305,7 @@ const MoodAnalyticsScreen = () => {
               </TouchableOpacity>
             </View>
           ) : (
-            <View className="bg-pink-50 rounded-xl p-4 shadow-sm">
+            <View className="bg-pink-50 rounded-xl p-5 shadow-sm">
               <Text className="text-base font-pbold text-gray-800 mb-2">
                 Mood Trends
               </Text>
@@ -273,55 +330,94 @@ const MoodAnalyticsScreen = () => {
                     segments={5}
                   />
                 )}
-                {/* Mood Scale Legend */}
-                <View className="flex-row justify-between w-full px-2 mt-2">
-                  <View className="items-center">
-                    <MaterialCommunityIcons
-                      name="emoticon-sad"
-                      size={18}
-                      color="#6366F1"
-                    />
-                    <Text className="text-xs text-gray-500">Sad</Text>
+
+                {/* Enhanced Mood Scale Legend with Numeric Values */}
+                <View className="w-full mt-3 bg-white rounded-lg p-3 shadow-sm">
+                  <Text className="text-xs font-pbold text-gray-700 mb-2">
+                    Mood Scale Reference
+                  </Text>
+                  <View className="flex-row justify-between w-full">
+                    <View className="items-center">
+                      <View className="bg-white rounded-full p-1 border border-gray-200">
+                        <MaterialCommunityIcons
+                          name="emoticon-sad"
+                          size={20}
+                          color="#6366F1"
+                        />
+                      </View>
+                      <Text className="text-xs font-pbold text-gray-700 mt-1">
+                        1
+                      </Text>
+                      <Text className="text-xs text-gray-500">Sad</Text>
+                    </View>
+                    <View className="items-center">
+                      <View className="bg-white rounded-full p-1 border border-gray-200">
+                        <MaterialCommunityIcons
+                          name="emoticon-angry"
+                          size={20}
+                          color="#EF4444"
+                        />
+                      </View>
+                      <Text className="text-xs font-pbold text-gray-700 mt-1">
+                        2
+                      </Text>
+                      <Text className="text-xs text-gray-500">Angry</Text>
+                    </View>
+                    <View className="items-center">
+                      <View className="bg-white rounded-full p-1 border border-gray-200">
+                        <MaterialCommunityIcons
+                          name="emoticon-neutral"
+                          size={20}
+                          color="#6B7280"
+                        />
+                      </View>
+                      <Text className="text-xs font-pbold text-gray-700 mt-1">
+                        3
+                      </Text>
+                      <Text className="text-xs text-gray-500">Neutral</Text>
+                    </View>
+                    <View className="items-center">
+                      <View className="bg-white rounded-full p-1 border border-gray-200">
+                        <MaterialCommunityIcons
+                          name="emoticon"
+                          size={20}
+                          color="#10B981"
+                        />
+                      </View>
+                      <Text className="text-xs font-pbold text-gray-700 mt-1">
+                        4
+                      </Text>
+                      <Text className="text-xs text-gray-500">Happy</Text>
+                    </View>
+                    <View className="items-center">
+                      <View className="bg-white rounded-full p-1 border border-gray-200">
+                        <MaterialCommunityIcons
+                          name="emoticon-excited"
+                          size={20}
+                          color="#F59E0B"
+                        />
+                      </View>
+                      <Text className="text-xs font-pbold text-gray-700 mt-1">
+                        5
+                      </Text>
+                      <Text className="text-xs text-gray-500">Excited</Text>
+                    </View>
                   </View>
-                  <View className="items-center">
-                    <MaterialCommunityIcons
-                      name="emoticon-angry"
-                      size={18}
-                      color="#EF4444"
-                    />
-                    <Text className="text-xs text-gray-500">Angry</Text>
-                  </View>
-                  <View className="items-center">
-                    <MaterialCommunityIcons
-                      name="emoticon-neutral"
-                      size={18}
-                      color="#6B7280"
-                    />
-                    <Text className="text-xs text-gray-500">Neutral</Text>
-                  </View>
-                  <View className="items-center">
-                    <MaterialCommunityIcons
-                      name="emoticon"
-                      size={18}
-                      color="#10B981"
-                    />
-                    <Text className="text-xs text-gray-500">Happy</Text>
-                  </View>
-                  <View className="items-center">
-                    <MaterialCommunityIcons
-                      name="emoticon-excited"
-                      size={18}
-                      color="#F59E0B"
-                    />
-                    <Text className="text-xs text-gray-500">Excited</Text>
-                  </View>
+                </View>
+
+                {/* Add a chart description */}
+                <View className="w-full mt-3 bg-white rounded-lg p-3 shadow-sm">
+                  <Text className="text-xs text-gray-600">
+                    This chart shows your mood changes over time. Each mood is
+                    represented by a numeric value from 1 (Sad) to 5 (Excited).
+                    Higher values indicate more positive moods.
+                  </Text>
                 </View>
               </View>
             </View>
           )}
         </View>
-        backgroundColor: moodColors[getMostFrequentMood() as keyof typeof
-        moodColors],
+
         {!isLoading && !error && moodData && (
           <View className="px-4 py-3">
             <View className="bg-white rounded-xl border border-pink-100 p-5 shadow-sm">
@@ -384,7 +480,8 @@ const MoodAnalyticsScreen = () => {
                         </Text>
                       </View>
                       <Text className="text-sm text-gray-500">
-                        {count as number} {count === 1 ? "time" : "times"}
+                        {count as number}{" "}
+                        {(count as number) === 1 ? "time" : "times"}
                       </Text>
                     </View>
                     <View className="bg-gray-200 h-2 rounded-full overflow-hidden">
