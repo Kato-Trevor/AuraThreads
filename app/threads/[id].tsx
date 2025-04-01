@@ -8,12 +8,8 @@ import {
   Platform,
 } from "react-native";
 import { useLocalSearchParams } from "expo-router";
-import React, { useEffect, useState, useRef } from "react";
-import {
-  addResponseToDB,
-  getPostFromDB,
-  getResponsesToPost,
-} from "@/lib/appwrite/appwrite";
+import React, { useEffect, useState, useRef, useCallback } from "react";
+import { addResponseToDB, getPostFromDB } from "@/lib/appwrite/appwrite";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -30,12 +26,12 @@ export default function Thread() {
   const { id: postId } = useLocalSearchParams();
   const [post, setPost] = useState<any>(null);
   const [response, setResponse] = useState<string>("");
-  const [fetchedResponses, setFetchedResponses] = useState<any>([]);
   const [song, setSong] = useState<any>();
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [currentSound, setCurrentSound] = useState<Audio.Sound | null>(null);
   const { showToast } = useToast();
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const flatListRef = useRef<FlatList>(null);
 
   const timeAgo = post?.$createdAt
@@ -44,31 +40,31 @@ export default function Thread() {
       })
     : "Unknown time";
 
-  useEffect(() => {
-    const fetchPost = async () => {
-      try {
-        setIsLoading(true);
-        const fetchedPost = await getPostFromDB(`${postId}`);
-        setPost(fetchedPost);
-        await fetchResponsesToPost();
-        setIsLoading(false);
-      } catch (error) {
-        console.error("Error fetching post:", error);
-        setIsLoading(false);
-      }
-    };
-
-    fetchPost();
-  }, [postId]);
-
-  const fetchResponsesToPost = async () => {
+  const fetchPost = useCallback(async (showRefreshing = false) => {
     try {
-      const fetchedResponses = await getResponsesToPost(`${postId}`);
-      setFetchedResponses(fetchedResponses);
+      if (showRefreshing) {
+        setIsRefreshing(true);
+      } else {
+        setIsLoading(true);
+      }
+
+      const fetchedPost = await getPostFromDB(`${postId}`);
+      setPost(fetchedPost);
     } catch (error) {
-      console.error("Error fetching responses:", error);
+      console.error("Error fetching post:", error);
+    } finally {
+      setIsLoading(false);
+      setIsRefreshing(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchPost();
+  }, [fetchPost]);
+
+  const handleRefresh = useCallback(() => {
+    fetchPost(true);
+  }, [fetchPost]);
 
   useEffect(() => {
     const fetchSong = async () => {
@@ -133,7 +129,7 @@ export default function Thread() {
       await addResponseToDB(response, `${postId}`, user.$id);
       showToast("Response created successfully!", "success");
       setResponse("");
-      await fetchResponsesToPost();
+      handleRefresh();
       // Scroll to the bottom to see the new response
       if (flatListRef.current) {
         flatListRef.current.scrollToEnd({ animated: true });
@@ -144,7 +140,7 @@ export default function Thread() {
     }
   };
 
-  if (isLoading) {
+  if (isLoading && !isRefreshing) {
     return (
       <SafeAreaView className="flex-1 justify-center items-center">
         <LoadingSpinner visible={true} />
@@ -195,20 +191,20 @@ export default function Thread() {
         {/* Responses in the middle */}
         <Text className="pl-4 mb-4">
           <Text className="text-base font-bold text-gray-600">
-            {fetchedResponses.length}
+            {post?.responses?.length}
           </Text>{" "}
           <Text className="text-base text-gray-500"> Responses</Text>
         </Text>
         <View className="h-[0.5px] bg-gray-200 w-full" />
 
-        {fetchedResponses.length === 0 ? (
+        {post?.responses?.length === 0 ? (
           <Text className="p-4 italic text-gray-500 text-center">
             No responses yet. Be the first to respond!
           </Text>
         ) : (
           <FlatList
             ref={flatListRef}
-            data={fetchedResponses}
+            data={post?.responses}
             keyExtractor={(item) => item.$id}
             renderItem={({ item }) => <Response response={item} />}
             className="flex-1"

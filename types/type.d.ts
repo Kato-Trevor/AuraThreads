@@ -23,6 +23,7 @@ declare interface PostModel {
   updatedAt?: string;
   topic: string;
   songId?: number;
+  responses?: ResponseModel[];
 }
 
 declare interface ResponseModel {

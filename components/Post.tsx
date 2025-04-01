@@ -5,7 +5,6 @@ import Avatar from "./Avatar";
 import { formatDistanceToNow } from "date-fns";
 import { Ionicons } from "@expo/vector-icons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { getResponsesToPost } from "@/lib/appwrite/appwrite";
 import getSongById from "@/services/get-song";
 
 const Post = ({ post }: { post: PostModel }) => {
@@ -13,16 +12,7 @@ const Post = ({ post }: { post: PostModel }) => {
     addSuffix: true,
   });
 
-  const [responses, setResponses] = useState<any>([]);
   const [song, setSong] = useState<any>();
-
-  useEffect(() => {
-    const fetchResponses = async () => {
-      const responses = await getResponsesToPost(`${post.$id}`);
-      setResponses(responses);
-    };
-    fetchResponses();
-  }, []);
 
   useEffect(() => {
     const fetchSong = async () => {
@@ -56,12 +46,12 @@ const Post = ({ post }: { post: PostModel }) => {
           </View>
           <Text className="text-lg text-gray-800">{post.content}</Text>
           <Text className="text-xs text-secondary">#{post.topic}</Text>
-          {responses.length ? (
+          {post?.responses?.length ? (
             <View className="flex-row justify-start mt-2 space-x-4">
               <View className="p-1 flex-row items-center gap-2">
                 <Ionicons name="chatbubble-outline" size={15} color="gray" />
                 <Text className="text-xs text-gray-500">
-                  {responses.length}
+                  {post.responses.length}
                 </Text>
               </View>
             </View>
