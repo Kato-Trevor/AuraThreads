@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Dimensions,
-  StyleSheet,
 } from "react-native";
 import { LineChart } from "react-native-chart-kit";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -14,7 +13,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { getMoodLogs } from "@/lib/appwrite/moods";
 import { useGlobalContext } from "@/context/GlobalProvider";
 
-const MoodAnalyticsScreen = () => {
+const MoodAnalytics = () => {
   const { user } = useGlobalContext();
   const [moodData, setMoodData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -225,7 +224,7 @@ const MoodAnalyticsScreen = () => {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
+    <View style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
       <ScrollView className="flex-1">
         {/* Header */}
         <View className="px-6 pt-4 pb-2">
@@ -558,8 +557,8 @@ const MoodAnalyticsScreen = () => {
           </View>
         )}
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 
-export default MoodAnalyticsScreen;
+export default MoodAnalytics;
