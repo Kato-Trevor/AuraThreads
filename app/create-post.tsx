@@ -15,6 +15,8 @@ import { topics } from "@/constants/constants";
 import TopicsList from "@/components/TopicsList";
 import SongsList from "@/components/SongsList";
 import { formatTopic } from "@/utils/stringHelpers";
+import { addAIResponseToDB } from "@/lib/appwrite/appwrite";
+
 
 const CreatePost = () => {
   const { user } = useGlobalContext();
@@ -30,9 +32,18 @@ const CreatePost = () => {
 
   const handlePostCreation = async () => {
     try {
-      await addPostToDB(postContent, user.$id, formatTopic(selectedTopic), selectedSong?.id);
+      const newPost = await addPostToDB(postContent, user.$id, formatTopic(selectedTopic), selectedSong?.id);
       showToast("Post created successfully!", "success");
       router.back();
+
+      if (newPost?.$id) {
+      try {
+          await addAIResponseToDB(postContent, newPost.$id);
+      } catch (error: any) {
+          console.error("Error generating AI response:", error);
+      }
+  }
+
     } catch (error: any) {
       console.log("Error creating post:", error);
       showToast("Failed to create post", "error");
