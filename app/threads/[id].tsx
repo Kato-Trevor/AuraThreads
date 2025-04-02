@@ -183,7 +183,7 @@ export default function Thread() {
               </View>
             </View>
             <View>
-              <Text className="text-lg text-gray-800 w-full">
+              <Text className="text-lg text-gray-800">
                 {post.content}
               </Text>
               <Text className="text-xs text-secondary">#{post.topic}</Text>
