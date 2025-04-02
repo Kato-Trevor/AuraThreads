@@ -2,6 +2,7 @@ declare module 'react-tagcloud/rn';
 
 declare interface UserModel {
   $id?: string;
+  avatar?: string;
   anonymousId? : string;
   email: string;
   password: string;
