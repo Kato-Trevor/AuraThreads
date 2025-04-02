@@ -1,3 +1,4 @@
+import './gesture-handler';
 import React from "react";
 import { images } from "@/constants";
 import { useToast } from "@/components/ToastProvider";
