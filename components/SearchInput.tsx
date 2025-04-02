@@ -33,10 +33,10 @@ const SearchInput = ({ initialQuery, placeholderText }: SearchInputProps) => {
             return Alert.alert("Please enter something to search");
           }
 
-          if (pathName.startsWith("/search")) {
+          if (pathName.startsWith("/search-post")) {
             router.setParams({ query });
           } else {
-            router.push(`/search/${query}`);
+            router.push(`/search-post/${query}` as any);
             setQuery("");
           }
         }}

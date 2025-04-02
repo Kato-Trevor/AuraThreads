@@ -1,15 +1,44 @@
-import { StyleSheet, Text, View } from "react-native";
-import React from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
+import React, { useState } from "react";
+import { Dimensions } from "react-native";
+import { TabView, SceneMap, TabBar } from "react-native-tab-view";
+import WordCloud from "@/components/WordCloud";
+import MoodAnalytics from "@/components/MoodAnalytics";
 
-const trending = () => {
+const PopularTab = () => <WordCloud />;
+
+const ForYouTab = () => (
+  <MoodAnalytics />
+);
+
+const Trending = () => {
+  const [index, setIndex] = useState(0);
+  const [routes] = useState([
+    { key: "popular", title: "Popular" },
+    { key: "forYou", title: "For You" },
+  ]);
+
+  const renderScene = SceneMap({
+    popular: PopularTab,
+    forYou: ForYouTab,
+  });
+
   return (
-    <SafeAreaView>
-      <Text>trending</Text>
-    </SafeAreaView>
+    <TabView
+      navigationState={{ index, routes }}
+      renderScene={renderScene}
+      onIndexChange={setIndex}
+      initialLayout={{ width: Dimensions.get("window").width }}
+      renderTabBar={(props) => (
+        <TabBar
+          {...props}
+          indicatorStyle={{ backgroundColor: "#F032DA" }}
+          style={{ backgroundColor: "white" }}
+          activeColor="#F032DA"
+          inactiveColor="gray"
+        />
+      )}
+    />
   );
 };
 
-export default trending;
-
-const styles = StyleSheet.create({});
+export default Trending;

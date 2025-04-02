@@ -1,12 +1,12 @@
 import { StyleSheet, Text, View } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-
+import SearchInput from "@/components/SearchInput";
 
 const search = () => {
   return (
     <SafeAreaView>
-      <Text>search</Text>
+      <SearchInput />
     </SafeAreaView>
   );
 };

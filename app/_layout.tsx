@@ -1,8 +1,4 @@
-import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-} from "@react-navigation/native";
+import { DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import Toast from "react-native-toast-message";
 import { Stack } from "expo-router";
 import { useFonts } from "expo-font";
@@ -11,13 +7,15 @@ import { ToastProvider } from "@/components/ToastProvider";
 import * as SplashScreen from "expo-splash-screen";
 import React, { useEffect } from "react";
 import "react-native-reanimated";
-import { StatusBar, View } from "react-native";
+import { StatusBar, View, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import AppHeader from "@/components/AppHeader";
+import { Drawer } from "react-native-drawer-layout";
+import DrawerContent from "@/components/DrawerContent";
 
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  const [openMenu, setOpenMenu] = React.useState(false);
   const [fontsLoaded, error] = useFonts({
     "Poppins-Bold": require("../assets/fonts/Poppins-Bold.ttf"),
     "Poppins-Thin": require("../assets/fonts/Poppins-Thin.ttf"),
@@ -51,28 +49,76 @@ export default function RootLayout() {
       <GlobalProvider>
         <ThemeProvider value={DefaultTheme}>
           <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
-          <Stack>
-            <Stack.Screen name="index" options={{ headerShown: false }} />
-            <Stack.Screen name="create-post" options={{ headerShown: false }} />
-            <Stack.Screen
-              name="search-songs"
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-            <Stack.Screen
-              name="(tabs)"
-              options={{
-                headerTitle: () => <AppHeader />,
-              }}
-            />
-            <Stack.Screen
-              name="threads/[id]"
-              options={{
-                headerTitle: "Post",
-                headerTitleAlign: "center",
-              }}
-            />
-          </Stack>
+          <Drawer
+            open={openMenu}
+            onOpen={() => setOpenMenu(true)}
+            onClose={() => setOpenMenu(false)}
+            renderDrawerContent={() => <DrawerContent onLogOut={() => setOpenMenu(false)}/>}
+          >
+            <Stack>
+              <Stack.Screen name="index" options={{ headerShown: false }} />
+              <Stack.Screen
+                name="create-post"
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+              <Stack.Screen
+                name="(tabs)"
+                options={{
+                  headerLeft: () => (
+                    <TouchableOpacity
+                      onPressOut={() => {
+                        setOpenMenu(true);
+                      }}
+                    >
+                      <Ionicons name="menu" size={24} color="black" />
+                    </TouchableOpacity>
+                  ),
+                  headerTitle: () => (
+                    <View className="bg-white rounded-full p-2 shadow-md">
+                      <View className="bg-secondary-100 rounded-full p-2">
+                        <Ionicons
+                          name="leaf-outline"
+                          size={24}
+                          color="#FFE4E1"
+                        />
+                      </View>
+                    </View>
+                  ),
+                  headerRight: () => (
+                    <TouchableOpacity
+                      onPressOut={() => {
+                        console.log("notification icon has been pressed");
+                      }}
+                    >
+                      <Ionicons
+                        name="notifications-outline"
+                        size={24}
+                        color="black"
+                      />
+                    </TouchableOpacity>
+                  ),
+                  headerTitleAlign: "center",
+                  headerShadowVisible: false,
+                }}
+              />
+              <Stack.Screen
+                name="threads/[id]"
+                options={{
+                  headerTitle: "Post",
+                  headerTitleAlign: "center",
+                }}
+              />
+              <Stack.Screen
+                name="search-post/[query]"
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="analytics/index"
+                options={{ headerShown: false }}
+              />
+            </Stack>
+          </Drawer>
         </ThemeProvider>
       </GlobalProvider>
       <Toast />

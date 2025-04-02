@@ -155,38 +155,41 @@ const Response = ({ response }: { response: ResponseModel }) => {
   };
 
   return (
-    <View className="p-4 mb-4 bg-gray-100 rounded-lg flex-row items-start">
-      <Avatar username={response.userId.username} />
-      <View className="flex-1 px-2">
-        <View className="flex-row justify-between">
-          <Text className="text-gray-500">{response.userId.username}</Text>
-          <Text className="text-xs text-gray-500 text-right">{timeAgo}</Text>
-        </View>
-        <Text className="text-lg text-gray-800 mt-1">{response.content}</Text>
-        <View className="flex-row justify-start mt-2 space-x-4">
-          <TouchableOpacity className="mr-4" onPress={handleLike}>
-            <View className="p-1 flex-row items-center gap-2">
-              <Ionicons
-                name={liked ? "thumbs-up" : "thumbs-up-outline"}
-                size={15}
-                color={liked ? "#F032DA" : "gray"}
-              />
-              <Text>{likeCount ? likeCount : null}</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={handleDislike}>
-            <View className="p-1 flex-row items-center gap-2">
-              <Ionicons
-                name={disliked ? "thumbs-down" : "thumbs-down-outline"}
-                size={15}
-                color={disliked ? "#F032DA" : "gray"}
-              />
-              <Text>{dislikeCount ? dislikeCount : null}</Text>
-            </View>
-          </TouchableOpacity>
+    <>
+      <View className="p-4 rounded-lg flex-row items-start">
+        <Avatar username={response.userId.username} imageUrl={response.userId.avatar} />
+        <View className="flex-1 px-2">
+          <View className="flex-row justify-between">
+            <Text className="text-gray-500">@{response.userId.username}</Text>
+            <Text className="text-xs text-gray-500 text-right">{timeAgo}</Text>
+          </View>
+          <Text className="text-lg text-gray-800 mt-1">{response.content}</Text>
+          <View className="flex-row justify-start mt-2 space-x-4">
+            <TouchableOpacity className="mr-4" onPress={handleLike}>
+              <View className="p-1 flex-row items-center gap-2">
+                <Ionicons
+                  name={liked ? "thumbs-up" : "thumbs-up-outline"}
+                  size={15}
+                  color={liked ? "#F032DA" : "gray"}
+                />
+                <Text>{likeCount ? likeCount : null}</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={handleDislike}>
+              <View className="p-1 flex-row items-center gap-2">
+                <Ionicons
+                  name={disliked ? "thumbs-down" : "thumbs-down-outline"}
+                  size={15}
+                  color={disliked ? "#F032DA" : "gray"}
+                />
+                <Text>{dislikeCount ? dislikeCount : null}</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
-    </View>
+      <View className="h-[0.5px] bg-gray-200 w-full" />
+    </>
   );
 };
 
