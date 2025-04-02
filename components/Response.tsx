@@ -157,7 +157,7 @@ const Response = ({ response }: { response: ResponseModel }) => {
   return (
     <>
       <View className="p-4 rounded-lg flex-row items-start">
-        <Avatar username={response.userId.username} imageUrl={response.userId.avatar} />
+        <Avatar username={response.userId.username!} imageUrl={response.userId.avatar} />
         <View className="flex-1 px-2">
           <View className="flex-row justify-between">
             <Text className="text-gray-500">@{response.userId.username}</Text>

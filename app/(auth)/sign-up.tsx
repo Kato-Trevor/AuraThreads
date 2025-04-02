@@ -129,11 +129,7 @@ const Signup = () => {
     });
   };
 
-  const handleSubmit = async (values: {
-    username: string;
-    password: string;
-    email: string;
-  }) => {
+  const handleSubmit = async (values: UserModel) => {
     setIsSubmitting(true);
 
     try {
@@ -141,9 +137,9 @@ const Signup = () => {
         username: values.username,
         email: values.email,
         password: values.password,
-        role: (activeTab === "student") ? "student" : "counselor",
-      }
-      
+        role: values.role,
+      };
+
       const result = await createUser(userData);
       setUser(result);
       setIsLoggedIn(true);
@@ -258,6 +254,7 @@ const Signup = () => {
                           username: "",
                           password: "",
                           email: "",
+                          role: "student",
                         }}
                         validationSchema={studentValidationSchema}
                         onSubmit={(values) => handleSubmit(values)}
@@ -327,11 +324,14 @@ const Signup = () => {
                     ) : (
                       <Formik
                         initialValues={{
-                          username: "",
+                          surname: "",
+                          givenNames: "",
                           password: "",
                           email: "",
                           phone: "",
                           qualification: "",
+                          nationalIdentificationNumber: "",
+                          role: "counselor",
                         }}
                         validationSchema={counselorValidationSchema}
                         onSubmit={(values) => handleSubmit(values)}
@@ -345,15 +345,28 @@ const Signup = () => {
                         }) => (
                           <>
                             <FormField
-                              title="Username"
-                              value={values.username}
-                              handleChangeText={handleChange("username")}
-                              placeholder="Enter your username"
+                              title="Surname"
+                              value={values.surname}
+                              handleChangeText={handleChange("surname")}
+                              placeholder="According to National ID"
                               otherStyles="mb-1"
                             />
-                            {touched.username && errors.username && (
+                            {touched.surname && errors.surname && (
                               <Text className="text-red-500 text-sm mb-3">
-                                {errors.username}
+                                {errors.surname}
+                              </Text>
+                            )}
+
+                            <FormField
+                              title="Given Names"
+                              value={values.givenNames}
+                              handleChangeText={handleChange("givenNames")}
+                              placeholder="According to National ID"
+                              otherStyles="mb-1"
+                            />
+                            {touched.givenNames && errors.givenNames && (
+                              <Text className="text-red-500 text-sm mb-3">
+                                {errors.givenNames}
                               </Text>
                             )}
 
@@ -394,6 +407,20 @@ const Signup = () => {
                                 {errors.qualification}
                               </Text>
                             )}
+
+                            <FormField
+                              title="NIN"
+                              value={values.nationalIdentificationNumber}
+                              handleChangeText={handleChange("qualification")}
+                              placeholder="National Identification No."
+                              otherStyles="mb-1"
+                            />
+                            {touched.nationalIdentificationNumber &&
+                              errors.nationalIdentificationNumber && (
+                                <Text className="text-red-500 text-sm mb-3">
+                                  {errors.nationalIdentificationNumber}
+                                </Text>
+                              )}
 
                             <FormField
                               title="Password"

@@ -6,8 +6,10 @@ declare interface UserModel {
   anonymousId? : string;
   email: string;
   password: string;
-  username: string;
+  username?: string;
   gender?: string;
+  surname?: string;
+  givenNames?: string;
   lastName?: string;
   firstName?: string;
   phoneNumber?: string;
