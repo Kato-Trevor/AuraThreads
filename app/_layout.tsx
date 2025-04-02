@@ -53,7 +53,9 @@ export default function RootLayout() {
             open={openMenu}
             onOpen={() => setOpenMenu(true)}
             onClose={() => setOpenMenu(false)}
-            renderDrawerContent={() => <DrawerContent onLogOut={() => setOpenMenu(false)}/>}
+            renderDrawerContent={() => (
+              <DrawerContent onLogOut={() => setOpenMenu(false)} />
+            )}
           >
             <Stack>
               <Stack.Screen name="index" options={{ headerShown: false }} />
@@ -104,10 +106,7 @@ export default function RootLayout() {
               />
               <Stack.Screen
                 name="threads/[id]"
-                options={{
-                  headerTitle: "Post",
-                  headerTitleAlign: "center",
-                }}
+                options={{ headerShown: false }}
               />
               <Stack.Screen
                 name="search-post/[query]"

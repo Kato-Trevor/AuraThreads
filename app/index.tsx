@@ -1,4 +1,4 @@
-import './gesture-handler';
+import "./gesture-handler";
 import React from "react";
 import { images } from "@/constants";
 import { useToast } from "@/components/ToastProvider";
@@ -17,7 +17,7 @@ const RootLayout = () => {
   const { showToast } = useToast();
   const { isLoading, isLoggedIn } = useGlobalContext();
 
-  if(!isLoading && isLoggedIn) return <Redirect href="/(tabs)/home"/>
+  if (!isLoading && isLoggedIn) return <Redirect href="/(tabs)/home" />;
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>

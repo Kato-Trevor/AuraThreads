@@ -109,11 +109,18 @@ export const searchPosts = async (query: any, userId: string) => {
     const posts = await databases.listDocuments(
       appwriteConfig.databaseId,
       appwriteConfig.postCollectionId,
-      [Query.search("content", query), Query.notEqual("userId", userId)]
+      [
+        Query.or([
+          Query.search("content", query),
+          Query.search("topic", query),
+        ]),
+        Query.notEqual("userId", userId),
+      ]
     );
 
     return posts.documents;
   } catch (error: any) {
+    console.error("Error searching posts:", error);
     throw new Error(error.message);
   }
 };
