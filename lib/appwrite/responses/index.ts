@@ -34,12 +34,15 @@ export async function getResponseById(responseId: string) {
 
 export async function addAIResponseToDB(postContent: string, postId: string): Promise<any> {
 
-  const apiKey = "AIzaSyCw3mE41_qfuntNRbyvPzavS9u3Nl4npS0";
-  const genAI = new GoogleGenerativeAI(apiKey);
+  const apiKey = process.env.EXPO_PUBLIC_GEN_AI_API_KEY;
+  if (!apiKey) {
+    throw new Error("API key is not defined");
+  }
+  const genAI = new GoogleGenerativeAI(apiKey!);
   const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash",  
     generationConfig: {
     temperature: 0.7, 
-    topP: 0.9, 
+    topP: 0.9,
     maxOutputTokens: 300, 
   },
   systemInstruction: "You are an AI assistant providing appropriate, helpful and supportive responses. Avoid asking questions in your replies." }); 
