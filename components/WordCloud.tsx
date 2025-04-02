@@ -30,29 +30,89 @@ const WordCloud = () => {
   const [allTags, setAllTags] = useState<TagItem[]>([]);
 
   const mockData = {
-    posts: [
-      { "$id": "67eab8e20039505af549", "topic": "ExamAnxiety" },
-      { "$id": "67eab5a400189f496785", "topic": "Loneliness" },
-      { "$id": "67e94ebf002486771cfc", "topic": "CampusLife" },
-      { "$id": "67e82ade00131e7d7efc", "topic": "Burnout" },
-      { "$id": "67e58d86000469718873", "topic": "MentalHealth" },
-      { "$id": "67e58d0d001ae1a867cd", "topic": "SocialPressure" },
-      { "$id": "67e5840e000e7a7a936b", "topic": "RoommateIssues" },
-      { "$id": "67e57cea0028a2116d8c", "topic": "CareerUncertainty" },
-      { "$id": "67e3d1480037f5c8d935", "topic": "SocialPressure" },
-      { "$id": "67e3d0fa002c389666a0", "topic": "TimeManagement" }
+    posts : [
+      {
+        "$id": "67ecc41d00260a830244",
+        "topic": "Procrastination"
+      },
+      {
+        "$id": "67ecc3eb003e245957d8",
+        "topic": "Burnout"
+      },
+      {
+        "$id": "67ecbfbf001f1d092030",
+        "topic": "GroupProjects"
+      },
+      {
+        "$id": "67ec41ff0009fe93eea2",
+        "topic": "AcademicStress"
+      },
+      {
+        "$id": "67ec2d490022801ef335",
+        "topic": "SocialPressure"
+      },
+      {
+        "$id": "67ec29f80034e191e653",
+        "topic": "CampusLife"
+      },
+      {
+        "$id": "67eab8e20039505af549",
+        "topic": "ExamAnxiety"
+      },
+      {
+        "$id": "67eab5a400189f496785",
+        "topic": "Loneliness"
+      },
+      {
+        "$id": "67e94ebf002486771cfc",
+        "topic": "CampusLife"
+      },
+      {
+        "$id": "67e82ade00131e7d7efc",
+        "topic": "Burnout"
+      }
     ],
-    responses: [
-      { "$id": "67eb8aaa003b497fa712", "topic": "RoommateIssues" },
-      { "$id": "67eb8a70000505ece74b", "topic": "MentalHealth" },
-      { "$id": "67eb8a68003869ca4b20", "topic": "MentalHealth" },
-      { "$id": "67eb8a1c001145a53af6", "topic": "Burnout" },
-      { "$id": "67eb89ec001b007d471c", "topic": "CampusLife" },
-      { "$id": "67eb89e900101be07492", "topic": "CampusLife" },
-      { "$id": "67eb872b002aa77afb90", "topic": "Loneliness" },
-      { "$id": "67eb86f30014223bbbea", "topic": "ExamAnxiety" },
-      { "$id": "67eb856c002167f83d36", "topic": "ExamAnxiety" },
-      { "$id": "67eb854f002c3444ba14", "topic": "ExamAnxiety" }
+    responses : [
+      {
+        "$id": "67ecbef600103938dc76",
+        "topic": "AcademicStress"
+      },
+      {
+        "$id": "67eb8aaa003b497fa712",
+        "topic": "RoommateIssues"
+      },
+      {
+        "$id": "67eb8a70000505ece74b",
+        "topic": "MentalHealth"
+      },
+      {
+        "$id": "67eb8a68003869ca4b20",
+        "topic": "MentalHealth"
+      },
+      {
+        "$id": "67eb8a1c001145a53af6",
+        "topic": "Burnout"
+      },
+      {
+        "$id": "67eb89ec001b007d471c",
+        "topic": "CampusLife"
+      },
+      {
+        "$id": "67eb89e900101be07492",
+        "topic": "CampusLife"
+      },
+      {
+        "$id": "67eb872b002aa77afb90",
+        "topic": "Loneliness"
+      },
+      {
+        "$id": "67eb86f30014223bbbea",
+        "topic": "ExamAnxiety"
+      },
+      {
+        "$id": "67eb856c002167f83d36",
+        "topic": "ExamAnxiety"
+      }
     ]
   };
 
