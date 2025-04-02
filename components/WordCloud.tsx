@@ -149,7 +149,7 @@ const WordCloud = () => {
           </View>
         ) : (
           <>
-            <View className="m-10 items-center justify-center">
+            <View className="m-2 items-center justify-center">
               <TagCloud
                 minSize={12}
                 maxSize={35}
