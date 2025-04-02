@@ -1,9 +1,4 @@
-import {
-  Text,
-  View,
-  TouchableOpacity,
-  TextInput,
-} from "react-native";
+import { Text, View, TouchableOpacity, TextInput, Switch } from "react-native";
 import React, { useState } from "react";
 import { router } from "expo-router";
 import { useToast } from "@/components/ToastProvider";
@@ -17,7 +12,6 @@ import SongsList from "@/components/SongsList";
 import { formatTopic } from "@/utils/stringHelpers";
 import { addAIResponseToDB } from "@/lib/appwrite/appwrite";
 
-
 const CreatePost = () => {
   const { user } = useGlobalContext();
   const { showToast } = useToast();
@@ -25,6 +19,7 @@ const CreatePost = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedTopic, setSelectedTopic] = useState("");
   const [selectedSong, setSelectedSong] = useState<Song | null>(null);
+  const [enableAIResponse, setEnableAIResponse] = useState(false);
 
   const handleCancel = () => {
     router.back();
@@ -32,18 +27,22 @@ const CreatePost = () => {
 
   const handlePostCreation = async () => {
     try {
-      const newPost = await addPostToDB(postContent, user.$id, formatTopic(selectedTopic), selectedSong?.id);
+      const newPost = await addPostToDB(
+        postContent,
+        user.$id,
+        formatTopic(selectedTopic),
+        selectedSong?.id
+      );
       showToast("Post created successfully!", "success");
       router.back();
 
-      if (newPost?.$id) {
-      try {
+      if (newPost?.$id && enableAIResponse) {
+        try {
           await addAIResponseToDB(postContent, newPost.$id);
-      } catch (error: any) {
+        } catch (error: any) {
           console.error("Error generating AI response:", error);
+        }
       }
-  }
-
     } catch (error: any) {
       console.log("Error creating post:", error);
       showToast("Failed to create post", "error");
@@ -97,7 +96,17 @@ const CreatePost = () => {
           </TouchableOpacity>
         )}
       </View>
-      
+
+      <View className="flex-row items-center mb-4">
+        <Text className="text-lg text-gray-700 mr-2">Response from AuraThreads AI</Text>
+        <Switch
+          value={enableAIResponse}
+          onValueChange={setEnableAIResponse}
+          trackColor={{ false: "#ccc", true: "#F032DA" }}
+          thumbColor={enableAIResponse ? "#F032DA" : "#f4f3f4"}
+        />
+      </View>
+
       {/*Content based on current step*/}
       {currentStep === 1 && (
         <View className="flex-row items-start mb-4">
@@ -121,8 +130,9 @@ const CreatePost = () => {
         />
       )}
 
-      {currentStep === 3 && <SongsList selectedSong={selectedSong} onSongSelect={setSelectedSong} />}
-      
+      {currentStep === 3 && (
+        <SongsList selectedSong={selectedSong} onSongSelect={setSelectedSong} />
+      )}
     </SafeAreaView>
   );
 };
