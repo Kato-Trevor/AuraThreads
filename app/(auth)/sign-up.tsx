@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
-  Image,
   KeyboardAvoidingView,
   Platform,
   Animated,
@@ -17,47 +16,16 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
-import { Formik } from "formik";
 import * as Yup from "yup";
 import { Link, router } from "expo-router";
 
-import FormField from "@/components/FormField";
-import CustomButton from "@/components/CustomButton";
-import ButtonLoadAnimation from "@/components/LoadButtonAnimation";
-import { images } from "@/constants";
 import { useToast } from "@/components/ToastProvider";
 import { createUser } from "@/lib/appwrite/auth";
 import { useGlobalContext } from "@/context/GlobalProvider";
+import CounselorSignUpForm from "@/components/CounselorSignUpForm";
+import StudentSignUpForm from "@/components/StudentSignUpForm";
 
-const { width, height } = Dimensions.get("window");
-
-const studentValidationSchema = Yup.object().shape({
-  username: Yup.string()
-    .min(3, "Username must be at least 3 characters")
-    .required("Username is required"),
-  password: Yup.string()
-    .min(6, "Password must be at least 6 characters")
-    .required("Password is required"),
-  email: Yup.string()
-    .email("Invalid email address")
-    .required("Email is required"),
-});
-
-const counselorValidationSchema = Yup.object().shape({
-  username: Yup.string()
-    .min(3, "Username must be at least 3 characters")
-    .required("Username is required"),
-  password: Yup.string()
-    .min(6, "Password must be at least 6 characters")
-    .required("Password is required"),
-  email: Yup.string()
-    .email("Invalid email address")
-    .required("Email is required"),
-  phone: Yup.string()
-    .min(10, "Phone number must be at least 10 digits")
-    .required("Phone number is required"),
-  qualification: Yup.string().required("Qualification is required"),
-});
+Dimensions.get("window");
 
 const Signup = () => {
   const { setUser, setIsLoggedIn } = useGlobalContext();
@@ -133,14 +101,7 @@ const Signup = () => {
     setIsSubmitting(true);
 
     try {
-      const userData = {
-        username: values.username,
-        email: values.email,
-        password: values.password,
-        role: values.role,
-      };
-
-      const result = await createUser(userData);
+      const result = await createUser(values);
       setUser(result);
       setIsLoggedIn(true);
       showToast("Account created successfully", "success");
@@ -249,207 +210,15 @@ const Signup = () => {
                     </View>
 
                     {activeTab === "student" ? (
-                      <Formik
-                        initialValues={{
-                          username: "",
-                          password: "",
-                          email: "",
-                          role: "student",
-                        }}
-                        validationSchema={studentValidationSchema}
-                        onSubmit={(values) => handleSubmit(values)}
-                      >
-                        {({
-                          handleChange,
-                          handleSubmit,
-                          values,
-                          errors,
-                          touched,
-                        }) => (
-                          <>
-                            <FormField
-                              title="Username"
-                              value={values.username}
-                              handleChangeText={handleChange("username")}
-                              placeholder="Enter your username"
-                              otherStyles="mb-1"
-                            />
-                            {touched.username && errors.username && (
-                              <Text className="text-red-500 text-sm mb-3">
-                                {errors.username}
-                              </Text>
-                            )}
-
-                            <FormField
-                              title="Email"
-                              value={values.email}
-                              handleChangeText={handleChange("email")}
-                              placeholder="Enter your email"
-                              otherStyles="mb-1"
-                            />
-                            {touched.email && errors.email && (
-                              <Text className="text-red-500 text-sm mb-3">
-                                {errors.email}
-                              </Text>
-                            )}
-
-                            <FormField
-                              title="Password"
-                              value={values.password}
-                              handleChangeText={handleChange("password")}
-                              placeholder="Enter your password"
-                              otherStyles="mt-5"
-                            />
-                            {touched.password && errors.password && (
-                              <Text className="text-red-500 text-sm">
-                                {errors.password}
-                              </Text>
-                            )}
-
-                            {isSubmitting ? (
-                              <View className="flex-row justify-center mt-6">
-                                <ButtonLoadAnimation />
-                              </View>
-                            ) : (
-                              <CustomButton
-                                title="Sign Up"
-                                handlePress={handleSubmit}
-                                containerStyles="mt-6 bg-secondary rounded-full h-14"
-                                textStyles="text-white font-pbold text-lg"
-                              />
-                            )}
-                          </>
-                        )}
-                      </Formik>
+                      <StudentSignUpForm
+                        handleSubmit={handleSubmit}
+                        isSubmitting={isSubmitting}
+                      />
                     ) : (
-                      <Formik
-                        initialValues={{
-                          surname: "",
-                          givenNames: "",
-                          password: "",
-                          email: "",
-                          phone: "",
-                          qualification: "",
-                          nationalIdentificationNumber: "",
-                          role: "counselor",
-                        }}
-                        validationSchema={counselorValidationSchema}
-                        onSubmit={(values) => handleSubmit(values)}
-                      >
-                        {({
-                          handleChange,
-                          handleSubmit,
-                          values,
-                          errors,
-                          touched,
-                        }) => (
-                          <>
-                            <FormField
-                              title="Surname"
-                              value={values.surname}
-                              handleChangeText={handleChange("surname")}
-                              placeholder="According to National ID"
-                              otherStyles="mb-1"
-                            />
-                            {touched.surname && errors.surname && (
-                              <Text className="text-red-500 text-sm mb-3">
-                                {errors.surname}
-                              </Text>
-                            )}
-
-                            <FormField
-                              title="Given Names"
-                              value={values.givenNames}
-                              handleChangeText={handleChange("givenNames")}
-                              placeholder="According to National ID"
-                              otherStyles="mb-1"
-                            />
-                            {touched.givenNames && errors.givenNames && (
-                              <Text className="text-red-500 text-sm mb-3">
-                                {errors.givenNames}
-                              </Text>
-                            )}
-
-                            <FormField
-                              title="Email"
-                              value={values.email}
-                              handleChangeText={handleChange("email")}
-                              placeholder="Enter your email"
-                              otherStyles="mb-1"
-                            />
-                            {touched.email && errors.email && (
-                              <Text className="text-red-500 text-sm mb-3">
-                                {errors.email}
-                              </Text>
-                            )}
-                            <FormField
-                              title="Phone"
-                              value={values.phone}
-                              handleChangeText={handleChange("phone")}
-                              placeholder="Enter your phone number"
-                              otherStyles="mb-1"
-                            />
-                            {touched.phone && errors.phone && (
-                              <Text className="text-red-500 text-sm mb-3">
-                                {errors.phone}
-                              </Text>
-                            )}
-
-                            <FormField
-                              title="Qualification"
-                              value={values.qualification}
-                              handleChangeText={handleChange("qualification")}
-                              placeholder="Enter your qualification"
-                              otherStyles="mb-1"
-                            />
-                            {touched.qualification && errors.qualification && (
-                              <Text className="text-red-500 text-sm mb-3">
-                                {errors.qualification}
-                              </Text>
-                            )}
-
-                            <FormField
-                              title="NIN"
-                              value={values.nationalIdentificationNumber}
-                              handleChangeText={handleChange("qualification")}
-                              placeholder="National Identification No."
-                              otherStyles="mb-1"
-                            />
-                            {touched.nationalIdentificationNumber &&
-                              errors.nationalIdentificationNumber && (
-                                <Text className="text-red-500 text-sm mb-3">
-                                  {errors.nationalIdentificationNumber}
-                                </Text>
-                              )}
-
-                            <FormField
-                              title="Password"
-                              value={values.password}
-                              handleChangeText={handleChange("password")}
-                              placeholder="Enter your password"
-                              otherStyles="mt-5"
-                            />
-                            {touched.password && errors.password && (
-                              <Text className="text-red-500 text-sm">
-                                {errors.password}
-                              </Text>
-                            )}
-
-                            {isSubmitting ? (
-                              <View className="flex-row justify-center mt-6">
-                                <ButtonLoadAnimation />
-                              </View>
-                            ) : (
-                              <CustomButton
-                                title="Sign Up"
-                                handlePress={handleSubmit}
-                                containerStyles="mt-6 bg-secondary rounded-full h-14"
-                                textStyles="text-white font-pbold text-lg"
-                              />
-                            )}
-                          </>
-                        )}
-                      </Formik>
+                      <CounselorSignUpForm
+                        handleSubmit={handleSubmit}
+                        isSubmitting={isSubmitting}
+                      />
                     )}
                   </View>
                 </Animated.View>
