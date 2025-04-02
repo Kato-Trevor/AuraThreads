@@ -182,7 +182,12 @@ export default function Thread() {
                 )}
               </View>
             </View>
-            <Text className="text-lg text-gray-800 w-full">{post.content}</Text>
+            <View>
+              <Text className="text-lg text-gray-800 w-full">
+                {post.content}
+              </Text>
+              <Text className="text-xs text-secondary">#{post.topic}</Text>
+            </View>
             <Text className="text-xs text-gray-500 text-right">{timeAgo}</Text>
             <View className="h-[0.5px] bg-gray-200 w-full" />
           </View>
