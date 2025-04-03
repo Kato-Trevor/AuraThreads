@@ -1,8 +1,9 @@
 import React from "react";
 import { FlatList, Text, TouchableOpacity, View } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 interface TopicsListProps {
-  topics: string[];
+  topics: any;
   selectedTopic: string;
   onSelectTopic: (topic: string) => void;
 }
@@ -19,21 +20,27 @@ const TopicsList: React.FC<TopicsListProps> = ({
         data={topics}
         renderItem={({ item }) => (
           <TouchableOpacity
-            className={`py-2 px-4 rounded-lg mb-2 ${
-              selectedTopic === item ? "bg-secondary" : "bg-gray-200"
+            className={`px-4 py-2 rounded-full mr-2 mb-2 flex-row items-center ${
+              selectedTopic === item.topic ? "bg-pink-500" : "bg-pink-100"
             }`}
-            onPress={() => onSelectTopic(item)}
+            onPress={() => onSelectTopic(item.topic)}
           >
+            <Ionicons
+              name={item.icon}
+              size={24}
+              color={selectedTopic === item.topic ? "white" : "#D1006B"}
+            />
             <Text
-              className={`text-lg ${
-                selectedTopic === item ? "text-white" : "text-black"
+              className={`font-pmedium ml-2 ${
+                selectedTopic === item.topic ? "text-white" : "text-pink-900"
               }`}
             >
-              {item}
+              {item.topic}
             </Text>
           </TouchableOpacity>
         )}
         keyExtractor={(item, index) => index.toString()}
+        contentContainerStyle={{ flexDirection: "row", flexWrap: "wrap" }}
       />
     </View>
   );
