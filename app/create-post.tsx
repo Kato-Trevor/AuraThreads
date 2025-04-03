@@ -327,9 +327,23 @@ const CreatePost = () => {
               ) : (
                 <TouchableOpacity
                   onPress={handlePostCreation}
-                  className="py-2 px-6 rounded-full bg-secondary shadow-md"
+                  disabled={postContent.trim() === ""}
+                  className={`py-3 px-8 rounded-full shadow-md transition-all duration-200 ${
+                    postContent.trim() === ""
+                      ? "bg-gray-300"
+                      : "bg-pink-500 hover:bg-secondary-dark"
+                  }`}
+                  style={{
+                    opacity: postContent.trim() === "" ? 0.6 : 1,
+                  }}
                 >
-                  <Text className="text-sm font-medium text-white">Post</Text>
+                  <Text
+                    className={`text-base font-semibold ${
+                      postContent.trim() === "" ? "text-gray-500" : "text-white"
+                    }`}
+                  >
+                    Post
+                  </Text>
                 </TouchableOpacity>
               )}
             </View>

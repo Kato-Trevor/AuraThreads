@@ -24,8 +24,13 @@ const SongItem: React.FC<SongItemProps> = ({
   const scaleAnim = useRef(new Animated.Value(1)).current;
   const opacityAnim = useRef(new Animated.Value(1)).current;
   const playButtonScale = useRef(new Animated.Value(0)).current;
-  const spinValue = useRef(new Animated.Value(0)).current;
 
+  // Animation values for loading dots
+  const dot1Opacity = useRef(new Animated.Value(0.3)).current;
+  const dot2Opacity = useRef(new Animated.Value(0.3)).current;
+  const dot3Opacity = useRef(new Animated.Value(0.3)).current;
+
+  // Handle animations when selection state changes
   useEffect(() => {
     if (isSelected) {
       Animated.sequence([
@@ -41,12 +46,14 @@ const SongItem: React.FC<SongItemProps> = ({
         }),
       ]).start();
 
+      // Only show play button if this item is actually selected
       Animated.spring(playButtonScale, {
         toValue: 1,
         friction: 6,
         useNativeDriver: true,
       }).start();
     } else {
+      // Hide play button when not selected
       Animated.timing(playButtonScale, {
         toValue: 0,
         duration: 150,
@@ -55,6 +62,7 @@ const SongItem: React.FC<SongItemProps> = ({
     }
   }, [isSelected]);
 
+  // Animation for pulsing when playing
   useEffect(() => {
     if (isPlaying) {
       Animated.loop(
@@ -76,24 +84,66 @@ const SongItem: React.FC<SongItemProps> = ({
     }
   }, [isPlaying]);
 
+  // Better loading animation using three dots with sequential opacity changes
   useEffect(() => {
     if (isLoading) {
-      Animated.loop(
-        Animated.timing(spinValue, {
-          toValue: 1,
-          duration: 1200,
-          useNativeDriver: true,
-        })
-      ).start();
-    } else {
-      spinValue.setValue(0);
-    }
-  }, [isLoading]);
+      // Animated dots sequence
+      const animateDots = () => {
+        Animated.sequence([
+          // First dot
+          Animated.timing(dot1Opacity, {
+            toValue: 1,
+            duration: 300,
+            useNativeDriver: true,
+          }),
+          Animated.timing(dot1Opacity, {
+            toValue: 0.3,
+            duration: 300,
+            useNativeDriver: true,
+          }),
 
-  const spin = spinValue.interpolate({
-    inputRange: [0, 1],
-    outputRange: ["0deg", "360deg"],
-  });
+          // Second dot
+          Animated.timing(dot2Opacity, {
+            toValue: 1,
+            duration: 300,
+            useNativeDriver: true,
+          }),
+          Animated.timing(dot2Opacity, {
+            toValue: 0.3,
+            duration: 300,
+            useNativeDriver: true,
+          }),
+
+          // Third dot
+          Animated.timing(dot3Opacity, {
+            toValue: 1,
+            duration: 300,
+            useNativeDriver: true,
+          }),
+          Animated.timing(dot3Opacity, {
+            toValue: 0.3,
+            duration: 300,
+            useNativeDriver: true,
+          }),
+        ]).start(() => {
+          if (isLoading) {
+            animateDots();
+          }
+        });
+      };
+
+      animateDots();
+    } else {
+      dot1Opacity.setValue(0.3);
+      dot2Opacity.setValue(0.3);
+      dot3Opacity.setValue(0.3);
+    }
+    return () => {
+      dot1Opacity.stopAnimation();
+      dot2Opacity.stopAnimation();
+      dot3Opacity.stopAnimation();
+    };
+  }, [isLoading]);
 
   const formatDuration = (seconds: any) => {
     const mins = Math.floor(seconds / 60);
@@ -108,7 +158,9 @@ const SongItem: React.FC<SongItemProps> = ({
         opacity: isSelected && !isPlaying ? 0.9 : opacityAnim,
       }}
       className={`flex-row items-center p-4 rounded-xl mb-3 ${
-        isSelected ? "bg-gray-200 shadow-sm" : "bg-white border border-gray-100"
+        isSelected
+          ? "bg-pink-200 shadow-sm"
+          : "bg-pink-50 border border-pink-50"
       }`}
     >
       <TouchableOpacity
@@ -131,20 +183,23 @@ const SongItem: React.FC<SongItemProps> = ({
         </View>
 
         <View className="flex-1 justify-center">
-          <Text numberOfLines={1} className="text-base font-bold text-gray-800">
+          <Text
+            numberOfLines={1}
+            className="text-base font-pbold text-pink-900"
+          >
             {song.title_short}
           </Text>
-          <Text numberOfLines={1} className="text-sm text-gray-500">
+          <Text numberOfLines={1} className="text-sm text-pink-800">
             {song.artist.name}
           </Text>
 
           <View className="flex-row items-center mt-1">
             {song.explicit_lyrics && (
-              <View className="mr-2 px-1 bg-gray-200 rounded">
-                <Text className="text-xs text-gray-500 font-medium">E</Text>
+              <View className="mr-2 px-1 bg-pink-300 rounded">
+                <Text className="text-xs text-pink-700 font-pmedium">E</Text>
               </View>
             )}
-            <Text className="text-xs text-gray-400">
+            <Text className="text-xs text-pink-500">
               {song.album.title.length > 18
                 ? song.album.title.substring(0, 15) + "..."
                 : song.album.title}{" "}
@@ -154,39 +209,52 @@ const SongItem: React.FC<SongItemProps> = ({
         </View>
       </TouchableOpacity>
 
-      <Animated.View
-        style={{
-          transform: [{ scale: isSelected ? playButtonScale : 0 }],
-        }}
-      >
-        <TouchableOpacity
-          onPress={() => {
-            if (!isLoading) {
-              isPlaying ? onPause() : onPlay(song);
-            }
+      {isSelected && (
+        <Animated.View
+          style={{
+            transform: [{ scale: playButtonScale }],
           }}
-          className={`p-2 rounded-full ${
-            isPlaying
-              ? "bg-pink-100"
-              : isLoading
-              ? "bg-blue-100"
-              : "bg-gray-100"
-          }`}
-          activeOpacity={0.7}
         >
-          {isLoading ? (
-            <Animated.View style={{ transform: [{ rotate: spin }] }}>
-              <Ionicons name="refresh" size={22} color="#3B82F6" />
-            </Animated.View>
-          ) : (
-            <Ionicons
-              name={isPlaying ? "pause" : "play"}
-              size={22}
-              color={isPlaying ? "#F032DA" : "#444"}
-            />
-          )}
-        </TouchableOpacity>
-      </Animated.View>
+          <TouchableOpacity
+            onPress={() => {
+              if (!isLoading) {
+                isPlaying ? onPause() : onPlay(song);
+              }
+            }}
+            className={`p-2 rounded-full ${
+              isPlaying
+                ? "bg-pink-100"
+                : isLoading
+                ? "bg-blue-50"
+                : "bg-gray-100"
+            }`}
+            activeOpacity={0.7}
+          >
+            {isLoading ? (
+              <View className="flex-row items-center justify-center w-6 h-5">
+                <Animated.View
+                  style={{ opacity: dot1Opacity }}
+                  className="w-1.5 h-1.5 rounded-full bg-pink-500 mx-0.5"
+                />
+                <Animated.View
+                  style={{ opacity: dot2Opacity }}
+                  className="w-1.5 h-1.5 rounded-full bg-pink-500 mx-0.5"
+                />
+                <Animated.View
+                  style={{ opacity: dot3Opacity }}
+                  className="w-1.5 h-1.5 rounded-full bg-pink-500 mx-0.5"
+                />
+              </View>
+            ) : (
+              <Ionicons
+                name={isPlaying ? "pause" : "play"}
+                size={22}
+                color={"#D1006B"}
+              />
+            )}
+          </TouchableOpacity>
+        </Animated.View>
+      )}
     </Animated.View>
   );
 };
