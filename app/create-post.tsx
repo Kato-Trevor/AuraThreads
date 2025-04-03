@@ -251,11 +251,12 @@ const CreatePost = () => {
       case 3:
         return (
           <View className="flex-1">
-            <Text className="text-lg font-bold mb-2">Add Music (Optional)</Text>
+            <Text className="text-lg font-bold mb-2">
+              Attach Music (Optional)
+            </Text>
             <Text className="text-gray-500 mb-4">
               Add a song that matches your mood
             </Text>
-            {/* SongsList component without a ScrollView wrapper */}
             <SongsList
               selectedSong={selectedSong}
               onSongSelect={setSelectedSong}
