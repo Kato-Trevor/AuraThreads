@@ -11,6 +11,8 @@ import TopicsList from "@/components/TopicsList";
 import SongsList from "@/components/SongsList";
 import { formatTopic } from "@/utils/stringHelpers";
 import { addAIResponseToDB } from "@/lib/appwrite/appwrite";
+import { assignPostTopic } from "@/components/TopicAssigner";
+
 
 const CreatePost = () => {
   const { user } = useGlobalContext();
@@ -25,17 +27,47 @@ const CreatePost = () => {
     router.back();
   };
 
+  // const handlePostCreation = async () => {
+  //   try {
+  //     const newPost = await addPostToDB(
+  //       postContent,
+  //       user.$id,
+  //       formatTopic(selectedTopic),
+  //       selectedSong?.id
+  //     );
+  //     showToast("Post created successfully!", "success");
+  //     router.back();
+
+  //     if (newPost?.$id && enableAIResponse) {
+  //       try {
+  //         await addAIResponseToDB(postContent, newPost.$id);
+  //       } catch (error: any) {
+  //         console.error("Error generating AI response:", error);
+  //       }
+  //     }
+  //   } catch (error: any) {
+  //     console.log("Error creating post:", error);
+  //     showToast("Failed to create post", "error");
+  //   }
+  // };
+
+
+
+
   const handlePostCreation = async () => {
     try {
+      // Derive the topic from the post content rather than using the selectedTopic
+      const derivedTopic = assignPostTopic(postContent);
+  
       const newPost = await addPostToDB(
         postContent,
         user.$id,
-        formatTopic(selectedTopic),
+        formatTopic(derivedTopic), // Use the derived topic here
         selectedSong?.id
       );
       showToast("Post created successfully!", "success");
       router.back();
-
+  
       if (newPost?.$id && enableAIResponse) {
         try {
           await addAIResponseToDB(postContent, newPost.$id);
@@ -48,6 +80,8 @@ const CreatePost = () => {
       showToast("Failed to create post", "error");
     }
   };
+
+
 
   return (
     <SafeAreaView className="flex-1 p-4 bg-white">
@@ -65,10 +99,10 @@ const CreatePost = () => {
         {currentStep < 3 ? (
           <TouchableOpacity
             onPress={() => setCurrentStep(currentStep + 1)}
-            disabled={
-              (currentStep === 1 && postContent === "") ||
-              (currentStep === 2 && !selectedTopic)
-            }
+            // disabled={
+            //   (currentStep === 1 && postContent === "") ||
+            //   (currentStep === 2 && !selectedTopic)
+            // }
             className={`py-2 px-4 rounded ${
               (currentStep === 1 && postContent === "") ||
               (currentStep === 2 && !selectedTopic)
@@ -80,6 +114,7 @@ const CreatePost = () => {
               className={`text-lg ${
                 (currentStep === 1 && postContent === "") ||
                 (currentStep === 2 && !selectedTopic)
+                
                   ? "text-gray-500"
                   : "text-white"
               }`}
