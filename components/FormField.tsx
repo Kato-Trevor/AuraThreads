@@ -12,6 +12,7 @@ interface FormFieldProps {
   autoCompleteType?: any;
   handleChangeText: (e: any) => void;
   disabled?: boolean;
+  [key: string]: any;
 }
 
 const FormField = ({
@@ -23,6 +24,7 @@ const FormField = ({
   autoCompleteType,
   handleChangeText,
   disabled = false,
+  ...rest
 }: FormFieldProps) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -48,6 +50,7 @@ const FormField = ({
           editable={!disabled}
           selectTextOnFocus={!disabled}
           style={{ color: disabled ? "#B0B0B0" : "black" }}
+          {...rest}
         />
 
         {title === "Password" && (

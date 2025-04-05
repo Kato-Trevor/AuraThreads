@@ -27,7 +27,7 @@ export const signIn = async (email: string, password: string) => {
 };
 
 export const createUser = async (data: UserModel) => {
-  const { email, password, username, role } = data;
+  const { email, password, username, role, ...additionalFields } = data;
   try {
     const newAccount = await account.create(
       ID.unique(),
@@ -49,6 +49,7 @@ export const createUser = async (data: UserModel) => {
         email,
         username,
         role,
+        ...additionalFields
       }
     );
 
