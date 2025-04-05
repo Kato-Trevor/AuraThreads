@@ -16,7 +16,6 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
-import * as Yup from "yup";
 import { Link, router } from "expo-router";
 
 import { useToast } from "@/components/ToastProvider";
@@ -25,7 +24,7 @@ import { useGlobalContext } from "@/context/GlobalProvider";
 import CounselorSignUpForm from "@/components/CounselorSignUpForm";
 import StudentSignUpForm from "@/components/StudentSignUpForm";
 
-Dimensions.get("window");
+const { width, height } = Dimensions.get("window");
 
 const Signup = () => {
   const { setUser, setIsLoggedIn } = useGlobalContext();
