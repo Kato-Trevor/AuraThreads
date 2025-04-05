@@ -20,7 +20,7 @@ const Avatar = ({
 
   return (
     <View
-      className={`bg-gray-400 rounded-full w-10 h-10 justify-center items-center overflow-hidden ${className}`}
+      className={`bg-[#d0ded8] rounded-full w-10 h-10 justify-center items-center overflow-hidden ${className}`}
     >
       {imageUrl ? (
         <Image

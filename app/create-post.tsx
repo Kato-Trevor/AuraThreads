@@ -11,7 +11,7 @@ import TopicsList from "@/components/TopicsList";
 import SongsList from "@/components/SongsList";
 import { formatTopic } from "@/utils/stringHelpers";
 import { addAIResponseToDB } from "@/lib/appwrite/appwrite";
-import { assignPostTopic } from "@/components/TopicAssigner";
+import { categorizePostTopic } from "@/components/TopicAssigner";
 
 
 const CreatePost = () => {
@@ -57,7 +57,7 @@ const CreatePost = () => {
   const handlePostCreation = async () => {
     try {
       // Derive the topic from the post content rather than using the selectedTopic
-      const derivedTopic = assignPostTopic(postContent);
+      const derivedTopic = await categorizePostTopic(postContent)
   
       const newPost = await addPostToDB(
         postContent,

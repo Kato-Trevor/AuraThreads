@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import SearchInput from "@/components/SearchInput";
 
-const search = () => {
+const Discover = () => {
   return (
     <SafeAreaView>
       <SearchInput />
@@ -11,6 +11,6 @@ const search = () => {
   );
 };
 
-export default search;
+export default Discover;
 
 const styles = StyleSheet.create({});

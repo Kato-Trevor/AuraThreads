@@ -2,8 +2,7 @@ import React from "react";
 import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { StatusBar } from "expo-status-bar";
-import { router } from "expo-router";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text } from "react-native";
 
 const TabIcon = ({
   iconName,
@@ -20,9 +19,7 @@ const TabIcon = ({
     <View className="flex items-center justify-center w-20 mt-3">
       <Ionicons name={iconName as any} size={24} color={color} />
       <Text
-        className={`text-xs text-center ${
-          focused ? "font-psemibold" : "font-pregular"
-        }`}
+        className={`text-xs text-center ${focused ? "font-psemibold" : "font-pregular"}`}
         numberOfLines={1}
         style={{ color }}
       >
@@ -40,15 +37,18 @@ const TabsLayout = () => {
         screenOptions={{
           tabBarShowLabel: false,
           tabBarStyle: {
-            backgroundColor: "#F5F5F5",
-            borderTopWidth: 1,
-            borderTopColor: "#CDCDE0",
+            backgroundColor: "#18392b",
+            borderTopWidth: 0,
             height: 80,
-            elevation: 0,
             paddingTop: 10,
+            elevation: 10,
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: -3 },
+            shadowOpacity: 0.1,
+            shadowRadius: 6,
           },
-          tabBarActiveTintColor: "#F032DA",
-          tabBarInactiveTintColor: "#7D7D7D",
+          tabBarActiveTintColor: "#ffffff",
+          tabBarInactiveTintColor: "#85aa9b",
         }}
       >
         <Tabs.Screen
@@ -57,25 +57,35 @@ const TabsLayout = () => {
             title: "Home",
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
+              <TabIcon iconName="home" color={color} name="Home" focused={focused} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="discover"
+          options={{
+            title: "Discover",
+            headerShown: false,
+            tabBarIcon: ({ color, focused }) => (
               <TabIcon
-                iconName="home"
+                iconName="compass-outline"
                 color={color}
-                name="Home"
+                name="Discover"
                 focused={focused}
               />
             ),
           }}
         />
         <Tabs.Screen
-          name="search"
+          name="community"
           options={{
-            title: "Search",
+            title: "Community",
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <TabIcon
-                iconName="search"
+                iconName="people-outline"
                 color={color}
-                name="Search"
+                name="Community"
                 focused={focused}
               />
             ),
@@ -87,22 +97,11 @@ const TabsLayout = () => {
             title: "Trending",
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
-              <TabIcon
-                iconName="flame"
-                color={color}
-                name="Trending"
-                focused={focused}
-              />
+              <TabIcon iconName="flame" color={color} name="Trending" focused={focused} />
             ),
           }}
         />
       </Tabs>
-      <TouchableOpacity
-        className="absolute bottom-28 right-5 bg-secondary rounded-full w-16 h-16 justify-center items-center shadow-lg"
-        onPress={() => router.push("/create-post")}
-      >
-        <Ionicons name="add" size={24} color="#FFFFFF" />
-      </TouchableOpacity>
     </>
   );
 };

@@ -33,7 +33,7 @@ const WordCloud = () => {
     posts : [
       {
         "$id": "67ecc41d00260a830244",
-        "topic": "Procrastination"
+        "topic": "Motivation"
       },
       {
         "$id": "67ecc3eb003e245957d8",
@@ -41,11 +41,11 @@ const WordCloud = () => {
       },
       {
         "$id": "67ecbfbf001f1d092030",
-        "topic": "GroupProjects"
+        "topic": "Self-Harm"
       },
       {
         "$id": "67ec41ff0009fe93eea2",
-        "topic": "AcademicStress"
+        "topic": "Stress"
       },
       {
         "$id": "67ec2d490022801ef335",
@@ -53,11 +53,11 @@ const WordCloud = () => {
       },
       {
         "$id": "67ec29f80034e191e653",
-        "topic": "CampusLife"
+        "topic": "Confidence"
       },
       {
         "$id": "67eab8e20039505af549",
-        "topic": "ExamAnxiety"
+        "topic": "Anxiety"
       },
       {
         "$id": "67eab5a400189f496785",
@@ -65,7 +65,7 @@ const WordCloud = () => {
       },
       {
         "$id": "67e94ebf002486771cfc",
-        "topic": "CampusLife"
+        "topic": "Confidence"
       },
       {
         "$id": "67e82ade00131e7d7efc",
@@ -75,19 +75,19 @@ const WordCloud = () => {
     responses : [
       {
         "$id": "67ecbef600103938dc76",
-        "topic": "AcademicStress"
+        "topic": "Stress"
       },
       {
         "$id": "67eb8aaa003b497fa712",
-        "topic": "RoommateIssues"
+        "topic": "Sleep"
       },
       {
         "$id": "67eb8a70000505ece74b",
-        "topic": "MentalHealth"
+        "topic": "Trauma"
       },
       {
         "$id": "67eb8a68003869ca4b20",
-        "topic": "MentalHealth"
+        "topic": "Grief"
       },
       {
         "$id": "67eb8a1c001145a53af6",
@@ -95,11 +95,11 @@ const WordCloud = () => {
       },
       {
         "$id": "67eb89ec001b007d471c",
-        "topic": "CampusLife"
+        "topic": "Social Pressure"
       },
       {
         "$id": "67eb89e900101be07492",
-        "topic": "CampusLife"
+        "topic": "Fear"
       },
       {
         "$id": "67eb872b002aa77afb90",
@@ -107,11 +107,11 @@ const WordCloud = () => {
       },
       {
         "$id": "67eb86f30014223bbbea",
-        "topic": "ExamAnxiety"
+        "topic": "Focus"
       },
       {
         "$id": "67eb856c002167f83d36",
-        "topic": "ExamAnxiety"
+        "topic": "Addiction"
       }
     ]
   };
