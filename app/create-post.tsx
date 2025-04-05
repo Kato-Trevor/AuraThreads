@@ -25,7 +25,7 @@ import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 
 const CreatePost = () => {
-  const { user } = useGlobalContext();
+  const { user, enableAnonymousID } = useGlobalContext();
   const { showToast } = useToast();
   const [postContent, setPostContent] = useState("");
   const [currentStep, setCurrentStep] = useState(1);
@@ -117,7 +117,8 @@ const CreatePost = () => {
         postContent,
         user.$id,
         formatTopic(selectedTopic),
-        selectedSong?.id
+        enableAnonymousID,
+        selectedSong?.id,
       );
       showToast("Post created successfully!", "success");
       router.back();

@@ -12,6 +12,7 @@ import {
   updateReaction,
 } from "@/lib/appwrite/appwrite";
 import { useGlobalContext } from "@/context/GlobalProvider";
+import { generateAnonymousUsername } from "@/lib/utils/generateAnonymousId";
 
 const Response = ({ response }: { response: ResponseModel }) => {
   const { user } = useGlobalContext();
@@ -24,6 +25,19 @@ const Response = ({ response }: { response: ResponseModel }) => {
   const [dislikeCount, setDislikeCount] = useState(0);
   const [liked, setLiked] = useState(false);
   const [disliked, setDisliked] = useState(false);
+  const [username, setUsername] = useState("");
+
+  useEffect(() => {
+    if (response.userId.role === "student") {
+      if (response.isAnonymous) {
+        setUsername(`@${generateAnonymousUsername()}`);
+      } else {
+        setUsername(`@${response.userId.username}`);
+      }
+    } else {
+      setUsername(`${response.userId.surname} ${response.userId.givenNames}`);
+    }
+  }, [response]);
 
   useEffect(() => {
     const fetchReaction = async () => {
@@ -157,10 +171,10 @@ const Response = ({ response }: { response: ResponseModel }) => {
   return (
     <>
       <View className="p-4 rounded-lg flex-row items-start">
-        <Avatar username={response.userId.username} imageUrl={response.userId.avatar} />
+        <Avatar username={username} imageUrl={response.userId.avatar} />
         <View className="flex-1 px-2">
           <View className="flex-row justify-between">
-            <Text className="text-gray-500">@{response.userId.username}</Text>
+            <Text className="text-gray-500">{username}</Text>
             <Text className="text-xs text-gray-500 text-right">{timeAgo}</Text>
           </View>
           <Text className="text-lg text-gray-800 mt-1">{response.content}</Text>

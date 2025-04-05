@@ -7,12 +7,16 @@ const GlobalContext = createContext<{
   setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
   user: any;
   setUser: React.Dispatch<React.SetStateAction<any>>;
+  enableAnonymousID: boolean;
+  setEnableAnonymousID: React.Dispatch<React.SetStateAction<boolean>>;
   isLoading: boolean;
 }>({
   isLoggedIn: false,
   setIsLoggedIn: () => {},
   user: null,
   setUser: () => {},
+  enableAnonymousID: false,
+  setEnableAnonymousID: () => {},
   isLoading: true,
 });
 
@@ -20,6 +24,7 @@ export const useGlobalContext = () => useContext(GlobalContext);
 
 const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [enableAnonymousID, setEnableAnonymousID] = useState(false);
   const [user, setUser] = useState<null | any>(null);
   const [isLoading, setLoading] = useState(true);
 
@@ -49,6 +54,8 @@ const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ children }) =
         setIsLoggedIn,
         user,
         setUser,
+        enableAnonymousID,
+        setEnableAnonymousID,
         isLoading,
       }}
     >

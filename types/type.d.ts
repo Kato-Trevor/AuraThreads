@@ -25,6 +25,7 @@ declare interface PostModel {
   topic: string;
   songId?: number;
   responses?: ResponseModel[];
+  isAnonymous: boolean
 }
 
 declare interface ResponseModel {
@@ -34,6 +35,7 @@ declare interface ResponseModel {
   content: string;
   $createdAt?: string;
   updatedAt?: string;
+  isAnonymous: boolean
 }
 
 declare interface ReactionModel {
