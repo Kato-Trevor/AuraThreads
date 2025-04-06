@@ -10,7 +10,7 @@ import {
 import { useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { addResponseToDB, getPostFromDB } from "@/lib/appwrite/appwrite";
-import LoadingSpinner from "@/components/LoadingSpinner";
+// import LoadingSpinner from "@/components/LoadingSpinner";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useToast } from "@/components/ToastProvider";
@@ -20,9 +20,11 @@ import { formatDistanceToNow } from "date-fns";
 import Avatar from "@/components/Avatar";
 import getSongById from "@/services/get-song";
 import { Audio } from "expo-av";
+import { generateAnonymousUsername } from "@/lib/utils/generateAnonymousId";
+import Colors from "@/assets/colors/colors";
 
 export default function Thread() {
-  const { user } = useGlobalContext();
+  const { user, enableAnonymousID } = useGlobalContext();
   const { id: postId } = useLocalSearchParams();
   const [post, setPost] = useState<any>(null);
   const [response, setResponse] = useState<string>("");
@@ -33,6 +35,7 @@ export default function Thread() {
   const { showToast } = useToast();
   const [isRefreshing, setIsRefreshing] = useState(false);
   const flatListRef = useRef<FlatList>(null);
+  const [username, setUsername] = useState('');
 
   const timeAgo = post?.$createdAt
     ? formatDistanceToNow(new Date(post.$createdAt), {
@@ -84,6 +87,19 @@ export default function Thread() {
     };
   }, [currentSound]);
 
+    // Anonymous stuff
+    useEffect(() => {
+      if (post?.userId.role === "student") {
+        if (post?.isAnonymous) {
+          setUsername(generateAnonymousUsername());
+        } else {
+          setUsername(post?.userId.username);
+        }
+      } else {
+        setUsername(`${post?.userId.surname} ${post?.userId.givenNames}`);
+      }
+    }, [post]);
+
   const stopSound = async () => {
     try {
       if (currentSound) {
@@ -126,7 +142,7 @@ export default function Thread() {
     if (!response.trim()) return;
 
     try {
-      await addResponseToDB(response, `${postId}`, user.$id);
+      await addResponseToDB(response, `${postId}`, user.$id, enableAnonymousID);
       showToast("Response created successfully!", "success");
       setResponse("");
       handleRefresh();
@@ -140,14 +156,6 @@ export default function Thread() {
     }
   };
 
-  if (isLoading && !isRefreshing) {
-    return (
-      <SafeAreaView className="flex-1 justify-center items-center">
-        <LoadingSpinner visible={true} />
-      </SafeAreaView>
-    );
-  }
-
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -157,11 +165,11 @@ export default function Thread() {
       {/* Post at the top */}
       <View className="flex-1">
         {post && (
-          <View className="px-8 py-3 flex-column items-start gap-3 mb-2">
+          <View className="px-5 py-5 flex-column items-start gap-3 mb-2">
             <View className="flex-row items-center gap-2">
-              <Avatar username={post.userId.username} />
-              <View className="flex-column items-start gap-1">
-                <Text className="text-gray-500">@{post.userId.username}</Text>
+              <Avatar username={username} />
+              <View className="flex-column items-start gap-0">
+                <Text className="text-gray-500">@{username}</Text>
                 {post.songId && (
                   <TouchableOpacity
                     onPress={() => {
@@ -186,7 +194,6 @@ export default function Thread() {
               <Text className="text-lg text-gray-800 w-full">
                 {post.content}
               </Text>
-              <Text className="text-xs text-secondary">#{post.topic}</Text>
             </View>
             <Text className="text-xs text-gray-500 text-right">{timeAgo}</Text>
             <View className="h-[0.5px] bg-gray-200 w-full" />
@@ -222,7 +229,7 @@ export default function Thread() {
       </View>
 
       {/* Input field at the bottom */}
-      <View className="flex-row p-3 border-t border-gray-200 bg-white items-center">
+      <View className="flex-row p-3 border-t-[0.5px] border-gray-200 bg-white items-center">
         <TextInput
           className="flex-1 bg-gray-100 rounded-full px-4 py-2 text-base max-h-24"
           placeholder="Post a response"
@@ -238,7 +245,7 @@ export default function Thread() {
           <Ionicons
             name="send"
             size={24}
-            color={response.trim() ? "#F032DA" : "#cccccc"}
+            color={response.trim() ? Colors.darkestGreen : "#cccccc"}
           />
         </TouchableOpacity>
       </View>

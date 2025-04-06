@@ -10,13 +10,12 @@ import { topics } from "@/constants/constants";
 import TopicsList from "@/components/TopicsList";
 import SongsList from "@/components/SongsList";
 import { formatTopic } from "@/utils/stringHelpers";
-import { addAIResponseToDB } from "@/lib/appwrite/appwrite";
 import { categorizePostTopic } from "@/components/TopicAssigner";
 import Colors from "@/assets/colors/colors";
 
 
 const CreatePost = () => {
-  const { user } = useGlobalContext();
+  const { user, enableAnonymousID } = useGlobalContext();
   const { showToast } = useToast();
   const [postContent, setPostContent] = useState("");
   const [currentStep, setCurrentStep] = useState(1);
@@ -28,60 +27,28 @@ const CreatePost = () => {
     router.back();
   };
 
-  // const handlePostCreation = async () => {
-  //   try {
-  //     const newPost = await addPostToDB(
-  //       postContent,
-  //       user.$id,
-  //       formatTopic(selectedTopic),
-  //       selectedSong?.id
-  //     );
-  //     showToast("Post created successfully!", "success");
-  //     router.back();
-
-  //     if (newPost?.$id && enableAIResponse) {
-  //       try {
-  //         await addAIResponseToDB(postContent, newPost.$id);
-  //       } catch (error: any) {
-  //         console.error("Error generating AI response:", error);
-  //       }
-  //     }
-  //   } catch (error: any) {
-  //     console.log("Error creating post:", error);
-  //     showToast("Failed to create post", "error");
-  //   }
-  // };
-
-
-
-
   const handlePostCreation = async () => {
     try {
-      // Derive the topic from the post content rather than using the selectedTopic
       const derivedTopic = await categorizePostTopic(postContent)
   
       const newPost = await addPostToDB(
         postContent,
         user.$id,
-        formatTopic(derivedTopic), // Use the derived topic here
+        formatTopic(derivedTopic), 
+        enableAnonymousID,
         selectedSong?.id
       );
       showToast("Post created successfully!", "success");
       router.back();
   
-      if (newPost?.$id && enableAIResponse) {
-        try {
-          await addAIResponseToDB(postContent, newPost.$id);
-        } catch (error: any) {
-          console.error("Error generating AI response:", error);
-        }
+      if (newPost?.$id) {
+       
       }
     } catch (error: any) {
       console.log("Error creating post:", error);
       showToast("Failed to create post", "error");
     }
   };
-
 
 
   return (
@@ -100,13 +67,8 @@ const CreatePost = () => {
         {currentStep < 3 ? (
           <TouchableOpacity
             onPress={() => setCurrentStep(currentStep + 1)}
-            // disabled={
-            //   (currentStep === 1 && postContent === "") ||
-            //   (currentStep === 2 && !selectedTopic)
-            // }
             className={`py-2 px-4 rounded ${
-              (currentStep === 1 && postContent === "") ||
-              (currentStep === 2 && !selectedTopic)
+              (currentStep === 1 && postContent === "")
                 ? "bg-gray-300"
                 : "bg-secondary"
             }`}
@@ -133,16 +95,6 @@ const CreatePost = () => {
         )}
       </View>
 
-      {/* <View className="flex-row items-center mb-4">
-        <Text className="text-lg text-gray-700 mr-2">Response from AuraThreads AI</Text>
-        <Switch
-          value={enableAIResponse}
-          onValueChange={setEnableAIResponse}
-          trackColor={{ false: "#ccc", true: "#F032DA" }}
-          thumbColor={enableAIResponse ? "#F032DA" : "#f4f3f4"}
-        />
-      </View> */}
-
       {/*Content based on current step*/}
       {currentStep === 1 && (
         <View className="flex-row items-start mb-4">
@@ -157,14 +109,6 @@ const CreatePost = () => {
           />
         </View>
       )}
-
-      {/* {currentStep === 2 && (
-        <TopicsList
-          topics={topics}
-          selectedTopic={selectedTopic}
-          onSelectTopic={setSelectedTopic}
-        />
-      )} */}
 
       {currentStep === 2 && (
         <SongsList selectedSong={selectedSong} onSongSelect={setSelectedSong} />

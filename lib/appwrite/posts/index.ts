@@ -4,6 +4,7 @@ export async function addPostToDB(
   postContent: string,
   userId: string,
   topic: string,
+  isAnonymous: boolean,
   songId?: number
 ) {
   try {
@@ -16,6 +17,7 @@ export async function addPostToDB(
         userId,
         topic,
         songId,
+        isAnonymous
       }
     );
 
@@ -70,7 +72,8 @@ export async function getPostFromDB(postId: string) {
 export async function addResponseToDB(
   responseContent: string,
   postId: string,
-  userId: string
+  userId: string,
+  isAnonymous: boolean
 ) {
   try {
     const newResponse = await databases.createDocument(
@@ -81,6 +84,7 @@ export async function addResponseToDB(
         content: responseContent,
         postId,
         userId,
+        isAnonymous
       }
     );
 

@@ -92,16 +92,6 @@ const TabsLayout = () => {
             ),
           }}
         />
-        {/* <Tabs.Screen
-          name="trending"
-          options={{
-            title: "Trending",
-            headerShown: false,
-            tabBarIcon: ({ color, focused }) => (
-              <TabIcon iconName="flame" color={color} name="Trending" focused={focused} />
-            ),
-          }}
-        /> */}
       </Tabs>
     </>
   );

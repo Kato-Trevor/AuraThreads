@@ -12,6 +12,8 @@ import {
   updateReaction,
 } from "@/lib/appwrite/appwrite";
 import { useGlobalContext } from "@/context/GlobalProvider";
+import { generateAnonymousUsername } from "@/lib/utils/generateAnonymousId";
+import Colors from "@/assets/colors/colors";
 
 const Response = ({ response }: { response: ResponseModel }) => {
   const { user } = useGlobalContext();
@@ -24,6 +26,20 @@ const Response = ({ response }: { response: ResponseModel }) => {
   const [dislikeCount, setDislikeCount] = useState(0);
   const [liked, setLiked] = useState(false);
   const [disliked, setDisliked] = useState(false);
+  const [username, setUsername] = useState("");
+
+  useEffect(() => {
+    if (response.userId.role === "student") {
+      if (response.isAnonymous) {
+        setUsername(generateAnonymousUsername());
+      } else {
+        setUsername(response.userId.username!);
+      }
+    } else {
+      setUsername(`${response.userId.surname} ${response.userId.givenNames}`);
+    }
+  }, [response]);
+
 
   useEffect(() => {
     const fetchReaction = async () => {
@@ -157,10 +173,10 @@ const Response = ({ response }: { response: ResponseModel }) => {
   return (
     <>
       <View className="p-4 rounded-lg flex-row items-start">
-        <Avatar username={response.userId.username} imageUrl={response.userId.avatar} />
+        <Avatar username={username} imageUrl={response.userId.avatar} />
         <View className="flex-1 px-2">
           <View className="flex-row justify-between">
-            <Text className="text-gray-500">@{response.userId.username}</Text>
+            <Text className="text-gray-500">{response.userId.role === "counselor" ? username : `@${username}`}</Text>
             <Text className="text-xs text-gray-500 text-right">{timeAgo}</Text>
           </View>
           <Text className="text-lg text-gray-800 mt-1">{response.content}</Text>
@@ -170,7 +186,7 @@ const Response = ({ response }: { response: ResponseModel }) => {
                 <Ionicons
                   name={liked ? "thumbs-up" : "thumbs-up-outline"}
                   size={15}
-                  color={liked ? "#F032DA" : "gray"}
+                  color={liked ? Colors.Green : "gray"}
                 />
                 <Text>{likeCount ? likeCount : null}</Text>
               </View>
@@ -180,7 +196,7 @@ const Response = ({ response }: { response: ResponseModel }) => {
                 <Ionicons
                   name={disliked ? "thumbs-down" : "thumbs-down-outline"}
                   size={15}
-                  color={disliked ? "#F032DA" : "gray"}
+                  color={disliked ? Colors.Green  : "gray"}
                 />
                 <Text>{dislikeCount ? dislikeCount : null}</Text>
               </View>
@@ -188,7 +204,7 @@ const Response = ({ response }: { response: ResponseModel }) => {
           </View>
         </View>
       </View>
-      <View className="h-[0.5px] bg-gray-200 w-full" />
+      <View className="bg-gray-200 w-full" />
     </>
   );
 };

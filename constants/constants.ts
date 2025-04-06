@@ -1,26 +1,3 @@
-// export const topics = [
-//   "Academic Stress 📚",
-//   "Exam Anxiety 😰",
-//   "Procrastination 🕒",
-//   "Time Management ⏳",
-//   "Burnout 🔥",
-//   "Social Pressure 🤝",
-//   "Loneliness 😔",
-//   "Roommate Issues 🏠",
-//   "Career Uncertainty 💼",
-//   "Financial Stress 💸",
-//   "Homesickness 🏡",
-//   "Imposter Syndrome 🥸",
-//   "Mental Health 🧠",
-//   "Study Tips ✏️",
-//   "Group Projects 👥",
-//   "Part-Time Jobs 🕑",
-//   "Overcommitment 📅",
-//   "Sleep Deprivation 🌙",
-//   "Motivation 💪",
-//   "Campus Life 🎓",
-// ];
-
 export const topics =[
   "Anxiety",
   "Depression",
