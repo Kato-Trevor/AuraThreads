@@ -30,9 +30,9 @@ const Response = ({ response }: { response: ResponseModel }) => {
   useEffect(() => {
     if (response.userId.role === "student") {
       if (response.isAnonymous) {
-        setUsername(`@${generateAnonymousUsername()}`);
+        setUsername(generateAnonymousUsername());
       } else {
-        setUsername(`@${response.userId.username}`);
+        setUsername(response.userId.username!);
       }
     } else {
       setUsername(`${response.userId.surname} ${response.userId.givenNames}`);
@@ -174,7 +174,7 @@ const Response = ({ response }: { response: ResponseModel }) => {
         <Avatar username={username} imageUrl={response.userId.avatar} />
         <View className="flex-1 px-2">
           <View className="flex-row justify-between">
-            <Text className="text-gray-500">{username}</Text>
+            <Text className="text-gray-500">{response.userId.role === "counselor" ? username : `@${username}`}</Text>
             <Text className="text-xs text-gray-500 text-right">{timeAgo}</Text>
           </View>
           <Text className="text-lg text-gray-800 mt-1">{response.content}</Text>

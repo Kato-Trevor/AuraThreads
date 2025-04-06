@@ -361,7 +361,7 @@ const CreatePost = () => {
               isKeyboardVisible ? "opacity-0" : "opacity-100"
             }`}
           >
-            {currentStep === 1 && (
+            {(user.role === 'student' && currentStep === 1) && (
               <View className="flex-row items-center justify-between bg-gray-50 p-3 rounded-lg shadow-sm">
                 <View className="flex-row items-center">
                   <MaterialCommunityIcons

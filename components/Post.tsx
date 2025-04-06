@@ -17,20 +17,19 @@ const Post = ({ post }: { post: PostModel }) => {
   const [song, setSong] = useState<any>();
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(Math.floor(Math.random() * 20));
-  const [username, setUsername] = useState('');
+  const [username, setUsername] = useState("");
 
   useEffect(() => {
     if (post.userId.role === "student") {
       if (post.isAnonymous) {
-        setUsername(`@${generateAnonymousUsername()}`);
+        setUsername(generateAnonymousUsername());
       } else {
-        setUsername(`@${post.userId.username}`);
+        setUsername(post.userId.username!);
       }
     } else {
       setUsername(`${post.userId.surname} ${post.userId.givenNames}`);
     }
   }, [post]);
-
 
   useEffect(() => {
     const fetchSong = async () => {
@@ -61,7 +60,7 @@ const Post = ({ post }: { post: PostModel }) => {
             <Avatar username={username} />
             <View className="ml-2">
               <Text className="font-bold text-gray-800">
-                {username}
+                {post.userId.role === "counselor" ? username : `@${username}`}
               </Text>
               <Text className="text-xs text-gray-500">{timeAgo}</Text>
             </View>
