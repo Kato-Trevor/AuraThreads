@@ -13,6 +13,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import Colors from "@/assets/colors/colors";
 
 const Community = () => {
   const [posts, setPosts] = useState<any>([]);
@@ -108,7 +109,7 @@ const Community = () => {
       {/* Floating Action Button */}
       <TouchableOpacity
         className="absolute bottom-5 right-5 rounded-full w-16 h-16 justify-center items-center shadow-lg"
-        style={{ backgroundColor: "#18392b" }}
+        style={{ backgroundColor: Colors.darkestGreen }}
         onPress={() => router.push("/create-post")}
       >
         <Ionicons name="add" size={24} color="#FFFFFF" />

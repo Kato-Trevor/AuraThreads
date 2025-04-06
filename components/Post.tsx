@@ -71,6 +71,7 @@ import { formatDistanceToNow } from "date-fns";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import getSongById from "@/services/get-song";
+import Colors from "@/assets/colors/colors";
 
 const Post = ({ post }: { post: PostModel }) => {
   let timeAgo = formatDistanceToNow(new Date(`${post.$createdAt}`), {
@@ -107,7 +108,7 @@ const Post = ({ post }: { post: PostModel }) => {
               {(post.responses?.length ?? 0) === 1 ? "response" : "responses"}
             </Text>
             <Text className="text-xs text-right">
-              <Text style={{ color: '#588b76' }}>@{post.userId.username}</Text>{" "}
+              <Text style={{ color: Colors.Green }}>@{post.userId.username}</Text>{" "}
               <Text className="text-gray-400">posted {timeAgo}</Text>
             </Text>
           </View>

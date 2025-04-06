@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Dimensions } from "react-native";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
-import WordCloud from "@/components/WordCloud";
+import WordCloud from "@/app/WordCloud";
 import MoodAnalytics from "@/components/MoodAnalytics";
 
 const Trending = () => <WordCloud />;

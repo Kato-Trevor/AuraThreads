@@ -3,6 +3,7 @@ import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { StatusBar } from "expo-status-bar";
 import { View, Text } from "react-native";
+import Colors from "@/assets/colors/colors";
 
 const TabIcon = ({
   iconName,
@@ -37,7 +38,7 @@ const TabsLayout = () => {
         screenOptions={{
           tabBarShowLabel: false,
           tabBarStyle: {
-            backgroundColor: "#18392b",
+            backgroundColor: Colors.darkestGreen,
             borderTopWidth: 0,
             height: 80,
             paddingTop: 10,
@@ -47,8 +48,8 @@ const TabsLayout = () => {
             shadowOpacity: 0.1,
             shadowRadius: 6,
           },
-          tabBarActiveTintColor: "#ffffff",
-          tabBarInactiveTintColor: "#85aa9b",
+          tabBarActiveTintColor: Colors.white,
+          tabBarInactiveTintColor: Colors.lighterGreen,
         }}
       >
         <Tabs.Screen
