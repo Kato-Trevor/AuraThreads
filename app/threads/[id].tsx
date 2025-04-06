@@ -22,9 +22,10 @@ import { formatDistanceToNow } from "date-fns";
 import Avatar from "@/components/Avatar";
 import getSongById from "@/services/get-song";
 import { Audio } from "expo-av";
+import { generateAnonymousUsername } from "@/lib/utils/generateAnonymousId";
 
 export default function Thread() {
-  const { user } = useGlobalContext();
+  const { user, enableAnonymousID } = useGlobalContext();
   const { id: postId } = useLocalSearchParams();
   const [post, setPost] = useState<any>(null);
   const [response, setResponse] = useState<string>("");
@@ -37,6 +38,7 @@ export default function Thread() {
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
   const flatListRef = useRef<FlatList>(null);
+  const [username, setUsername] = useState('');
 
   const timeAgo = post?.$createdAt
     ? formatDistanceToNow(new Date(post.$createdAt), {
@@ -92,6 +94,18 @@ export default function Thread() {
     };
   }, [currentSound]);
 
+  useEffect(() => {
+    if (post?.userId.role === "student") {
+      if (post?.isAnonymous) {
+        setUsername(generateAnonymousUsername());
+      } else {
+        setUsername(post?.userId.username);
+      }
+    } else {
+      setUsername(`${post?.userId.surname} ${post?.userId.givenNames}`);
+    }
+  }, [post]);
+
   const stopSound = async () => {
     try {
       if (currentSound) {
@@ -134,7 +148,7 @@ export default function Thread() {
     if (!response.trim()) return;
 
     try {
-      await addResponseToDB(response, `${postId}`, user.$id);
+      await addResponseToDB(response, `${postId}`, user.$id, enableAnonymousID);
       showToast("Response created successfully!", "success");
       setResponse("");
       handleRefresh();
@@ -187,13 +201,10 @@ export default function Thread() {
           {post && (
             <View className="p-4 bg-white border-b border-gray-100">
               <View className="flex-row items-center mb-3">
-                <Avatar username={post.userId.username} />
+                <Avatar username={username} />
                 <View className="ml-3 flex-1">
                   <Text className="font-semibold text-gray-800">
-                    {post.userId.name || post.userId.username}
-                  </Text>
-                  <Text className="text-gray-500 text-sm">
-                    @{post.userId.username}
+                    {username}
                   </Text>
                 </View>
                 <TouchableOpacity className="p-2">

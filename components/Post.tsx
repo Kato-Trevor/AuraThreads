@@ -7,6 +7,7 @@ import { Ionicons } from "@expo/vector-icons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Feather } from "@expo/vector-icons";
 import getSongById from "@/services/get-song";
+import { generateAnonymousUsername } from "@/lib/utils/generateAnonymousId";
 
 const Post = ({ post }: { post: PostModel }) => {
   const timeAgo = formatDistanceToNow(new Date(`${post.$createdAt}`), {
@@ -16,6 +17,19 @@ const Post = ({ post }: { post: PostModel }) => {
   const [song, setSong] = useState<any>();
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(Math.floor(Math.random() * 20));
+  const [username, setUsername] = useState("");
+
+  useEffect(() => {
+    if (post.userId.role === "student") {
+      if (post.isAnonymous) {
+        setUsername(generateAnonymousUsername());
+      } else {
+        setUsername(post.userId.username!);
+      }
+    } else {
+      setUsername(`${post.userId.surname} ${post.userId.givenNames}`);
+    }
+  }, [post]);
 
   useEffect(() => {
     const fetchSong = async () => {
@@ -43,10 +57,10 @@ const Post = ({ post }: { post: PostModel }) => {
         {/* Header section */}
         <View className="flex-row justify-between items-center mb-2">
           <View className="flex-row items-center">
-            <Avatar username={post.userId.username} />
+            <Avatar username={username} />
             <View className="ml-2">
               <Text className="font-bold text-gray-800">
-                @{post.userId.username}
+                {post.userId.role === "counselor" ? username : `@${username}`}
               </Text>
               <Text className="text-xs text-gray-500">{timeAgo}</Text>
             </View>

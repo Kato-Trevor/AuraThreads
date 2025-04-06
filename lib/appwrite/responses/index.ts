@@ -62,7 +62,8 @@ export async function addAIResponseToDB(postContent: string, postId: string): Pr
       {
         content: aiResponse,
         postId,
-        userId: AI_USER_ID
+        userId: AI_USER_ID,
+        isAnonymous: false
       }
     );
     return newResponse;
