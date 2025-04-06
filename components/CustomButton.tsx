@@ -1,3 +1,4 @@
+import Colors from "@/assets/colors/colors";
 import React from "react";
 import { TouchableOpacity, Text, ActivityIndicator, View } from "react-native";
 
@@ -20,7 +21,8 @@ const CustomButton = ({
 }: CustomButtonProps) => {
   return (
     <TouchableOpacity
-      className={`bg-secondary rounded-2xl min-h-[62px] justify-center items-center shadow-sm
+      style={{ backgroundColor: Colors.darkGreen }}
+      className={`rounded-2xl min-h-[62px] justify-center items-center shadow-sm
         ${containerStyles} ${isLoading ? "opacity-70" : ""}`}
       onPress={handlePress}
       activeOpacity={0.7}

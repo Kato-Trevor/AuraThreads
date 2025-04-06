@@ -261,7 +261,7 @@ const Onboard = () => {
                 </View>
               </View>
               <Text className="text-4xl font-pbold text-center">
-                Welcome to{" "}
+                {/* Welcome to{" "} */}
                 <Text style={{ color: Colors.darkGreen }} className="font-pextrabold">
                   AuraThreads
                 </Text>

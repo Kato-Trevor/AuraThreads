@@ -18,7 +18,7 @@ import Colors from "@/assets/colors/colors";
 const Community = () => {
   const [posts, setPosts] = useState<any>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  // const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const fetchPosts = useCallback(async (showRefreshing = false) => {
@@ -26,7 +26,7 @@ const Community = () => {
       if (showRefreshing) {
         setIsRefreshing(true);
       } else {
-        setIsLoading(true);
+        // setIsLoading(true);
       }
 
       const fetchedPosts = await getAllPostsFromDB();
@@ -34,7 +34,7 @@ const Community = () => {
     } catch (error) {
       console.error("Error fetching posts:", error);
     } finally {
-      setIsLoading(false);
+      // setIsLoading(false);
       setIsRefreshing(false);
     }
   }, []);
@@ -51,16 +51,16 @@ const Community = () => {
     return <Post post={item} />;
   };
 
-  if (isLoading && !isRefreshing) {
-    return (
-      <SafeAreaView className="flex-1 justify-center items-center">
-        <LoadingSpinner visible={true} />
-      </SafeAreaView>
-    );
-  }
+  // if (isLoading && !isRefreshing) {
+  //   return (
+  //     <SafeAreaView className="flex-1 justify-center items-center">
+  //       <LoadingSpinner visible={true} />
+  //     </SafeAreaView>
+  //   );
+  // }
 
   return (
-    <View className="flex-1">
+    <View className="flex-1 bg-white">
       {/* Uncomment and adjust the MoodLog button if needed */}
       {/*
       <TouchableOpacity

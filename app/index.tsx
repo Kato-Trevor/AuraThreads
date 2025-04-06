@@ -196,8 +196,7 @@ const RootLayout = () => {
                 Your Safe Space
               </Text>
               <Text className="text-md font-pmedium text-gray-600 text-center">
-                Share your mental health challenges anonymously with fellow
-                students in a supportive community.
+                Share your mental health challenges anonymously with fellow in a supportive community.
               </Text>
             </View>
 
@@ -206,7 +205,7 @@ const RootLayout = () => {
               <CustomButton
                 title="Get Started"
                 handlePress={() => router.push("/onboard")}
-                containerStyles={`mb-3 w-full h-14 bg-[${Colors.darkGreen}]`}
+                containerStyles={`mb-3 w-full h-14`}
                 textStyles="text-white font-pbold"
               />
 

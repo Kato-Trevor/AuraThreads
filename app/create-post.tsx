@@ -12,6 +12,7 @@ import SongsList from "@/components/SongsList";
 import { formatTopic } from "@/utils/stringHelpers";
 import { addAIResponseToDB } from "@/lib/appwrite/appwrite";
 import { categorizePostTopic } from "@/components/TopicAssigner";
+import Colors from "@/assets/colors/colors";
 
 
 const CreatePost = () => {
@@ -89,7 +90,7 @@ const CreatePost = () => {
       <View className="flex-row justify-between items-center mb-2">
         {currentStep === 1 ? (
           <TouchableOpacity onPress={handleCancel}>
-            <Text className="text-secondary text-lg">Cancel</Text>
+            <Text style={{ color: Colors.darkestGreen }} className="text-lg">Cancel</Text>
           </TouchableOpacity>
         ) : (
           <TouchableOpacity onPress={() => setCurrentStep(currentStep - 1)}>
@@ -132,7 +133,7 @@ const CreatePost = () => {
         )}
       </View>
 
-      <View className="flex-row items-center mb-4">
+      {/* <View className="flex-row items-center mb-4">
         <Text className="text-lg text-gray-700 mr-2">Response from AuraThreads AI</Text>
         <Switch
           value={enableAIResponse}
@@ -140,12 +141,12 @@ const CreatePost = () => {
           trackColor={{ false: "#ccc", true: "#F032DA" }}
           thumbColor={enableAIResponse ? "#F032DA" : "#f4f3f4"}
         />
-      </View>
+      </View> */}
 
       {/*Content based on current step*/}
       {currentStep === 1 && (
         <View className="flex-row items-start mb-4">
-          <Avatar username={user.username} />
+          {/* <Avatar username={user.username} /> */}
           <TextInput
             className="flex-1 px-4 rounded-lg text-lg"
             placeholder="How are you feeling?"
@@ -157,15 +158,15 @@ const CreatePost = () => {
         </View>
       )}
 
-      {currentStep === 2 && (
+      {/* {currentStep === 2 && (
         <TopicsList
           topics={topics}
           selectedTopic={selectedTopic}
           onSelectTopic={setSelectedTopic}
         />
-      )}
+      )} */}
 
-      {currentStep === 3 && (
+      {currentStep === 2 && (
         <SongsList selectedSong={selectedSong} onSongSelect={setSelectedSong} />
       )}
     </SafeAreaView>

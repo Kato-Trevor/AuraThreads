@@ -2,6 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { TextInput } from "react-native-gesture-handler";
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
+import Colors from "@/assets/colors/colors";
 
 interface FormFieldProps {
   value: string;
@@ -35,7 +36,7 @@ const FormField = ({
       >
         {title}
       </Text>
-      <View className="border border-gray-300 w-full h-16 px-4 bg-gray-100 rounded-xl focus:border-secondary items-center flex-row">
+      <View className="border border-gray-300 w-full h-16 px-4 bg-gray-100 rounded-xl focus:border-green-800 items-center flex-row">
         <TextInput
           className="flex-1 text-black font-pmedium text-base"
           value={value}

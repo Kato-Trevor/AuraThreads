@@ -201,15 +201,15 @@ const WordCloud = () => {
   };
 
   return (
-    <GestureHandlerRootView className="flex-1">
+    <GestureHandlerRootView className="flex-1 bg-white">
       <SafeAreaView className="flex-1">
         {loading.tags ? (
-          <View className="flex-1 justify-center items-center">
+          <View className="flex-1 justify-center items-center ">
             <ActivityIndicator size="large" />
           </View>
         ) : (
           <>
-            <View className="m-10 items-center justify-center">
+            <View className="m-10 items-center justify-center ">
               <TagCloud
                 minSize={12}
                 maxSize={35}

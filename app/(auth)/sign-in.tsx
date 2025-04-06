@@ -280,10 +280,10 @@ const Login = () => {
   const handleSubmit = async (values: { email: string; password: string }) => {
     setIsSubmitting(true);
     try {
-      await signIn(values.email, values.password);
-      const result = await getCurrentUser();
-      setUser(result);
-      setIsLoggedIn(true);
+      // await signIn(values.email, values.password);
+      // const result = await getCurrentUser();
+      // setUser(result);
+      // setIsLoggedIn(true);
       router.replace("/home");
     } catch (error) {
       showToast("An error occurred", "error");
