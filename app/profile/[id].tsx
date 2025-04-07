@@ -20,6 +20,7 @@ export default function Profile() {
   const { id: userId } = useLocalSearchParams();
 
   const [user, setUser] = useState<any>(null);
+  const [username, setUsername] = useState<any>(null);
   const [activeTab, setActiveTab] = useState<"posts" | "responses">("posts");
   const [posts, setPosts] = useState<any[]>([]);
   const [responses, setResponses] = useState<any[]>([]);
@@ -42,6 +43,16 @@ export default function Profile() {
     fetchUser();
     StatusBar.setBarStyle("dark-content");
   }, [fetchUser]);
+
+  useEffect(() => {
+    if (user) {
+      if (user.role === "student") {
+        setUsername(user.username);
+      } else {
+        setUsername(`${user.surname} ${user.givenNames}`);
+      }
+    }
+  }, [user]);
 
   const fetchUserContent = useCallback(async () => {
     try {
@@ -77,7 +88,7 @@ export default function Profile() {
         {/* User Profile Header */}
         <View className="p-4">
           <View className="flex-row items-center">
-            <Avatar username={`${user?.surname} ${user?.givenNames}`} />
+            <Avatar username={username} imageUrl={user?.avatar} />
             <View className="ml-4">
               <Text className="text-2xl font-bold">
                 {user?.surname} {user?.givenNames}

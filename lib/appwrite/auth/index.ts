@@ -160,7 +160,7 @@ export async function getFileUrl(fileId: string) {
   let fileUrl;
 
   try {
-    fileUrl = storage.getFilePreview(appwriteConfig.storageId, fileId);
+    fileUrl = storage.getFileView(appwriteConfig.storageId, fileId);
 
     if (!fileUrl) throw Error;
 
