@@ -13,6 +13,7 @@ import {
 } from "@/lib/appwrite/appwrite";
 import { useGlobalContext } from "@/context/GlobalProvider";
 import { generateAnonymousUsername } from "@/lib/utils/generateAnonymousId";
+import { Link } from "expo-router";
 
 const Response = ({ response }: { response: ResponseModel }) => {
   const { user } = useGlobalContext();
@@ -174,7 +175,18 @@ const Response = ({ response }: { response: ResponseModel }) => {
         <Avatar username={username} imageUrl={response.userId.avatar} />
         <View className="flex-1 px-2">
           <View className="flex-row justify-between">
-            <Text className="text-gray-500">{response.userId.role === "counselor" ? username : `@${username}`}</Text>
+            {response.userId.role === "counselor" ? (
+              <Link
+                href={{
+                  pathname: "/profile/[id]",
+                  params: { id: `${response.userId.$id}` },
+                }}
+              >
+                <Text className="text-gray-500">{username}</Text>
+              </Link>
+            ) : (
+              <Text className="text-gray-500">@{username}</Text>
+            )}
             <Text className="text-xs text-gray-500 text-right">{timeAgo}</Text>
           </View>
           <Text className="text-lg text-gray-800 mt-1">{response.content}</Text>

@@ -109,6 +109,13 @@ export default function RootLayout() {
                 options={{ headerShown: false }}
               />
               <Stack.Screen
+                name="profile/[id]"
+                options={{
+                  headerTitle: "Profile",
+                  headerTitleAlign: "center",
+                }}
+              />
+              <Stack.Screen
                 name="search-post/[query]"
                 options={{ headerShown: false }}
               />
