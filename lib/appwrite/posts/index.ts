@@ -5,7 +5,7 @@ export async function addPostToDB(
   userId: string,
   topic: string,
   isAnonymous: boolean,
-  songId?: number,
+  songId?: number
 ) {
   try {
     const newPost = await databases.createDocument(
@@ -17,7 +17,7 @@ export async function addPostToDB(
         userId,
         topic,
         songId,
-        isAnonymous
+        isAnonymous,
       }
     );
 
@@ -55,6 +55,20 @@ export async function getPostsByTopic(topic: string) {
   }
 }
 
+export async function getPostsByUserID(userId: string) {
+  try {
+    const posts = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.postCollectionId,
+      [Query.equal("userId", userId)]
+    );
+
+    return posts.documents;
+  } catch (error: any) {
+    throw new Error(error);
+  }
+}
+
 export async function getPostFromDB(postId: string) {
   try {
     const post = await databases.getDocument(
@@ -84,7 +98,7 @@ export async function addResponseToDB(
         content: responseContent,
         postId,
         userId,
-        isAnonymous
+        isAnonymous,
       }
     );
 

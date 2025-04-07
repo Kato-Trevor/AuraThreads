@@ -9,7 +9,7 @@ import {
   StatusBar,
   Image,
 } from "react-native";
-import { useLocalSearchParams, router } from "expo-router";
+import { useLocalSearchParams, router, Link } from "expo-router";
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { addResponseToDB, getPostFromDB } from "@/lib/appwrite/appwrite";
 import LoadingSpinner from "@/components/LoadingSpinner";
@@ -38,7 +38,7 @@ export default function Thread() {
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
   const flatListRef = useRef<FlatList>(null);
-  const [username, setUsername] = useState('');
+  const [username, setUsername] = useState("");
 
   const timeAgo = post?.$createdAt
     ? formatDistanceToNow(new Date(post.$createdAt), {
@@ -203,9 +203,22 @@ export default function Thread() {
               <View className="flex-row items-center mb-3">
                 <Avatar username={username} />
                 <View className="ml-3 flex-1">
-                  <Text className="font-semibold text-gray-800">
-                    {username}
-                  </Text>
+                  {post.userId.role === "counselor" ? (
+                    <Link
+                      href={{
+                        pathname: "/profile/[id]",
+                        params: { id: `${post.userId.$id}` },
+                      }}
+                    >
+                      <Text className="font-semibold text-gray-800">
+                        {username}
+                      </Text>
+                    </Link>
+                  ) : (
+                    <Text className="font-semibold text-gray-800">
+                      {username}
+                    </Text>
+                  )}
                 </View>
                 <TouchableOpacity className="p-2">
                   <Feather name="more-horizontal" size={20} color="#666" />
