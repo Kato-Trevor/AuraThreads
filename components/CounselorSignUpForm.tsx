@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { Formik } from "formik";
-import { View, Text } from "react-native";
+import { View, Text, Image } from "react-native";
 import FormField from "@/components/FormField";
 import CustomButton from "@/components/CustomButton";
 import ButtonLoadAnimation from "@/components/LoadButtonAnimation";
 import * as Yup from "yup";
+import * as ImagePicker from "expo-image-picker";
 
 const counselorValidationSchema = Yup.object().shape({
   surname: Yup.string()
@@ -29,10 +30,28 @@ const counselorValidationSchema = Yup.object().shape({
 const CounselorSignUpForm = ({
   handleSubmit,
   isSubmitting,
+  onProfileImageUpload
 }: {
   handleSubmit: (values: any) => void;
   isSubmitting: boolean;
+  onProfileImageUpload: (image: any) => void;
 }) => {
+  const [image, setImage] = useState<string | null>(null);
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images", "videos"],
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+      onProfileImageUpload(result);
+    }
+  };
+
   return (
     <Formik
       initialValues={{
@@ -93,7 +112,9 @@ const CounselorSignUpForm = ({
             otherStyles="mb-1"
           />
           {touched.phoneNumber && errors.phoneNumber && (
-            <Text className="text-red-500 text-sm mb-3">{errors.phoneNumber}</Text>
+            <Text className="text-red-500 text-sm mb-3">
+              {errors.phoneNumber}
+            </Text>
           )}
 
           <FormField
@@ -134,6 +155,22 @@ const CounselorSignUpForm = ({
           />
           {touched.password && errors.password && (
             <Text className="text-red-500 text-sm">{errors.password}</Text>
+          )}
+
+          <CustomButton
+            title="Upload Profile Picture"
+            handlePress={pickImage}
+            containerStyles="bg-white border-2 border-secondary rounded-full mt-6 h-14"
+            textStyles="text-secondary font-psemibold"
+          />
+          {image && (
+            <View className="mt-5 rounded-full w-full h-20 justify-center items-center">
+              <Image
+                source={{ uri: image }}
+                className="w-full h-full"
+                resizeMode="contain"
+              />
+            </View>
           )}
 
           {isSubmitting ? (

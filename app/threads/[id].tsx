@@ -7,7 +7,6 @@ import {
   KeyboardAvoidingView,
   Platform,
   StatusBar,
-  Image,
 } from "react-native";
 import { useLocalSearchParams, router, Link } from "expo-router";
 import React, { useEffect, useState, useRef, useCallback } from "react";
@@ -329,7 +328,7 @@ export default function Thread() {
 
         {/* Input field at the bottom */}
         <View className="flex-row p-3 border-t border-gray-200 bg-white items-center">
-          <Avatar username={user.username} />
+          <Avatar username={user.username} imageUrl={user.avatar} />
           <TextInput
             className="flex-1 bg-gray-100 rounded-full px-4 py-2 text-base max-h-24 ml-2"
             placeholder="Add your response..."
