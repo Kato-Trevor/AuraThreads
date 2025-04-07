@@ -19,7 +19,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Link, router } from "expo-router";
 
 import { useToast } from "@/components/ToastProvider";
-import { createUser } from "@/lib/appwrite/auth";
+import { createUser, uploadFile } from "@/lib/appwrite/auth";
 import { useGlobalContext } from "@/context/GlobalProvider";
 import CounselorSignUpForm from "@/components/CounselorSignUpForm";
 import StudentSignUpForm from "@/components/StudentSignUpForm";
@@ -30,6 +30,7 @@ const Signup = () => {
   const { setUser, setIsLoggedIn } = useGlobalContext();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeTab, setActiveTab] = useState("student");
+  const [profileImage, setProfileImage] = useState<any>();
   const { showToast } = useToast();
 
   // Animation values
@@ -100,16 +101,23 @@ const Signup = () => {
     setIsSubmitting(true);
 
     try {
-      const result = await createUser(values);
+      let result: any;
+      if (activeTab === "counselor") {
+        const imageUri = await uploadFile(profileImage.assets[0]);
+        values.avatar = `${imageUri}`;
+        result = await createUser(values);
+      } else {
+        result = await createUser(values);
+      }
       setUser(result);
       setIsLoggedIn(true);
       showToast("Account created successfully", "success");
-      setIsSubmitting(false);
 
       router.replace("/home");
     } catch (error: any) {
       console.log("An error occurred: ", error);
       showToast("An error occurred", "error");
+    } finally {
       setIsSubmitting(false);
     }
   };
@@ -217,6 +225,7 @@ const Signup = () => {
                       <CounselorSignUpForm
                         handleSubmit={handleSubmit}
                         isSubmitting={isSubmitting}
+                        onProfileImageUpload={setProfileImage}
                       />
                     )}
                   </View>

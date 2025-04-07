@@ -4,7 +4,9 @@ import {
   Query,
   databases,
   appwriteConfig,
+  storage,
 } from "@/lib/appwrite/config";
+import { ImagePickerAsset } from "expo-image-picker";
 
 export async function getAccount() {
   try {
@@ -49,7 +51,7 @@ export const createUser = async (data: UserModel) => {
         email,
         username,
         role,
-        ...additionalFields
+        ...additionalFields,
       }
     );
 
@@ -113,6 +115,56 @@ export async function signOut() {
     const session = await account.deleteSession("current");
 
     return session;
+  } catch (error: any) {
+    throw new Error(error);
+  }
+}
+
+export async function uploadFile(file: ImagePickerAsset) {
+  if (!file) return;
+
+  try {
+    const uploadedFile = await storage.createFile(
+      appwriteConfig.storageId,
+      ID.unique(),
+      await prepareNativeFile(file),
+    );
+    const fileUrl = await getFileUrl(uploadedFile.$id);
+    return fileUrl;
+  } catch (error: any) {
+    throw new Error(error);
+  }
+}
+
+const prepareNativeFile = async (
+  asset: ImagePickerAsset
+): Promise<{ name: string; type: string; size: number; uri: string }> => {
+  console.log("[prepareNativeFile] asset ==>", asset);
+  try {
+    const url = new URL(asset.uri);
+
+    // Handle native file preparation
+    return {
+      name: url.pathname.split("/").pop()!,
+      size: asset.fileSize!,
+      type: asset.mimeType!,
+      uri: url.href,
+    } as any;
+  } catch (error) {
+    console.error("[prepareNativeFile] error ==>", error);
+    return Promise.reject(error);
+  }
+};
+
+export async function getFileUrl(fileId: string) {
+  let fileUrl;
+
+  try {
+    fileUrl = storage.getFilePreview(appwriteConfig.storageId, fileId);
+
+    if (!fileUrl) throw Error;
+
+    return fileUrl;
   } catch (error: any) {
     throw new Error(error);
   }
