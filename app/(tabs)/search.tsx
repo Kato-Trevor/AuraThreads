@@ -1,47 +1,98 @@
-import { Text, View, TouchableOpacity, ScrollView } from "react-native";
-import React, { useState } from "react";
+import { Text, View, TouchableOpacity, ScrollView, Alert } from "react-native";
+import React, { useState, useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Feather } from "@expo/vector-icons";
+import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import SearchInput from "@/components/SearchInput";
 import { router } from "expo-router";
+import * as SecureStore from "expo-secure-store";
+
+const RECENT_SEARCHES_KEY = "aura_recent_searches";
+const MAX_RECENT_SEARCHES = 5;
 
 const SearchScreen = () => {
-  const [recentSearches, setRecentSearches] = useState([
-    "photography tips",
-    "travel destinations",
-    "food recipes",
-    "fitness routines",
-  ]);
+  const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const [trendingTopics, setTrendingTopics] = useState([
-    "Summer Fashion",
-    "Remote Work",
-    "Healthy Habits",
-    "DIY Projects",
-    "Book Recommendations",
+    "Self-Care Routines",
+    "Sleep Improvement",
+    "ImposterSyndrome",
+    "Procrastination",
+    "Burnout",
+    "Homesickness",
   ]);
 
-  const clearRecentSearches = () => {
-    setRecentSearches([]);
+  useEffect(() => {
+    loadRecentSearches();
+  }, []);
+
+  const loadRecentSearches = async () => {
+    try {
+      const storedSearches = await SecureStore.getItemAsync(
+        RECENT_SEARCHES_KEY
+      );
+      if (storedSearches) {
+        setRecentSearches(JSON.parse(storedSearches));
+      }
+    } catch (error) {
+      console.error("Error loading recent searches:", error);
+    }
   };
 
-  // Function to handle when a recent search or topic is selected
-  const handleTopicSelect = (topic: string) => {
-    // We can't directly set the input value since your component handles its own state
-    // Instead, we'll pass the topic as initialQuery prop which your component can use
-    // Your component will handle the routing when the search button is pressed
+  const saveRecentSearches = async (searches: string[]) => {
+    try {
+      await SecureStore.setItemAsync(
+        RECENT_SEARCHES_KEY,
+        JSON.stringify(searches)
+      );
+    } catch (error) {
+      console.error("Error saving recent searches:", error);
+    }
+  };
 
+  const addToRecentSearches = async (query: string) => {
+    if (!query.trim()) return;
+
+    const updatedSearches = [query];
+    recentSearches.forEach((search) => {
+      if (
+        search.toLowerCase() !== query.toLowerCase() &&
+        updatedSearches.length < MAX_RECENT_SEARCHES
+      ) {
+        updatedSearches.push(search);
+      }
+    });
+
+    setRecentSearches(updatedSearches);
+    await saveRecentSearches(updatedSearches);
+  };
+
+  const clearRecentSearches = async () => {
+    setRecentSearches([]);
+    await saveRecentSearches([]);
+  };
+
+  const handleTopicSelect = (topic: string) => {
+    addToRecentSearches(topic);
     router.push(`/search-post/${topic}` as any);
+  };
+
+  const handleSearch = (query: string) => {
+    addToRecentSearches(query);
+    router.push(`/search-post/${query}` as any);
   };
 
   return (
     <SafeAreaView className="flex-1 bg-white" style={{ paddingTop: 0 }}>
-      {/* Reduced header padding */}
+      {/* Header */}
       <View className="px-5 pt-1 pb-2">
         <Text className="text-2xl font-bold text-gray-800">Discover</Text>
       </View>
 
+      {/* Search Input */}
       <View className="px-5">
-        <SearchInput placeholderText="Search post by content or by topic" />
+        <SearchInput
+          placeholderText="Search mental health resources..."
+          onSearch={handleSearch}
+        />
       </View>
 
       <ScrollView className="flex-1 px-5">
@@ -76,7 +127,7 @@ const SearchScreen = () => {
         <View className="mb-4">
           <View className="flex-row justify-between items-center mb-2">
             <Text className="text-lg font-semibold text-gray-800">
-              Trending Topics
+              Trending Mental Health Topics
             </Text>
             <TouchableOpacity>
               <Text className="text-pink-500 font-medium">See all</Text>
@@ -96,62 +147,136 @@ const SearchScreen = () => {
           </View>
         </View>
 
-        {/* For You Section */}
+        {/* Mental Health Assessment Section */}
         <View className="mb-4">
           <Text className="text-lg font-semibold text-gray-800 mb-2">
-            For You
+            Your Wellbeing
           </Text>
           <View className="bg-pink-50 rounded-xl overflow-hidden">
             <View className="h-28 bg-pink-300 opacity-70" />
             <View className="p-3">
               <Text className="text-lg font-semibold text-gray-800 mb-1">
-                Explore content based on your interests
+                Take a mental health assessment
               </Text>
               <Text className="text-gray-600 mb-3">
-                Update your preferences to get personalized recommendations
+                Understand your current state of mind with our quick
+                questionnaire
               </Text>
               <TouchableOpacity className="bg-pink-500 py-2 px-4 rounded-lg self-start">
                 <Text className="text-white font-semibold">
-                  Update Preferences
+                  Start Assessment
                 </Text>
               </TouchableOpacity>
             </View>
           </View>
         </View>
 
-        {/* Popular Posts Section */}
+        {/* Popular Resources Section */}
         <View className="mb-6">
           <Text className="text-lg font-semibold text-gray-800 mb-2">
-            Popular Posts
+            Recommended Resources
           </Text>
 
-          {[1, 2].map((item) => (
-            <TouchableOpacity
-              key={item}
-              className="flex-row mb-3 bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100"
-            >
-              <View className="w-24 h-24 bg-pink-200" />
-              <View className="flex-1 p-3">
-                <View className="flex-row mb-1">
-                  <Text className="text-xs font-medium text-pink-500 bg-pink-50 px-2 py-0.5 rounded-full">
-                    {item === 1 ? "Fashion" : "Lifestyle"}
-                  </Text>
-                </View>
-                <Text className="text-base font-medium text-gray-800 mb-1">
-                  {item === 1
-                    ? "Spring Fashion Trends 2025"
-                    : "How to Style Minimalist Outfits"}
-                </Text>
-                <Text className="text-xs text-gray-500">
-                  Published {item === 1 ? "2 days" : "5 days"} ago •{" "}
-                  {item === 1 ? "4" : "3"} min read
+          <TouchableOpacity
+            className="flex-row mb-3 bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100"
+            onPress={() => handleTopicSelect("Breathing Techniques")}
+          >
+            <View className="w-24 h-24 bg-pink-200 items-center justify-center">
+              <MaterialCommunityIcons
+                name="meditation"
+                size={32}
+                color="#EC4899"
+              />
+            </View>
+            <View className="flex-1 p-3">
+              <View className="flex-row mb-1">
+                <Text className="text-xs font-medium text-pink-500 bg-pink-50 px-2 py-0.5 rounded-full">
+                  Anxiety
                 </Text>
               </View>
-            </TouchableOpacity>
-          ))}
+              <Text className="text-base font-medium text-gray-800 mb-1">
+                5 Breathing Exercises for Instant Calm
+              </Text>
+              <Text className="text-xs text-gray-500">
+                Published 2 days ago • 4 min read
+              </Text>
+            </View>
+          </TouchableOpacity>
 
-          <TouchableOpacity className="items-center py-3 border border-pink-100 rounded-lg">
-            <Text className="text-pink-500 font-medium">View More Posts</Text>
+          <TouchableOpacity
+            className="flex-row mb-3 bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100"
+            onPress={() => handleTopicSelect("Sleep Hygiene")}
+          >
+            <View className="w-24 h-24 bg-pink-200 items-center justify-center">
+              <MaterialCommunityIcons name="sleep" size={32} color="#EC4899" />
+            </View>
+            <View className="flex-1 p-3">
+              <View className="flex-row mb-1">
+                <Text className="text-xs font-medium text-pink-500 bg-pink-50 px-2 py-0.5 rounded-full">
+                  Sleep
+                </Text>
+              </View>
+              <Text className="text-base font-medium text-gray-800 mb-1">
+                Improve Your Sleep Quality Tonight
+              </Text>
+              <Text className="text-xs text-gray-500">
+                Published 5 days ago • 3 min read
+              </Text>
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            className="items-center py-3 border border-pink-100 rounded-lg"
+            // onPress={() => router.push("/resources")}
+          >
+            <Text className="text-pink-500 font-medium">
+              View More Resources
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Community Support Section */}
+        <View className="mb-6">
+          <Text className="text-lg font-semibold text-gray-800 mb-2">
+            Community Support
+          </Text>
+
+          <TouchableOpacity
+            className="bg-gradient-to-r from-pink-50 to-purple-50 p-4 rounded-xl mb-3"
+            // onPress={() => router.push("/support-groups")}
+          >
+            <View className="flex-row items-center mb-2">
+              <MaterialCommunityIcons
+                name="account-group"
+                size={24}
+                color="#EC4899"
+              />
+              <Text className="ml-2 text-base font-semibold text-gray-800">
+                Support Groups
+              </Text>
+            </View>
+            <Text className="text-sm text-gray-600">
+              Connect with others who understand what you're going through
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            className="bg-gradient-to-r from-pink-50 to-blue-50 p-4 rounded-xl"
+            // onPress={() => router.push("/therapists")}
+          >
+            <View className="flex-row items-center mb-2">
+              <MaterialCommunityIcons
+                name="hand-heart"
+                size={24}
+                color="#EC4899"
+              />
+              <Text className="ml-2 text-base font-semibold text-gray-800">
+                Find a Therapist
+              </Text>
+            </View>
+            <Text className="text-sm text-gray-600">
+              Professional help is just a tap away
+            </Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
