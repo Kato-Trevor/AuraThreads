@@ -118,7 +118,7 @@ const CreatePost = () => {
         user.$id,
         formatTopic(selectedTopic),
         enableAnonymousID,
-        selectedSong?.id,
+        selectedSong?.id
       );
       showToast("Post created successfully!", "success");
       router.back();
@@ -361,7 +361,7 @@ const CreatePost = () => {
               isKeyboardVisible ? "opacity-0" : "opacity-100"
             }`}
           >
-            {(user.role === 'student' && currentStep === 1) && (
+            {user.role === "student" && currentStep === 1 && (
               <View className="flex-row items-center justify-between bg-gray-50 p-3 rounded-lg shadow-sm">
                 <View className="flex-row items-center">
                   <MaterialCommunityIcons
