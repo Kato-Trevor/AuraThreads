@@ -56,19 +56,25 @@ const Post = ({ post }: { post: PostModel }) => {
           <Avatar username={username} />
           <View className="ml-2.5 flex-1">
             <View className="flex-row items-center justify-between">
-              <Text className="font-semibold text-gray-800 text-sm">
+              <Text className="font-psemibold text-gray-800 text-sm">
                 {post.userId.role === "counselor" ? username : `@${username}`}
               </Text>
-              <Text className="text-xs text-gray-400">{timeAgo}</Text>
+              <Text className="text-xs text-gray-400 font-plight">
+                {timeAgo}
+              </Text>
             </View>
           </View>
         </View>
 
         {/* Content section */}
         <View className="pl-10 pr-2">
-          <Text className="text-gray-800 leading-5">{displayContent}</Text>
+          <Text className="text-gray-800 font-pregular leading-5">
+            {displayContent}
+          </Text>
           {isContentTruncated && (
-            <Text className="text-secondary text-xs mt-1">Tap to see more</Text>
+            <Text className="text-secondary font-light text-xs mt-1">
+              Tap to see more
+            </Text>
           )}
         </View>
 
@@ -77,7 +83,7 @@ const Post = ({ post }: { post: PostModel }) => {
           {post.topic && (
             <View className="mt-2 mb-1">
               <View className="bg-gray-100 self-start rounded-full px-2.5">
-                <Text className="text-xs text-secondary font-medium">
+                <Text className="text-xs text-secondary font-pmedium">
                   #{post.topic}
                 </Text>
               </View>
@@ -92,7 +98,10 @@ const Post = ({ post }: { post: PostModel }) => {
                 color="#1e4635"
                 className="mr-1"
               />
-              <Text className="text-xs text-gray-600 ml-1" numberOfLines={1}>
+              <Text
+                className="text-xs text-gray-600 ml-1 font-pregular"
+                numberOfLines={1}
+              >
                 {song?.title_short} • {song?.artist?.name}
               </Text>
             </View>

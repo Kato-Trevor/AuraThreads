@@ -6,6 +6,7 @@ import {
   Switch,
   Keyboard,
   TouchableWithoutFeedback,
+  ScrollView,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { router } from "expo-router";
@@ -28,6 +29,7 @@ const CreatePost = () => {
   const [enableAIResponse, setEnableAIResponse] = useState(false);
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
   const [characterCount, setCharacterCount] = useState(0);
+  const [isPosting, setIsPosting] = useState(false); // New loading state
 
   const MAX_POST_LENGTH = 1000;
   const CHARACTER_WARNING = 950;
@@ -70,6 +72,7 @@ const CreatePost = () => {
   };
 
   const handlePostCreation = async () => {
+    setIsPosting(true); // Start loading
     try {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       const derivedTopic = await categorizePostTopic(postContent);
@@ -93,13 +96,15 @@ const CreatePost = () => {
     } catch (error: any) {
       console.log("Error creating post:", error);
       showToast("Failed to create post", "error");
+    } finally {
+      setIsPosting(false); // End loading
     }
   };
 
   return (
     <SafeAreaView className="flex-1 bg-white">
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View className="flex-1 p-4">
+        <ScrollView className="flex-1" contentContainerStyle={{ padding: 16 }}>
           {/* Header */}
           <View className="flex-row items-center justify-between mb-4">
             <View className="flex-row items-center">
@@ -109,40 +114,45 @@ const CreatePost = () => {
               >
                 <Ionicons name="close" size={24} color="#333" />
               </TouchableOpacity>
-              <Text className="text-xl font-bold text-gray-800">
+              <Text className="text-xl font-pbold text-gray-800">
                 Create Post
               </Text>
             </View>
             <TouchableOpacity
               onPress={handlePostCreation}
-              disabled={postContent.trim() === ""}
+              disabled={isPosting || postContent.trim() === ""} // Disable when posting or content is empty
               className={`py-3 px-8 rounded-full shadow-md transition-all duration-200 ${
-                postContent.trim() === ""
+                isPosting || postContent.trim() === ""
                   ? "bg-gray-300"
                   : "bg-secondary hover:bg-secondary-dark"
               }`}
-              style={{ opacity: postContent.trim() === "" ? 0.6 : 1 }}
+              style={{
+                opacity: isPosting || postContent.trim() === "" ? 0.6 : 1,
+              }}
             >
               <Text
                 className={`text-base font-psemibold ${
-                  postContent.trim() === "" ? "text-gray-500" : "text-white"
+                  isPosting || postContent.trim() === ""
+                    ? "text-gray-500"
+                    : "text-white"
                 }`}
               >
-                Post
+                {isPosting ? "Posting..." : "Post"}{" "}
+                {/* Show "Posting..." during loading */}
               </Text>
             </TouchableOpacity>
           </View>
 
           {/* Main Content */}
-          <View className="flex-1">
+          <View>
             {/* Post Content Input */}
             <View className="mb-4">
-              <Text className="text-lg font-bold mb-4">Express Yourself</Text>
+              <Text className="text-lg font-pbold mb-4">Express Yourself</Text>
               <View className="flex-row items-start mb-4">
                 <Avatar username={user.username} />
                 <View className="flex-1 ml-3">
                   <TextInput
-                    className="bg-gray-100 p-4 rounded-lg text-base min-h-60 shadow-sm"
+                    className="bg-gray-100 p-4 rounded-lg text-base min-h-60 shadow-md font-pregular"
                     placeholder="What's on your mind?"
                     multiline
                     value={postContent}
@@ -154,9 +164,9 @@ const CreatePost = () => {
                   />
                 </View>
               </View>
-              <View className="flex-row justify-between items-center">
+              <View className="flex-row justify-end">
                 <Text
-                  className={`text-xs ${
+                  className={`text-xs font-pregular ${
                     characterCount > CHARACTER_WARNING
                       ? "text-red-500"
                       : "text-gray-500"
@@ -164,37 +174,57 @@ const CreatePost = () => {
                 >
                   {characterCount}/{MAX_POST_LENGTH}
                 </Text>
-                <View className="flex-row">
-                  <TouchableOpacity
-                    className="p-2 mr-2 rounded-full bg-gray-100"
-                    onPress={() =>
-                      showToast("Image upload coming soon!", "info")
-                    }
-                  >
-                    <Ionicons name="image-outline" size={22} color="#666" />
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    className="p-2 rounded-full bg-gray-100"
-                    onPress={() =>
-                      showToast("Emoji picker coming soon!", "info")
-                    }
-                  >
-                    <MaterialCommunityIcons
-                      name="emoticon-outline"
-                      size={22}
-                      color="#666"
-                    />
-                  </TouchableOpacity>
-                </View>
               </View>
             </View>
 
-            {/* Song Selection */}
+            {/* AI Response Toggle (for students) */}
+            {user.role === "student" && (
+              <View className="mb-4">
+                <View className="flex-row items-center justify-between bg-gray-50 p-3 rounded-lg shadow-md">
+                  <View className="flex-row items-center">
+                    <MaterialCommunityIcons
+                      name="robot-outline"
+                      size={24}
+                      color={enableAIResponse ? "#588b76" : "#666"}
+                    />
+                    <Text
+                      className={`ml-2 mr-2 font-pmedium ${
+                        enableAIResponse ? "text-[#588b76]" : "text-gray-700"
+                      }`}
+                    >
+                      AuraThreads AI Response
+                    </Text>
+                    <TouchableOpacity
+                      onPress={() =>
+                        showToast(
+                          "AI will generate a thoughtful response to your post",
+                          "info"
+                        )
+                      }
+                    >
+                      <Ionicons
+                        name="information-circle-outline"
+                        size={20}
+                        color="#666"
+                      />
+                    </TouchableOpacity>
+                  </View>
+                  <Switch
+                    value={enableAIResponse}
+                    onValueChange={toggleAIResponse}
+                    trackColor={{ false: "#ccc", true: "#588b76" }}
+                    thumbColor={enableAIResponse ? "#fff" : "#f4f3f4"}
+                    style={{ transform: [{ scaleX: 1.2 }, { scaleY: 1.2 }] }}
+                  />
+                </View>
+              </View>
+            )}
+
             <View className="mb-4">
-              <Text className="text-lg font-bold mb-2">
+              <Text className="text-lg font-pbold mb-2">
                 Attach Music (Optional)
               </Text>
-              <Text className="text-gray-500 mb-4">
+              <Text className="text-gray-500 mb-4 font-pregular">
                 Add a song that matches your mood
               </Text>
               <SongsList
@@ -202,49 +232,8 @@ const CreatePost = () => {
                 onSongSelect={setSelectedSong}
               />
             </View>
-
-            {/* AI Response Toggle */}
-            {user.role === "student" && (
-              <View className="flex-row items-center justify-between bg-gray-50 p-3 rounded-lg shadow-sm">
-                <View className="flex-row items-center">
-                  <MaterialCommunityIcons
-                    name="robot-outline"
-                    size={24}
-                    color={enableAIResponse ? "#588b76" : "#666"}
-                  />
-                  <Text
-                    className={`ml-2 mr-2 font-medium ${
-                      enableAIResponse ? "text-[#588b76]" : "text-gray-700"
-                    }`}
-                  >
-                    AuraThreads AI Response
-                  </Text>
-                  <TouchableOpacity
-                    onPress={() =>
-                      showToast(
-                        "AI will generate a thoughtful response to your post",
-                        "info"
-                      )
-                    }
-                  >
-                    <Ionicons
-                      name="information-circle-outline"
-                      size={20}
-                      color="#666"
-                    />
-                  </TouchableOpacity>
-                </View>
-                <Switch
-                  value={enableAIResponse}
-                  onValueChange={toggleAIResponse}
-                  trackColor={{ false: "#ccc", true: "#588b76" }}
-                  thumbColor={enableAIResponse ? "#fff" : "#f4f3f4"}
-                  style={{ transform: [{ scaleX: 1.2 }, { scaleY: 1.2 }] }}
-                />
-              </View>
-            )}
           </View>
-        </View>
+        </ScrollView>
       </TouchableWithoutFeedback>
     </SafeAreaView>
   );

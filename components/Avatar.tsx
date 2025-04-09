@@ -41,7 +41,7 @@ const Avatar = ({
           resizeMode="cover"
         />
       ) : (
-        <Text className={`text-white font-bold ${textSize}`}>{initials}</Text>
+        <Text className={`text-white font-pbold ${textSize}`}>{initials}</Text>
       )}
     </View>
   );

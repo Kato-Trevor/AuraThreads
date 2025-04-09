@@ -174,35 +174,37 @@ export default function Thread() {
                     params: { id: `${post.userId.$id}` },
                   }}
                 >
-                  <Text className="font-semibold text-secondary-darkest">
+                  <Text className="font-psemibold text-secondary-darkest">
                     {username}
                   </Text>
-                  <Text className="text-xs text-secondary-dark opacity-70">
+                  <Text className="font-pregular text-xs text-secondary-dark opacity-70">
                     {post.userId.role}
                   </Text>
                 </Link>
               ) : (
                 <View>
-                  <Text className="font-semibold text-secondary-darkest">
+                  <Text className="font-psemibold text-secondary-darkest">
                     @{username}
                   </Text>
-                  <Text className="text-xs text-secondary-dark opacity-70">
+                  <Text className="text-xs font-pregular text-secondary-dark opacity-70">
                     {post.userId.role}
                   </Text>
                 </View>
               )}
             </View>
-            <Text className="text-xs text-secondary/60 mr-2">{timeAgo}</Text>
+            <Text className="font-plight text-xs text-secondary/60 mr-2">
+              {timeAgo}
+            </Text>
             <TouchableOpacity className="p-1.5 bg-secondary/5 rounded-full">
               <Feather name="more-horizontal" size={18} color="#1e4635" />
             </TouchableOpacity>
           </View>
-          <Text className="text-base text-secondary-darkest leading-6 mb-3">
+          <Text className="font-pregular text-base text-secondary-darkest leading-6 mb-3">
             {post.content}
           </Text>
           {post.topic && (
             <TouchableOpacity className="my-2">
-              <Text className="text-secondary font-medium text-sm">
+              <Text className="font-pregular text-secondary font-medium text-sm">
                 #{post.topic}
               </Text>
             </TouchableOpacity>
@@ -221,12 +223,15 @@ export default function Thread() {
               </View>
               <View className="flex-1">
                 <Text
-                  className="font-medium text-secondary-darkest truncate"
+                  className="font-pmedium text-secondary-darkest truncate"
                   numberOfLines={1}
                 >
                   {song?.title_short}
                 </Text>
-                <Text className="text-xs text-secondary-dark" numberOfLines={1}>
+                <Text
+                  className="text-xs font-plight text-secondary-dark"
+                  numberOfLines={1}
+                >
                   {song?.artist?.name}
                 </Text>
               </View>
@@ -242,12 +247,12 @@ export default function Thread() {
         </View>
       )}
       <View className="flex-row justify-between items-center px-4 py-3">
-        <Text className="font-semibold text-secondary-dark">
+        <Text className="font-psemibold text-secondary-dark">
           {post?.responses?.length || 0} Responses
         </Text>
         {post?.responses?.length > 0 && (
           <TouchableOpacity className="bg-secondary-200 py-1 px-3 rounded-full">
-            <Text className="text-secondary-darkest text-xs font-medium">
+            <Text className="font-plight text-secondary-darkest text-xs font-medium">
               Sort by: Recent
             </Text>
           </TouchableOpacity>
@@ -270,7 +275,7 @@ export default function Thread() {
           >
             <Ionicons name="arrow-back" size={22} color="#1e4635" />
           </TouchableOpacity>
-          <Text className="text-lg font-semibold text-secondary-darkest">
+          <Text className="text-lg font-psemibold text-secondary-darkest">
             Thread
           </Text>
           <View style={{ width: 30 }} />
@@ -287,7 +292,7 @@ export default function Thread() {
               <View className="bg-secondary-100/30 p-4 rounded-full">
                 <Feather name="message-circle" size={36} color="#1e4635" />
               </View>
-              <Text className="mt-4 text-secondary-dark text-center">
+              <Text className="font-pregular mt-4 text-secondary-dark text-center">
                 No responses yet. Be the first to respond!
               </Text>
             </View>
@@ -302,7 +307,7 @@ export default function Thread() {
         <View className="flex-row p-3 border-t border-secondary/10 bg-white items-center">
           <Avatar username={user.username} imageUrl={user.avatar} />
           <TextInput
-            className="flex-1 bg-secondary-100/20 rounded-full px-4 py-2 text-base max-h-24 ml-2 text-secondary-darkest"
+            className="font-pregular flex-1 bg-secondary-100/20 rounded-full px-4 py-2 text-base max-h-24 ml-2 text-secondary-darkest"
             placeholder="Add your response..."
             placeholderTextColor="#78a593"
             value={response}

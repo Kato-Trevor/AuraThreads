@@ -159,8 +159,8 @@ const SongItem: React.FC<SongItemProps> = ({
       }}
       className={`flex-row items-center p-4 rounded-xl mb-3 ${
         isSelected
-          ? "bg-pink-200 shadow-sm"
-          : "bg-pink-50 border border-pink-50"
+          ? "bg-secondary-100/60 shadow-sm"
+          : "bg-secondary-200/40 border border-secondary-200/10"
       }`}
     >
       <TouchableOpacity
@@ -185,21 +185,23 @@ const SongItem: React.FC<SongItemProps> = ({
         <View className="flex-1 justify-center">
           <Text
             numberOfLines={1}
-            className="text-base font-pbold text-pink-900"
+            className="text-base font-pbold text-secondary-darkest"
           >
             {song.title_short}
           </Text>
-          <Text numberOfLines={1} className="text-sm text-pink-800">
+          <Text numberOfLines={1} className="text-sm text-secondary-dark">
             {song.artist.name}
           </Text>
 
           <View className="flex-row items-center mt-1">
             {song.explicit_lyrics && (
-              <View className="mr-2 px-1 bg-pink-300 rounded">
-                <Text className="text-xs text-pink-700 font-pmedium">E</Text>
+              <View className="mr-2 px-1 bg-secondary-200 rounded">
+                <Text className="text-xs text-secondary-dark font-pmedium">
+                  E
+                </Text>
               </View>
             )}
-            <Text className="text-xs text-pink-500">
+            <Text className="text-xs text-secondary">
               {song.album.title.length > 18
                 ? song.album.title.substring(0, 15) + "..."
                 : song.album.title}{" "}
@@ -223,9 +225,9 @@ const SongItem: React.FC<SongItemProps> = ({
             }}
             className={`p-2 rounded-full ${
               isPlaying
-                ? "bg-pink-100"
+                ? "bg-secondary-200/50"
                 : isLoading
-                ? "bg-blue-50"
+                ? "bg-green-50"
                 : "bg-gray-100"
             }`}
             activeOpacity={0.7}
@@ -234,22 +236,22 @@ const SongItem: React.FC<SongItemProps> = ({
               <View className="flex-row items-center justify-center w-6 h-5">
                 <Animated.View
                   style={{ opacity: dot1Opacity }}
-                  className="w-1.5 h-1.5 rounded-full bg-pink-500 mx-0.5"
+                  className="w-1.5 h-1.5 rounded-full bg-secondary mx-0.5"
                 />
                 <Animated.View
                   style={{ opacity: dot2Opacity }}
-                  className="w-1.5 h-1.5 rounded-full bg-pink-500 mx-0.5"
+                  className="w-1.5 h-1.5 rounded-full bg-secondary mx-0.5"
                 />
                 <Animated.View
                   style={{ opacity: dot3Opacity }}
-                  className="w-1.5 h-1.5 rounded-full bg-pink-500 mx-0.5"
+                  className="w-1.5 h-1.5 rounded-full bg-secondary mx-0.5"
                 />
               </View>
             ) : (
               <Ionicons
                 name={isPlaying ? "pause" : "play"}
                 size={22}
-                color={"#D1006B"}
+                color={"#1e4635"}
               />
             )}
           </TouchableOpacity>

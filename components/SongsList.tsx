@@ -132,7 +132,7 @@ const SongsList: React.FC<SongListProps> = ({ selectedSong, onSongSelect }) => {
         />
         <TextInput
           style={{
-            fontSize: 16,
+            fontSize: 14,
             color: "gray",
             paddingVertical: 0,
             lineHeight: 20,
@@ -142,9 +142,12 @@ const SongsList: React.FC<SongListProps> = ({ selectedSong, onSongSelect }) => {
           placeholderTextColor="gray"
           value={searchQuery}
           onChangeText={setSearchQuery}
+          className="font-pregular"
         />
       </View>
-      {error && <Text className="text-red-500 text-center">{error}</Text>}
+      {error && (
+        <Text className="text-red-500 text-center font-pregular">{error}</Text>
+      )}
       <FlatList
         data={songs}
         renderItem={renderSong}
