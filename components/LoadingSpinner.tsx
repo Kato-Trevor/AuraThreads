@@ -90,13 +90,13 @@ const LoadingSpinner = ({ visible }: { visible: boolean }) => {
             style={{
               width: 30,
               height: 30,
-              backgroundColor: "#F032DA",
+              backgroundColor: "#588b76",
               borderRadius: 15,
               transform: [
                 { scale: scaleBall1 },
                 { translateX: translateXBall1 },
               ],
-              shadowColor: "#B620A7",
+              shadowColor: "#295f48",
               shadowOpacity: 0.5,
               shadowRadius: 10,
               elevation: 5,
@@ -108,13 +108,13 @@ const LoadingSpinner = ({ visible }: { visible: boolean }) => {
             style={{
               width: 30,
               height: 30,
-              backgroundColor: "#F032DA",
+              backgroundColor: "#588b76",
               borderRadius: 15,
               transform: [
                 { scale: scaleBall2 },
                 { translateX: translateXBall2 },
               ],
-              shadowColor: "#B620A7",
+              shadowColor: "#295f48",
               shadowOpacity: 0.5,
               shadowRadius: 10,
               elevation: 5,

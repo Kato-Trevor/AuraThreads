@@ -182,23 +182,29 @@ const Response = ({ response }: { response: ResponseModel }) => {
                   params: { id: `${response.userId.$id}` },
                 }}
               >
-                <Text className="text-gray-500">{username}</Text>
+                <Text className="font-pregular text-gray-500">{username}</Text>
               </Link>
             ) : (
-              <Text className="text-gray-500">@{username}</Text>
+              <Text className="font-pregular text-gray-500">@{username}</Text>
             )}
-            <Text className="text-xs text-gray-500 text-right">{timeAgo}</Text>
+            <Text className="font-plight text-xs text-gray-500 text-right">
+              {timeAgo}
+            </Text>
           </View>
-          <Text className="text-lg text-gray-800 mt-1">{response.content}</Text>
+          <Text className="text-lg text-gray-800 mt-1 font-pregular">
+            {response.content}
+          </Text>
           <View className="flex-row justify-start mt-2 space-x-4">
             <TouchableOpacity className="mr-4" onPress={handleLike}>
               <View className="p-1 flex-row items-center gap-2">
                 <Ionicons
                   name={liked ? "thumbs-up" : "thumbs-up-outline"}
                   size={15}
-                  color={liked ? "#F032DA" : "gray"}
+                  color={liked ? "#588b76" : "gray"}
                 />
-                <Text>{likeCount ? likeCount : null}</Text>
+                <Text className="font-pregular">
+                  {likeCount ? likeCount : null}
+                </Text>
               </View>
             </TouchableOpacity>
             <TouchableOpacity onPress={handleDislike}>
@@ -206,9 +212,11 @@ const Response = ({ response }: { response: ResponseModel }) => {
                 <Ionicons
                   name={disliked ? "thumbs-down" : "thumbs-down-outline"}
                   size={15}
-                  color={disliked ? "#F032DA" : "gray"}
+                  color={disliked ? "#588b76" : "gray"}
                 />
-                <Text>{dislikeCount ? dislikeCount : null}</Text>
+                <Text className="font-pregular">
+                  {dislikeCount ? dislikeCount : null}
+                </Text>
               </View>
             </TouchableOpacity>
           </View>

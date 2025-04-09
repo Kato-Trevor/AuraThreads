@@ -84,6 +84,7 @@ export async function addAIResponseToDB(
     );
     return newResponse;
   } catch (error: any) {
+    console.error("Error adding AI response to DB:", error);
     throw new Error(error.message || error);
   }
 }

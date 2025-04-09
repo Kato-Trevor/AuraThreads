@@ -1,11 +1,9 @@
 import { Link } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { View, Text, TouchableOpacity, Dimensions } from "react-native";
+import { View, Text } from "react-native";
 import Avatar from "./Avatar";
 import { formatDistanceToNow } from "date-fns";
-import { Ionicons } from "@expo/vector-icons";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { Feather } from "@expo/vector-icons";
+import { FontAwesome } from "@expo/vector-icons";
 import getSongById from "@/services/get-song";
 import { generateAnonymousUsername } from "@/lib/utils/generateAnonymousId";
 
@@ -15,9 +13,8 @@ const Post = ({ post }: { post: PostModel }) => {
   });
 
   const [song, setSong] = useState<any>();
-  const [liked, setLiked] = useState(false);
-  const [likeCount, setLikeCount] = useState(Math.floor(Math.random() * 20));
   const [username, setUsername] = useState("");
+  const MAX_CONTENT_LENGTH = 300;
 
   useEffect(() => {
     if (post.userId.role === "student") {
@@ -41,10 +38,10 @@ const Post = ({ post }: { post: PostModel }) => {
     fetchSong();
   }, [post.songId]);
 
-  const handleLike = () => {
-    setLiked(!liked);
-    setLikeCount(liked ? likeCount - 1 : likeCount + 1);
-  };
+  const isContentTruncated = post.content.length > MAX_CONTENT_LENGTH;
+  const displayContent = isContentTruncated
+    ? `${post.content.substring(0, MAX_CONTENT_LENGTH)}...`
+    : post.content;
 
   return (
     <Link
@@ -53,92 +50,62 @@ const Post = ({ post }: { post: PostModel }) => {
         params: { id: `${post.$id}` },
       }}
     >
-      <View className="w-full bg-white border-b border-gray-200 px-4 py-3">
+      <View className="w-full bg-white border-b border-gray-100 px-4 py-3">
         {/* Header section */}
-        <View className="flex-row justify-between items-center mb-2">
-          <View className="flex-row items-center">
-            <Avatar username={username} />
-            <View className="ml-2">
-              <Text className="font-bold text-gray-800">
+        <View className="flex-row items-center mb-2">
+          <Avatar username={username} />
+          <View className="ml-2.5 flex-1">
+            <View className="flex-row items-center justify-between">
+              <Text className="font-psemibold text-gray-800 text-sm">
                 {post.userId.role === "counselor" ? username : `@${username}`}
               </Text>
-              <Text className="text-xs text-gray-500">{timeAgo}</Text>
+              <Text className="text-xs text-gray-400 font-plight">
+                {timeAgo}
+              </Text>
             </View>
           </View>
-          <TouchableOpacity>
-            <Feather name="more-horizontal" size={20} color="#666" />
-          </TouchableOpacity>
         </View>
 
         {/* Content section */}
-        <View className="mb-2">
-          <Text className="text-base text-gray-800 mb-2">{post.content}</Text>
-
-          {/* Topic tag */}
-          <View className="flex-row flex-wrap mt-1">
-            <TouchableOpacity className="bg-pink-100 px-3 py-1 rounded-full mr-2 mb-1">
-              <Text className="text-sm text-pink-500 font-medium">
-                #{post.topic}
-              </Text>
-            </TouchableOpacity>
-          </View>
+        <View className="pl-10 pr-2">
+          <Text className="text-gray-800 font-pregular leading-5">
+            {displayContent}
+          </Text>
+          {isContentTruncated && (
+            <Text className="text-secondary font-light text-xs mt-1">
+              Tap to see more
+            </Text>
+          )}
         </View>
 
-        {/* Song section (if applicable) */}
-        {post.songId && song && (
-          <TouchableOpacity className="flex-row items-center p-2 bg-gray-50 rounded-lg mb-2">
-            <View className="w-10 h-10 bg-pink-200 rounded-md mr-3 items-center justify-center">
-              <FontAwesome name="music" size={16} color="#db2777" />
+        {/* Bottom row with topic and song */}
+        <View className="flex-row items-center justify-between mt-2 pl-10">
+          {post.topic && (
+            <View className="mt-2 mb-1">
+              <View className="bg-gray-100 self-start rounded-full px-2.5">
+                <Text className="text-xs text-secondary font-pmedium">
+                  #{post.topic}
+                </Text>
+              </View>
             </View>
-            <View className="flex-1">
-              <Text className="text-sm font-medium text-gray-800">
-                {song?.title_short}
-              </Text>
-              <Text className="text-xs text-gray-500">
-                {song?.artist?.name}
+          )}
+
+          {post.songId && song && (
+            <View className="flex-row items-center bg-gray-50 rounded-md px-2 py-1">
+              <FontAwesome
+                name="music"
+                size={10}
+                color="#1e4635"
+                className="mr-1"
+              />
+              <Text
+                className="text-xs text-gray-600 ml-1 font-pregular"
+                numberOfLines={1}
+              >
+                {song?.title_short} • {song?.artist?.name}
               </Text>
             </View>
-            <TouchableOpacity className="p-2">
-              <Feather name="play-circle" size={22} color="#db2777" />
-            </TouchableOpacity>
-          </TouchableOpacity>
-        )}
-
-        {/* Mock image (if applicable) - uncomment if needed */}
-        {/* {Math.random() > 0.5 && (
-          <View className="h-48 bg-pink-100 rounded-lg mb-2 overflow-hidden w-full">
-            <View className="h-full w-full bg-pink-200 opacity-80" />
-          </View>
-        )} */}
-
-        {/* Interaction section */}
-        <View className="flex-row justify-between pt-2">
-          <TouchableOpacity
-            className="flex-row items-center p-2"
-            onPress={handleLike}
-          >
-            <Ionicons
-              name={liked ? "heart" : "heart-outline"}
-              size={20}
-              color={liked ? "#db2777" : "gray"}
-            />
-            <Text className="text-sm text-gray-600 ml-1">{likeCount}</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity className="flex-row items-center p-2">
-            <Ionicons name="chatbubble-outline" size={20} color="gray" />
-            <Text className="text-sm text-gray-600 ml-1">
-              {post.responses?.length || 0}
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity className="flex-row items-center p-2">
-            <Feather name="share" size={20} color="gray" />
-          </TouchableOpacity>
-
-          <TouchableOpacity className="flex-row items-center p-2">
-            <Feather name="bookmark" size={20} color="gray" />
-          </TouchableOpacity>
+          )}
         </View>
       </View>
     </Link>
