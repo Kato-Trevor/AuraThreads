@@ -84,7 +84,7 @@ const SearchScreen = () => {
     <SafeAreaView className="flex-1 bg-white" style={{ paddingTop: 0 }}>
       {/* Header */}
       <View className="px-5 pt-1 pb-2">
-        <Text className="text-2xl font-bold text-gray-800">Discover</Text>
+        <Text className="text-2xl font-pbold text-gray-800">Discover</Text>
       </View>
 
       {/* Search Input */}
@@ -100,11 +100,11 @@ const SearchScreen = () => {
         {recentSearches.length > 0 && (
           <View className="mb-4">
             <View className="flex-row justify-between items-center mb-2">
-              <Text className="text-lg font-semibold text-gray-800">
+              <Text className="text-lg font-psemibold text-gray-800">
                 Recent Searches
               </Text>
               <TouchableOpacity onPress={clearRecentSearches}>
-                <Text className="text-pink-500 font-medium">Clear all</Text>
+                <Text className="text-secondary font-pmedium">Clear all</Text>
               </TouchableOpacity>
             </View>
 
@@ -116,7 +116,7 @@ const SearchScreen = () => {
                   onPress={() => handleTopicSelect(item)}
                 >
                   <Feather name="clock" size={16} color="#666" />
-                  <Text className="ml-3 text-gray-700">{item}</Text>
+                  <Text className="font-plight ml-3 text-gray-700">{item}</Text>
                 </TouchableOpacity>
               ))}
             </View>
@@ -126,11 +126,11 @@ const SearchScreen = () => {
         {/* Trending Topics Section */}
         <View className="mb-4">
           <View className="flex-row justify-between items-center mb-2">
-            <Text className="text-lg font-semibold text-gray-800">
+            <Text className="text-lg font-psemibold text-gray-800">
               Trending Mental Health Topics
             </Text>
             <TouchableOpacity>
-              <Text className="text-pink-500 font-medium">See all</Text>
+              <Text className="text-secondary font-pmedium">See all</Text>
             </TouchableOpacity>
           </View>
 
@@ -138,10 +138,10 @@ const SearchScreen = () => {
             {trendingTopics.map((topic, index) => (
               <TouchableOpacity
                 key={index}
-                className="bg-pink-100 px-4 py-2 rounded-full mr-2 mb-2"
+                className="bg-secondary-200/50 px-4 py-2 rounded-full mr-2 mb-2"
                 onPress={() => handleTopicSelect(topic)}
               >
-                <Text className="text-pink-500 font-medium">{topic}</Text>
+                <Text className="text-secondary font-pmedium">{topic}</Text>
               </TouchableOpacity>
             ))}
           </View>
@@ -149,21 +149,21 @@ const SearchScreen = () => {
 
         {/* Mental Health Assessment Section */}
         <View className="mb-4">
-          <Text className="text-lg font-semibold text-gray-800 mb-2">
+          <Text className="text-lg font-psemibold text-gray-800 mb-2">
             Your Wellbeing
           </Text>
-          <View className="bg-pink-50 rounded-xl overflow-hidden">
-            <View className="h-28 bg-pink-300 opacity-70" />
+          <View className="bg-secondary-200/40 rounded-xl overflow-hidden">
+            <View className="h-28 bg-secondary-200 opacity-70" />
             <View className="p-3">
-              <Text className="text-lg font-semibold text-gray-800 mb-1">
+              <Text className="text-lg font-psemibold text-gray-800 mb-1">
                 Take a mental health assessment
               </Text>
-              <Text className="text-gray-600 mb-3">
+              <Text className="font-pregular text-gray-600 mb-3">
                 Understand your current state of mind with our quick
                 questionnaire
               </Text>
-              <TouchableOpacity className="bg-pink-500 py-2 px-4 rounded-lg self-start">
-                <Text className="text-white font-semibold">
+              <TouchableOpacity className="bg-secondary py-2 px-4 rounded-lg self-start">
+                <Text className="text-white font-psemibold">
                   Start Assessment
                 </Text>
               </TouchableOpacity>
@@ -173,7 +173,7 @@ const SearchScreen = () => {
 
         {/* Popular Resources Section */}
         <View className="mb-6">
-          <Text className="text-lg font-semibold text-gray-800 mb-2">
+          <Text className="text-lg font-psemibold text-gray-800 mb-2">
             Recommended Resources
           </Text>
 
@@ -181,23 +181,23 @@ const SearchScreen = () => {
             className="flex-row mb-3 bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100"
             onPress={() => handleTopicSelect("Breathing Techniques")}
           >
-            <View className="w-24 h-24 bg-pink-200 items-center justify-center">
+            <View className="w-24 h-24 bg-secondary-200 items-center justify-center">
               <MaterialCommunityIcons
                 name="meditation"
                 size={32}
-                color="#EC4899"
+                color="#295f48"
               />
             </View>
             <View className="flex-1 p-3">
               <View className="flex-row mb-1">
-                <Text className="text-xs font-medium text-pink-500 bg-pink-50 px-2 py-0.5 rounded-full">
+                <Text className="text-xs font-pmedium text-secondary bg-secondary-200/50 px-2 py-0.5 rounded-full">
                   Anxiety
                 </Text>
               </View>
               <Text className="text-base font-medium text-gray-800 mb-1">
                 5 Breathing Exercises for Instant Calm
               </Text>
-              <Text className="text-xs text-gray-500">
+              <Text className="font-pregular text-xs text-gray-500">
                 Published 2 days ago • 4 min read
               </Text>
             </View>
@@ -207,29 +207,29 @@ const SearchScreen = () => {
             className="flex-row mb-3 bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100"
             onPress={() => handleTopicSelect("Sleep Hygiene")}
           >
-            <View className="w-24 h-24 bg-pink-200 items-center justify-center">
-              <MaterialCommunityIcons name="sleep" size={32} color="#EC4899" />
+            <View className="w-24 h-24 bg-secondary-200 items-center justify-center">
+              <MaterialCommunityIcons name="sleep" size={32} color="#295f48" />
             </View>
             <View className="flex-1 p-3">
               <View className="flex-row mb-1">
-                <Text className="text-xs font-medium text-pink-500 bg-pink-50 px-2 py-0.5 rounded-full">
+                <Text className="text-xs font-pmedium text-secondary bg-secondary-200/50 px-2 py-0.5 rounded-full">
                   Sleep
                 </Text>
               </View>
-              <Text className="text-base font-medium text-gray-800 mb-1">
+              <Text className="text-base font-pmedium text-gray-800 mb-1">
                 Improve Your Sleep Quality Tonight
               </Text>
-              <Text className="text-xs text-gray-500">
+              <Text className="font-pregular text-xs text-gray-500">
                 Published 5 days ago • 3 min read
               </Text>
             </View>
           </TouchableOpacity>
 
           <TouchableOpacity
-            className="items-center py-3 border border-pink-100 rounded-lg"
+            className="items-center py-3 border border-secondary-200 rounded-lg"
             // onPress={() => router.push("/resources")}
           >
-            <Text className="text-pink-500 font-medium">
+            <Text className="text-secondary font-pmedium">
               View More Resources
             </Text>
           </TouchableOpacity>
@@ -237,7 +237,7 @@ const SearchScreen = () => {
 
         {/* Community Support Section */}
         <View className="mb-6">
-          <Text className="text-lg font-semibold text-gray-800 mb-2">
+          <Text className="text-lg font-psemibold text-gray-800 mb-2">
             Community Support
           </Text>
 
@@ -249,13 +249,13 @@ const SearchScreen = () => {
               <MaterialCommunityIcons
                 name="account-group"
                 size={24}
-                color="#EC4899"
+                color="#295f48"
               />
-              <Text className="ml-2 text-base font-semibold text-gray-800">
+              <Text className="ml-2 text-base font-psemibold text-gray-800">
                 Support Groups
               </Text>
             </View>
-            <Text className="text-sm text-gray-600">
+            <Text className="font-pregular text-sm text-gray-600">
               Connect with others who understand what you're going through
             </Text>
           </TouchableOpacity>
@@ -268,13 +268,13 @@ const SearchScreen = () => {
               <MaterialCommunityIcons
                 name="hand-heart"
                 size={24}
-                color="#EC4899"
+                color="#295f48"
               />
-              <Text className="ml-2 text-base font-semibold text-gray-800">
+              <Text className="ml-2 text-base font-psemibold text-gray-800">
                 Find a Therapist
               </Text>
             </View>
-            <Text className="text-sm text-gray-600">
+            <Text className="font-pregular text-sm text-gray-600">
               Professional help is just a tap away
             </Text>
           </TouchableOpacity>
