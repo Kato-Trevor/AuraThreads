@@ -75,8 +75,8 @@ const Home = () => {
           <RefreshControl
             refreshing={isRefreshing}
             onRefresh={handleRefresh}
-            colors={["#F032DA"]}
-            tintColor="#F032DA"
+            colors={["#588b76"]}
+            tintColor="#588b76"
           />
         }
         contentContainerStyle={{ paddingBottom: 20 }}
