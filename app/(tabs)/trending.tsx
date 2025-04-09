@@ -6,9 +6,7 @@ import MoodAnalytics from "@/components/MoodAnalytics";
 
 const PopularTab = () => <WordCloud />;
 
-const ForYouTab = () => (
-  <MoodAnalytics />
-);
+const ForYouTab = () => <MoodAnalytics />;
 
 const Trending = () => {
   const [index, setIndex] = useState(0);

@@ -4,6 +4,7 @@ export async function addPostToDB(
   postContent: string,
   userId: string,
   topic: string,
+  isAnonymous: boolean,
   songId?: number
 ) {
   try {
@@ -16,6 +17,7 @@ export async function addPostToDB(
         userId,
         topic,
         songId,
+        isAnonymous,
       }
     );
 
@@ -53,6 +55,20 @@ export async function getPostsByTopic(topic: string) {
   }
 }
 
+export async function getPostsByUserID(userId: string) {
+  try {
+    const posts = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.postCollectionId,
+      [Query.equal("userId", userId)]
+    );
+
+    return posts.documents;
+  } catch (error: any) {
+    throw new Error(error);
+  }
+}
+
 export async function getPostFromDB(postId: string) {
   try {
     const post = await databases.getDocument(
@@ -70,7 +86,8 @@ export async function getPostFromDB(postId: string) {
 export async function addResponseToDB(
   responseContent: string,
   postId: string,
-  userId: string
+  userId: string,
+  isAnonymous: boolean
 ) {
   try {
     const newResponse = await databases.createDocument(
@@ -81,6 +98,7 @@ export async function addResponseToDB(
         content: responseContent,
         postId,
         userId,
+        isAnonymous,
       }
     );
 
@@ -109,11 +127,18 @@ export const searchPosts = async (query: any, userId: string) => {
     const posts = await databases.listDocuments(
       appwriteConfig.databaseId,
       appwriteConfig.postCollectionId,
-      [Query.search("content", query), Query.notEqual("userId", userId)]
+      [
+        Query.or([
+          Query.search("content", query),
+          Query.search("topic", query),
+        ]),
+        Query.notEqual("userId", userId),
+      ]
     );
 
     return posts.documents;
   } catch (error: any) {
+    console.error("Error searching posts:", error);
     throw new Error(error.message);
   }
 };

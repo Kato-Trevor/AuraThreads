@@ -16,6 +16,7 @@ const SongsList: React.FC<SongListProps> = ({ selectedSong, onSongSelect }) => {
   const [error, setError] = useState<string | null>(null);
   const [currentSound, setCurrentSound] = useState<Audio.Sound | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     // Request audio permissions and set audio mode
@@ -66,21 +67,22 @@ const SongsList: React.FC<SongListProps> = ({ selectedSong, onSongSelect }) => {
     }
   };
 
-  const handleSongSelect = useCallback((song: Song | null) => {
-    stopCurrentSound();
-    onSongSelect(song);
-  }, [onSongSelect]);
+  const handleSongSelect = useCallback(
+    (song: Song | null) => {
+      stopCurrentSound();
+      onSongSelect(song);
+    },
+    [onSongSelect]
+  );
 
-  // Play sound function
   const playSound = async (song: Song) => {
+    setIsLoading(true);
     try {
-      // Create and play new sound
       const { sound } = await Audio.Sound.createAsync(
         { uri: song.preview },
         { shouldPlay: true }
       );
 
-      // Set up playback status listener
       sound.setOnPlaybackStatusUpdate(async (status) => {
         if (status.isLoaded && status.didJustFinish) {
           await sound.unloadAsync();
@@ -94,10 +96,11 @@ const SongsList: React.FC<SongListProps> = ({ selectedSong, onSongSelect }) => {
     } catch (error) {
       console.error("Error playing sound:", error);
       setError("Could not play the song");
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // Cleanup sound on component unmount
   useEffect(() => {
     return () => {
       if (currentSound) {
@@ -106,13 +109,13 @@ const SongsList: React.FC<SongListProps> = ({ selectedSong, onSongSelect }) => {
     };
   }, [currentSound]);
 
-  // Render song item
   const renderSong = ({ item }: { item: Song }) => (
     <SongItem
       song={item}
       onSelect={handleSongSelect}
       onPlay={playSound}
       onPause={stopCurrentSound}
+      isLoading={isLoading}
       isSelected={item.id === selectedSong?.id}
       isPlaying={item.id === selectedSong?.id && isPlaying}
     />
@@ -120,11 +123,23 @@ const SongsList: React.FC<SongListProps> = ({ selectedSong, onSongSelect }) => {
 
   return (
     <>
-      <View className="flex-row items-center p-2 my-2 bg-[#E7ECF0] rounded-lg">
-        <Ionicons name="search" size={24} color="gray" className="mr-2" />
+      <View className="flex-row items-center p-3 my-3 bg-white rounded-full shadow-sm border border-gray-300">
+        <Ionicons
+          name="search"
+          size={20}
+          color="gray"
+          style={{ marginRight: 8 }}
+        />
         <TextInput
-          className="flex-1 text-lg"
+          style={{
+            fontSize: 16,
+            color: "gray",
+            paddingVertical: 0,
+            lineHeight: 20,
+            textAlignVertical: "center",
+          }}
           placeholder="What song resonates with you?"
+          placeholderTextColor="gray"
           value={searchQuery}
           onChangeText={setSearchQuery}
         />

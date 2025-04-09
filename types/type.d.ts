@@ -3,16 +3,16 @@ declare module 'react-tagcloud/rn';
 declare interface UserModel {
   $id?: string;
   avatar?: string;
-  anonymousId? : string;
+  anonymousID? : string;
   email: string;
   password: string;
-  username: string;
+  username?: string;
   gender?: string;
-  lastName?: string;
-  firstName?: string;
+  surname?: string;
+  givenNames?: string;
   phoneNumber?: string;
   identificationNumber?: string;
-  affiliation?: string;
+  biography?: string;
   role: string;
 }
 
@@ -25,6 +25,7 @@ declare interface PostModel {
   topic: string;
   songId?: number;
   responses?: ResponseModel[];
+  isAnonymous: boolean
 }
 
 declare interface ResponseModel {
@@ -34,6 +35,7 @@ declare interface ResponseModel {
   content: string;
   $createdAt?: string;
   updatedAt?: string;
+  isAnonymous: boolean
 }
 
 declare interface ReactionModel {

@@ -12,11 +12,11 @@ const Avatar = ({
   imageUrl,
   className,
 }: {
-  username: string;
+  username?: string;
   imageUrl?: string;
   className?: string;
 }) => {
-  const initials = getInitials(username);
+  const initials = getInitials(username ?? '');
 
   return (
     <View

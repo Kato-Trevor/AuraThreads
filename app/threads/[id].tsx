@@ -6,12 +6,13 @@ import {
   FlatList,
   KeyboardAvoidingView,
   Platform,
+  StatusBar,
 } from "react-native";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, router, Link } from "expo-router";
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { addResponseToDB, getPostFromDB } from "@/lib/appwrite/appwrite";
 import LoadingSpinner from "@/components/LoadingSpinner";
-import { Feather, Ionicons } from "@expo/vector-icons";
+import { Feather, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useToast } from "@/components/ToastProvider";
 import { useGlobalContext } from "@/context/GlobalProvider";
@@ -20,9 +21,10 @@ import { formatDistanceToNow } from "date-fns";
 import Avatar from "@/components/Avatar";
 import getSongById from "@/services/get-song";
 import { Audio } from "expo-av";
+import { generateAnonymousUsername } from "@/lib/utils/generateAnonymousId";
 
 export default function Thread() {
-  const { user } = useGlobalContext();
+  const { user, enableAnonymousID } = useGlobalContext();
   const { id: postId } = useLocalSearchParams();
   const [post, setPost] = useState<any>(null);
   const [response, setResponse] = useState<string>("");
@@ -32,7 +34,10 @@ export default function Thread() {
   const [currentSound, setCurrentSound] = useState<Audio.Sound | null>(null);
   const { showToast } = useToast();
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
   const flatListRef = useRef<FlatList>(null);
+  const [username, setUsername] = useState("");
 
   const timeAgo = post?.$createdAt
     ? formatDistanceToNow(new Date(post.$createdAt), {
@@ -50,6 +55,9 @@ export default function Thread() {
 
       const fetchedPost = await getPostFromDB(`${postId}`);
       setPost(fetchedPost);
+
+      // Initialize like count from post data (placeholder)
+      setLikeCount(fetchedPost.likes?.length || Math.floor(Math.random() * 20));
     } catch (error) {
       console.error("Error fetching post:", error);
     } finally {
@@ -60,6 +68,7 @@ export default function Thread() {
 
   useEffect(() => {
     fetchPost();
+    StatusBar.setBarStyle("dark-content");
   }, [fetchPost]);
 
   const handleRefresh = useCallback(() => {
@@ -83,6 +92,18 @@ export default function Thread() {
       }
     };
   }, [currentSound]);
+
+  useEffect(() => {
+    if (post?.userId.role === "student") {
+      if (post?.isAnonymous) {
+        setUsername(generateAnonymousUsername());
+      } else {
+        setUsername(post?.userId.username);
+      }
+    } else {
+      setUsername(`${post?.userId.surname} ${post?.userId.givenNames}`);
+    }
+  }, [post]);
 
   const stopSound = async () => {
     try {
@@ -126,7 +147,7 @@ export default function Thread() {
     if (!response.trim()) return;
 
     try {
-      await addResponseToDB(response, `${postId}`, user.$id);
+      await addResponseToDB(response, `${postId}`, user.$id, enableAnonymousID);
       showToast("Response created successfully!", "success");
       setResponse("");
       handleRefresh();
@@ -140,9 +161,19 @@ export default function Thread() {
     }
   };
 
+  const handleLike = () => {
+    setIsLiked(!isLiked);
+    setLikeCount(isLiked ? likeCount - 1 : likeCount + 1);
+    // Here you would add the actual API call to update likes in your backend
+  };
+
+  const handleBack = () => {
+    router.back();
+  };
+
   if (isLoading && !isRefreshing) {
     return (
-      <SafeAreaView className="flex-1 justify-center items-center">
+      <SafeAreaView className="flex-1 justify-center items-center bg-white">
         <LoadingSpinner visible={true} />
       </SafeAreaView>
     );
@@ -154,94 +185,167 @@ export default function Thread() {
       className="flex-1 bg-white"
       keyboardVerticalOffset={90}
     >
-      {/* Post at the top */}
-      <View className="flex-1">
-        {post && (
-          <View className="px-8 py-3 flex-column items-start gap-3 mb-2">
-            <View className="flex-row items-center gap-2">
-              <Avatar username={post.userId.username} />
-              <View className="flex-column items-start gap-1">
-                <Text className="text-gray-500">@{post.userId.username}</Text>
-                {post.songId && (
-                  <TouchableOpacity
-                    onPress={() => {
-                      isPlaying ? stopSound() : playSound();
-                    }}
-                  >
-                    <View className="flex-row justify-start items-center">
-                      <Feather
-                        name={isPlaying ? "volume-2" : "volume-x"}
-                        size={20}
-                        color="black"
-                      />
-                      <Text className="text-xs text-gray-500 ml-1">
-                        {song?.artist?.name} • {song?.title_short}
+      <SafeAreaView className="flex-1">
+        {/* Header with back button */}
+        <View className="flex-row items-center justify-between px-4 py-2 border-b border-gray-100">
+          <TouchableOpacity onPress={handleBack}>
+            <Ionicons name="arrow-back" size={24} color="#333" />
+          </TouchableOpacity>
+          <Text className="text-lg font-semibold text-gray-800">Thread</Text>
+          <View style={{ width: 24 }} />
+        </View>
+
+        {/* Post at the top */}
+        <View className="flex-1">
+          {post && (
+            <View className="p-4 bg-white border-b border-gray-100">
+              <View className="flex-row items-center mb-3">
+                <Avatar username={username} />
+                <View className="ml-3 flex-1">
+                  {post.userId.role === "counselor" ? (
+                    <Link
+                      href={{
+                        pathname: "/profile/[id]",
+                        params: { id: `${post.userId.$id}` },
+                      }}
+                    >
+                      <Text className="font-semibold text-gray-800">
+                        {username}
                       </Text>
-                    </View>
+                    </Link>
+                  ) : (
+                    <Text className="font-semibold text-gray-800">
+                      {username}
+                    </Text>
+                  )}
+                </View>
+                <TouchableOpacity className="p-2">
+                  <Feather name="more-horizontal" size={20} color="#666" />
+                </TouchableOpacity>
+              </View>
+
+              <Text className="text-lg text-gray-800 mb-2">{post.content}</Text>
+
+              {post.topic && (
+                <TouchableOpacity className="my-2">
+                  <Text className="text-pink-500 text-sm">#{post.topic}</Text>
+                </TouchableOpacity>
+              )}
+
+              {post.songId && song && (
+                <TouchableOpacity
+                  onPress={() => {
+                    isPlaying ? stopSound() : playSound();
+                  }}
+                  className="flex-row items-center mt-1 mb-3 bg-gray-50 p-3 rounded-lg"
+                >
+                  <View className="w-10 h-10 bg-pink-100 rounded-md justify-center items-center mr-3">
+                    <Feather
+                      name={isPlaying ? "pause" : "play"}
+                      size={20}
+                      color="#F032DA"
+                    />
+                  </View>
+                  <View className="flex-1">
+                    <Text className="font-medium text-gray-800">
+                      {song?.title_short}
+                    </Text>
+                    <Text className="text-sm text-gray-500">
+                      {song?.artist?.name}
+                    </Text>
+                  </View>
+                  <Feather
+                    name={isPlaying ? "volume-2" : "volume-x"}
+                    size={18}
+                    color="#888"
+                  />
+                </TouchableOpacity>
+              )}
+
+              <View className="flex-row justify-between items-center mt-2">
+                <Text className="text-sm text-gray-500">{timeAgo}</Text>
+
+                <View className="flex-row items-center">
+                  <TouchableOpacity
+                    onPress={handleLike}
+                    className="flex-row items-center mr-4"
+                  >
+                    <MaterialIcons
+                      name={isLiked ? "favorite" : "favorite-border"}
+                      size={22}
+                      color={isLiked ? "#F032DA" : "#666"}
+                    />
+                    {likeCount > 0 && (
+                      <Text className="ml-1 text-sm text-gray-700">
+                        {likeCount}
+                      </Text>
+                    )}
                   </TouchableOpacity>
-                )}
+
+                  <TouchableOpacity className="flex-row items-center">
+                    <Feather name="share-2" size={20} color="#666" />
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
-            <View>
-              <Text className="text-lg text-gray-800 w-full">
-                {post.content}
-              </Text>
-              <Text className="text-xs text-secondary">#{post.topic}</Text>
-            </View>
-            <Text className="text-xs text-gray-500 text-right">{timeAgo}</Text>
-            <View className="h-[0.5px] bg-gray-200 w-full" />
+          )}
+
+          {/* Responses header */}
+          <View className="flex-row justify-between items-center px-4 py-3 bg-gray-50">
+            <Text className="font-semibold text-gray-700">
+              {post?.responses?.length || 0} Responses
+            </Text>
+            {post?.responses?.length > 0 && (
+              <TouchableOpacity>
+                <Text className="text-pink-500 text-sm">Sort by: Recent</Text>
+              </TouchableOpacity>
+            )}
           </View>
-        )}
 
-        {/* Responses in the middle */}
-        <Text className="pl-4 mb-4">
-          <Text className="text-base font-bold text-gray-600">
-            {post?.responses?.length}
-          </Text>{" "}
-          <Text className="text-base text-gray-500"> Responses</Text>
-        </Text>
-        <View className="h-[0.5px] bg-gray-200 w-full" />
+          {/* Responses list */}
+          {post?.responses?.length === 0 ? (
+            <View className="flex-1 justify-center items-center p-8">
+              <Feather name="message-circle" size={40} color="#ccc" />
+              <Text className="mt-4 text-gray-500 text-center">
+                No responses yet. Be the first to respond!
+              </Text>
+            </View>
+          ) : (
+            <FlatList
+              ref={flatListRef}
+              data={post?.responses}
+              keyExtractor={(item) => item.$id}
+              renderItem={({ item }) => <Response response={item} />}
+              className="flex-1"
+              contentContainerStyle={{
+                paddingBottom: 16,
+              }}
+              onRefresh={handleRefresh}
+              refreshing={isRefreshing}
+            />
+          )}
+        </View>
 
-        {post?.responses?.length === 0 ? (
-          <Text className="p-4 italic text-gray-500 text-center">
-            No responses yet. Be the first to respond!
-          </Text>
-        ) : (
-          <FlatList
-            ref={flatListRef}
-            data={post?.responses}
-            keyExtractor={(item) => item.$id}
-            renderItem={({ item }) => <Response response={item} />}
-            className="flex-1"
-            contentContainerStyle={{
-              paddingHorizontal: 0,
-              paddingBottom: 16,
-            }}
+        {/* Input field at the bottom */}
+        <View className="flex-row p-3 border-t border-gray-200 bg-white items-center">
+          <Avatar username={user.username} imageUrl={user.avatar} />
+          <TextInput
+            className="flex-1 bg-gray-100 rounded-full px-4 py-2 text-base max-h-24 ml-2"
+            placeholder="Add your response..."
+            value={response}
+            onChangeText={setResponse}
+            multiline
           />
-        )}
-      </View>
-
-      {/* Input field at the bottom */}
-      <View className="flex-row p-3 border-t border-gray-200 bg-white items-center">
-        <TextInput
-          className="flex-1 bg-gray-100 rounded-full px-4 py-2 text-base max-h-24"
-          placeholder="Post a response"
-          value={response}
-          onChangeText={setResponse}
-          multiline
-        />
-        <TouchableOpacity
-          onPress={createResponse}
-          className="ml-3 p-2"
-          disabled={!response.trim()}
-        >
-          <Ionicons
-            name="send"
-            size={24}
-            color={response.trim() ? "#F032DA" : "#cccccc"}
-          />
-        </TouchableOpacity>
-      </View>
+          <TouchableOpacity
+            onPress={createResponse}
+            className="ml-2 p-2 bg-pink-500 rounded-full"
+            disabled={!response.trim()}
+            style={{ opacity: response.trim() ? 1 : 0.5 }}
+          >
+            <Ionicons name="send" size={18} color="#ffffff" />
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
     </KeyboardAvoidingView>
   );
 }
