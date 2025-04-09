@@ -5,7 +5,7 @@ import { useToast } from "@/components/ToastProvider";
 import CustomButton from "@/components/CustomButton";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Redirect, router } from "expo-router";
-import { Text, View, Image, Dimensions } from "react-native";
+import { Text, View, Image, Dimensions, StatusBar } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
@@ -24,9 +24,9 @@ const RootLayout = () => {
       <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
         <LinearGradient
           colors={[
-            "rgba(255, 192, 203, 0.4)",
-            "rgba(255, 255, 255, 0.9)",
-            "#FFFFFF",
+            "rgba(133, 170, 155, 0.4)",
+            "rgba(208, 222, 216, 0.9)",
+            "#D0DED8",
           ]}
           style={{ flex: 1 }}
           start={{ x: 0, y: 0 }}
@@ -40,12 +40,12 @@ const RootLayout = () => {
             {/* Logo section - compact */}
             <View className="items-center flex-row justify-center mb-2">
               <View className="bg-white rounded-full p-2 shadow-md mr-2">
-                <View className="bg-secondary-100 rounded-full p-2">
-                  <Ionicons name="leaf-outline" size={24} color="#FFE4E1" />
+                <View className="bg-secondary-dark rounded-full p-2">
+                  <Ionicons name="leaf-outline" size={24} color="#d0ded8" />
                 </View>
               </View>
               <View>
-                <Text className="text-3xl font-pbold text-secondary-200">
+                <Text className="text-3xl font-pbold text-secondary-dark">
                   AuraThreads
                 </Text>
               </View>
@@ -80,7 +80,7 @@ const RootLayout = () => {
             <View className="w-full">
               <CustomButton
                 title="Get Started"
-                handlePress={() => router.push("/onboard" as any)}
+                handlePress={() => router.push("/sign-in" as any)}
                 containerStyles="mb-3 w-full bg-secondary shadow-md h-14"
                 textStyles="text-white font-pbold"
               />
@@ -105,7 +105,7 @@ const RootLayout = () => {
               </View>
             </View>
           </View>
-          {/* <StatusBar backgroundColor="#F032DA" style="light" /> */}
+          {/* <StatusBar backgroundColor="#1e4635" barStyle="dark-content" /> */}
         </LinearGradient>
       </SafeAreaView>
     </GestureHandlerRootView>

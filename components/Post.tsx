@@ -1,9 +1,9 @@
 import { Link } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text } from "react-native";
 import Avatar from "./Avatar";
 import { formatDistanceToNow } from "date-fns";
-import { Feather, FontAwesome } from "@expo/vector-icons";
+import { FontAwesome } from "@expo/vector-icons";
 import getSongById from "@/services/get-song";
 import { generateAnonymousUsername } from "@/lib/utils/generateAnonymousId";
 
@@ -14,6 +14,7 @@ const Post = ({ post }: { post: PostModel }) => {
 
   const [song, setSong] = useState<any>();
   const [username, setUsername] = useState("");
+  const MAX_CONTENT_LENGTH = 300;
 
   useEffect(() => {
     if (post.userId.role === "student") {
@@ -37,6 +38,11 @@ const Post = ({ post }: { post: PostModel }) => {
     fetchSong();
   }, [post.songId]);
 
+  const isContentTruncated = post.content.length > MAX_CONTENT_LENGTH;
+  const displayContent = isContentTruncated
+    ? `${post.content.substring(0, MAX_CONTENT_LENGTH)}...`
+    : post.content;
+
   return (
     <Link
       href={{
@@ -44,13 +50,13 @@ const Post = ({ post }: { post: PostModel }) => {
         params: { id: `${post.$id}` },
       }}
     >
-      <View className="w-full bg-white border-b border-gray-100 px-3 py-2">
-        {/* Header section - More compact */}
-        <View className="flex-row items-center mb-1.5">
+      <View className="w-full bg-white border-b border-gray-100 px-4 py-3">
+        {/* Header section */}
+        <View className="flex-row items-center mb-2">
           <Avatar username={username} />
-          <View className="ml-2 flex-1">
+          <View className="ml-2.5 flex-1">
             <View className="flex-row items-center justify-between">
-              <Text className="font-medium text-gray-800 text-sm">
+              <Text className="font-semibold text-gray-800 text-sm">
                 {post.userId.role === "counselor" ? username : `@${username}`}
               </Text>
               <Text className="text-xs text-gray-400">{timeAgo}</Text>
@@ -58,26 +64,40 @@ const Post = ({ post }: { post: PostModel }) => {
           </View>
         </View>
 
-        {/* Content section - Simplified */}
-        <Text className="text-gray-800 text-sm pl-9">{post.content}</Text>
+        {/* Content section */}
+        <View className="pl-10 pr-2">
+          <Text className="text-gray-800 leading-5">{displayContent}</Text>
+          {isContentTruncated && (
+            <Text className="text-secondary text-xs mt-1">Tap to see more</Text>
+          )}
+        </View>
 
-        {/* Topic tag - Moved to right below content and made smaller */}
-        {post.topic && (
-          <Text className="text-xs text-pink-500 pl-9 pt-1">#{post.topic}</Text>
-        )}
+        {/* Bottom row with topic and song */}
+        <View className="flex-row items-center justify-between mt-2 pl-10">
+          {post.topic && (
+            <View className="mt-2 mb-1">
+              <View className="bg-gray-100 self-start rounded-full px-2.5">
+                <Text className="text-xs text-secondary font-medium">
+                  #{post.topic}
+                </Text>
+              </View>
+            </View>
+          )}
 
-        {/* Song section - Much more compact design */}
-        {post.songId && song && (
-          <View className="flex-row items-center pl-8 mt-1.5">
-            <FontAwesome name="music" size={12} color="#db2777" />
-            <Text className="text-xs text-gray-600 ml-1.5 flex-1">
-              {song?.title_short} • {song?.artist?.name}
-            </Text>
-            <TouchableOpacity className="py-1 px-1.5">
-              <Feather name="play" size={12} color="#db2777" />
-            </TouchableOpacity>
-          </View>
-        )}
+          {post.songId && song && (
+            <View className="flex-row items-center bg-gray-50 rounded-md px-2 py-1">
+              <FontAwesome
+                name="music"
+                size={10}
+                color="#1e4635"
+                className="mr-1"
+              />
+              <Text className="text-xs text-gray-600 ml-1" numberOfLines={1}>
+                {song?.title_short} • {song?.artist?.name}
+              </Text>
+            </View>
+          )}
+        </View>
       </View>
     </Link>
   );

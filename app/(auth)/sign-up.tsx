@@ -131,7 +131,11 @@ const Signup = () => {
       />
       <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
         <LinearGradient
-          colors={["rgba(255, 192, 203, 0.3)", "#FFFFFF"]}
+          colors={[
+            "rgba(133, 170, 155, 0.4)",
+            "rgba(208, 222, 216, 0.9)",
+            "#D0DED8",
+          ]}
           style={{ flex: 1 }}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
@@ -168,7 +172,7 @@ const Signup = () => {
                 >
                   <View className="bg-white rounded-full p-3 shadow-lg mb-4">
                     <View className="bg-secondary-100 rounded-full p-3">
-                      <Ionicons name="leaf-outline" size={32} color="#FFE4E1" />
+                      <Ionicons name="leaf-outline" size={24} color="#d0ded8" />
                     </View>
                   </View>
                   <Text className="text-3xl font-pbold text-center">

@@ -45,7 +45,7 @@ const ButtonLoadingAnimation = () => {
         style={{
           width: 20,
           height: 20,
-          backgroundColor: "#F032DA",
+          backgroundColor: "#588b76",
           borderRadius: 10,
           transform: [{ scale: scaleBall1 }],
           marginHorizontal: 5,
@@ -55,7 +55,7 @@ const ButtonLoadingAnimation = () => {
         style={{
           width: 20,
           height: 20,
-          backgroundColor: "#B620A7",
+          backgroundColor: "#295f48",
           borderRadius: 10,
           transform: [{ scale: scaleBall2 }],
           marginHorizontal: 5,

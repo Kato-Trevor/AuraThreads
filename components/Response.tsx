@@ -196,7 +196,7 @@ const Response = ({ response }: { response: ResponseModel }) => {
                 <Ionicons
                   name={liked ? "thumbs-up" : "thumbs-up-outline"}
                   size={15}
-                  color={liked ? "#F032DA" : "gray"}
+                  color={liked ? "#588b76" : "gray"}
                 />
                 <Text>{likeCount ? likeCount : null}</Text>
               </View>
@@ -206,7 +206,7 @@ const Response = ({ response }: { response: ResponseModel }) => {
                 <Ionicons
                   name={disliked ? "thumbs-down" : "thumbs-down-outline"}
                   size={15}
-                  color={disliked ? "#F032DA" : "gray"}
+                  color={disliked ? "#588b76" : "gray"}
                 />
                 <Text>{dislikeCount ? dislikeCount : null}</Text>
               </View>
