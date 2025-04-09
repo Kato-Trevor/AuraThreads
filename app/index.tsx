@@ -1,4 +1,3 @@
-import "./gesture-handler";
 import React from "react";
 import { images } from "@/constants";
 import { useToast } from "@/components/ToastProvider";
@@ -10,6 +9,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { useGlobalContext } from "@/context/GlobalProvider";
+import "react-native-gesture-handler";
 
 const { width, height } = Dimensions.get("window");
 
