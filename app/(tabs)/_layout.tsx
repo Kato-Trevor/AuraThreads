@@ -35,7 +35,7 @@ const TabIcon = ({
 const TabsLayout = () => {
   return (
     <>
-      <StatusBar style="dark" backgroundColor="#F5F5F5" />
+      <StatusBar style="dark" backgroundColor="#FFFFFF" />
       <Tabs
         screenOptions={{
           tabBarShowLabel: false,

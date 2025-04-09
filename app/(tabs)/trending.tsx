@@ -5,7 +5,6 @@ import WordCloud from "@/components/WordCloud";
 import MoodAnalytics from "@/components/MoodAnalytics";
 
 const PopularTab = () => <WordCloud />;
-
 const ForYouTab = () => <MoodAnalytics />;
 
 const Trending = () => {
@@ -24,8 +23,12 @@ const Trending = () => {
     <TabView
       navigationState={{ index, routes }}
       renderScene={renderScene}
-      onIndexChange={setIndex}
+      onIndexChange={(newIndex) => {
+        console.log("Tab changed to:", routes[newIndex].title);
+        setIndex(newIndex);
+      }}
       initialLayout={{ width: Dimensions.get("window").width }}
+      lazy={true}
       renderTabBar={(props) => (
         <TabBar
           {...props}
