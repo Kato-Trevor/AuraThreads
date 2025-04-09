@@ -29,9 +29,9 @@ const Trending = () => {
       renderTabBar={(props) => (
         <TabBar
           {...props}
-          indicatorStyle={{ backgroundColor: "#F032DA" }}
+          indicatorStyle={{ backgroundColor: "#588b76" }}
           style={{ backgroundColor: "white" }}
-          activeColor="#F032DA"
+          activeColor="#588b76"
           inactiveColor="gray"
         />
       )}
