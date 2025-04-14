@@ -693,3 +693,18 @@ export async function updateJournalPage(
     throw new Error(`Failed to update journal page: ${error.message}`);
   }
 }
+
+
+
+// Add this to your existing appwrite functions file
+export async function deleteJournalPage(pageId: string): Promise<void> {
+  try {
+    await databases.deleteDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.journalsCollectionId,
+      pageId
+    );
+  } catch (error: any) {
+    throw new Error(`Failed to delete journal page: ${error.message}`);
+  }
+}
