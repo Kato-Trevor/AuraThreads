@@ -47,7 +47,7 @@ export async function addAIResponseToDB(
   postContent: string,
   postId: string
 ): Promise<any> {
-  const apiKey = process.env.EXPO_PUBLIC_GEN_AI_API_KEY;
+  const apiKey = process.env.EXPO_PUBLIC_GEN_AI_API_KEY_2;
   if (!apiKey) {
     throw new Error("API key is not defined");
   }
@@ -60,7 +60,7 @@ export async function addAIResponseToDB(
       maxOutputTokens: 300,
     },
     systemInstruction:
-      "You are an AI assistant providing appropriate, helpful and supportive responses. Avoid asking questions in your replies.",
+      "Provide helpful mental health solutions if there is a real issue, otherwise simply provide an appropriate response. Avoid asking questions in your replies. Avoid unnecessarily lengthy responses",
   });
 
   const AI_USER_ID: string = "67e02f9a00217f9c641e";
@@ -86,5 +86,53 @@ export async function addAIResponseToDB(
   } catch (error: any) {
     console.error("Error adding AI response to DB:", error);
     throw new Error(error.message || error);
+  }
+}
+
+
+export async function getExperienceResponsesByTopic(topic: string) {
+  try {
+    // 1. Get all posts with the specified topic
+    const topicPosts = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.postCollectionId,
+      [Query.equal("topic", topic)]
+    );
+
+    // 2. Extract post IDs
+    const postIds = topicPosts.documents.map(post => post.$id);
+
+    // 3. Fetch responses linked to these posts AND isExperience=true
+    const responses = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.responsesCollectionId,
+      [
+        Query.equal("isExperience", true),
+        Query.equal("postId", postIds), // Works like SQL's "IN" clause
+        Query.orderDesc("$createdAt") // Optional: sort newest first
+      ]
+    );
+
+    console.log(responses.documents)
+    return responses.documents;
+  } catch (error: any) {
+    throw new Error(`Failed to fetch responses: ${error.message}`);
+  }
+}
+
+
+export async function getExperienceResponses() {
+  try {
+    const responses = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.responsesCollectionId,
+      [
+        Query.equal("isExperience", true),
+        Query.orderDesc("$createdAt")
+      ]
+    );
+    return responses.documents;
+  } catch (error: any) {
+    throw new Error(`Failed to fetch responses: ${error.message}`);
   }
 }

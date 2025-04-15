@@ -17,9 +17,10 @@ import Avatar from "@/components/Avatar";
 import { addPostToDB, addAIResponseToDB } from "@/lib/appwrite/appwrite";
 import SongsList from "@/components/SongsList";
 import { formatTopic } from "@/lib/utils/stringHelpers";
-import { categorizePostTopic } from "@/components/TopicAssigner";
+// import { categorizePostTopic } from "@/components/TopicAssigner";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
+import { categorizePost } from "@/components/Categoriser";
 
 const CreatePost = () => {
   const { user, enableAnonymousID } = useGlobalContext();
@@ -55,17 +56,20 @@ const CreatePost = () => {
     setEnableAIResponse(!enableAIResponse);
   };
 
+
   const handlePostCreation = async () => {
     setIsPosting(true);
     try {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      const derivedTopic = await categorizePostTopic(postContent);
+      const { topic, contentType } = await categorizePost(postContent);
       const newPost = await addPostToDB(
         postContent,
         user.$id,
-        formatTopic(derivedTopic),
+        formatTopic(topic),
+        contentType,
         enableAnonymousID,
-        selectedSong?.id
+        selectedSong?.id,
+        
       );
       showToast("Post created successfully!", "success");
       router.back();
@@ -84,6 +88,37 @@ const CreatePost = () => {
       setIsPosting(false);
     }
   };
+
+
+  // const handlePostCreation = async () => {
+  //   setIsPosting(true);
+  //   try {
+  //     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+  //     const derivedTopic = await categorizePostTopic(postContent);
+  //     const newPost = await addPostToDB(
+  //       postContent,
+  //       user.$id,
+  //       formatTopic(derivedTopic),
+  //       enableAnonymousID,
+  //       selectedSong?.id
+  //     );
+  //     showToast("Post created successfully!", "success");
+  //     router.back();
+
+  //     if (newPost?.$id && enableAIResponse) {
+  //       try {
+  //         await addAIResponseToDB(postContent, newPost.$id);
+  //       } catch (error) {
+  //         console.error("Error generating AI response:", error);
+  //       }
+  //     }
+  //   } catch (error: any) {
+  //     console.log("Error creating post:", error);
+  //     showToast("Failed to create post", "error");
+  //   } finally {
+  //     setIsPosting(false);
+  //   }
+  // };
 
   return (
     <SafeAreaView className="flex-1 bg-white">

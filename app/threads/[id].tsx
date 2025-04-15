@@ -22,6 +22,7 @@ import Avatar from "@/components/Avatar";
 import getSongById from "@/services/get-song";
 import { Audio } from "expo-av";
 import { generateAnonymousUsername } from "@/lib/utils/generateAnonymousId";
+import { categorizeResponse } from "@/components/Categoriser";
 
 export default function Thread() {
   const { user, enableAnonymousID } = useGlobalContext();
@@ -136,7 +137,9 @@ export default function Thread() {
   const createResponse = async () => {
     if (!response.trim()) return;
     try {
-      await addResponseToDB(response, `${postId}`, user.$id, enableAnonymousID);
+     const contentType = await categorizeResponse(response)
+
+      await addResponseToDB(response, `${postId}`, user.$id, contentType, enableAnonymousID);
       showToast("Response created successfully!", "success");
       setResponse("");
       handleRefresh();
