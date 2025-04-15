@@ -4,8 +4,10 @@ export async function addPostToDB(
   postContent: string,
   userId: string,
   topic: string,
+  isExperience: boolean,
   isAnonymous: boolean,
-  songId?: number
+  songId?: number,
+  
 ) {
   try {
     const newPost = await databases.createDocument(
@@ -18,6 +20,7 @@ export async function addPostToDB(
         topic,
         songId,
         isAnonymous,
+        isExperience
       }
     );
 
@@ -87,6 +90,7 @@ export async function addResponseToDB(
   responseContent: string,
   postId: string,
   userId: string,
+  isExperience: boolean,
   isAnonymous: boolean
 ) {
   try {
@@ -98,6 +102,7 @@ export async function addResponseToDB(
         content: responseContent,
         postId,
         userId,
+        isExperience,
         isAnonymous,
       }
     );
@@ -142,3 +147,38 @@ export const searchPosts = async (query: any, userId: string) => {
     throw new Error(error.message);
   }
 };
+
+
+export async function getExperiencePostsByTopic(topic: string) {
+  try {
+    const posts = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.postCollectionId,
+      [
+        Query.equal("topic", topic),
+        Query.equal("isExperience", true),
+        // Optional: Add sorting (e.g., newest first)
+        Query.orderDesc("$createdAt")
+      ]
+    );
+
+    return posts.documents;
+  } catch (error: any) {
+    throw new Error(error);
+  }
+}
+
+
+export async function getExperiencePosts() {
+  try {
+    const posts = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.postCollectionId,
+      [Query.equal("isExperience", true)]
+    );
+
+    return posts.documents;
+  } catch (error: any) {
+    throw new Error(error);
+  }
+}
