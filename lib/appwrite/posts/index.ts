@@ -52,7 +52,7 @@ export async function getPostsByTopic(topic: string) {
       [Query.equal("topic", topic)]
     );
 
-    return posts.documents;
+    return posts.documents.length > 0 ? posts.documents : [];
   } catch (error: any) {
     throw new Error(error);
   }

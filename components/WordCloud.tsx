@@ -4,7 +4,7 @@
 // import { TagCloud } from "react-tagcloud/rn";
 // import { GestureHandlerRootView } from "react-native-gesture-handler";
 // import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
-// import { 
+// import {
 //   getExperiencePostsByTopic,
 //   getExperienceResponsesByTopic,
 //   getExperiencePosts,
@@ -60,7 +60,7 @@
 
 //         // Process responses (need to get their associated posts' topics)
 //         const responsePosts = await Promise.all(
-//           experienceResponses.map(response => 
+//           experienceResponses.map(response =>
 //             getPostById(response.postId).catch(() => null)
 //           )
 //         );
@@ -194,31 +194,6 @@
 //     padding: 20,
 //   },
 // });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // import { Text, View, StyleSheet, ActivityIndicator } from "react-native";
 // import React, { useRef, useState, useEffect } from "react";
@@ -446,23 +421,18 @@
 //   },
 // });
 
-
-
-
-
 // import { Text, View, StyleSheet, ActivityIndicator } from "react-native";
 // import React, { useRef, useState, useEffect } from "react";
 // import { SafeAreaView } from "react-native-safe-area-context";
 // import { TagCloud } from "react-tagcloud/rn";
 // import { GestureHandlerRootView } from "react-native-gesture-handler";
 // import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
-// import { 
+// import {
 //   getExperiencePostsByTopic,
 //   getExperienceResponsesByTopic,
 // } from "@/lib/appwrite/appwrite";
 // import { formatTopic } from "@/utils/stringHelpers";
 // import { topics } from "@/constants/constants"; // Import your predefined topics
-
 
 // type TagItem = {
 //   value: string;
@@ -593,15 +563,13 @@
 //   },
 // });
 
-
-
 // import { Text, View, StyleSheet, ActivityIndicator, Dimensions } from "react-native";
 // import React, { useRef, useState, useEffect } from "react";
 // import { SafeAreaView } from "react-native-safe-area-context";
 // import { TagCloud } from "react-tagcloud/rn";
 // import { GestureHandlerRootView } from "react-native-gesture-handler";
 // import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
-// import { 
+// import {
 //   getExperiencePostsByTopic,
 //   getExperienceResponsesByTopic,
 // } from "@/lib/appwrite/appwrite";
@@ -759,15 +727,13 @@
 
 // export default WordCloud;
 
-
-
 // import { Text, View, StyleSheet, ActivityIndicator, Dimensions } from "react-native";
 // import React, { useRef, useState, useEffect } from "react";
 // import { SafeAreaView } from "react-native-safe-area-context";
 // import { TagCloud } from "react-tagcloud/rn";
 // import { GestureHandlerRootView } from "react-native-gesture-handler";
 // import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
-// import { 
+// import {
 //   getExperiencePostsByTopic,
 //   getExperienceResponsesByTopic,
 // } from "@/lib/appwrite/appwrite";
@@ -963,19 +929,28 @@
 
 // export default WordCloud;
 
-
-import React, { useRef, useState, useEffect } from "react";
-import { Text, View, StyleSheet, ActivityIndicator, Dimensions, RefreshControl } from "react-native";
+import React, { useRef, useState, useEffect, useCallback } from "react";
+import {
+  Text,
+  View,
+  StyleSheet,
+  ActivityIndicator,
+  Dimensions,
+  RefreshControl,
+  TouchableOpacity,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { TagCloud } from "react-tagcloud/rn";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
-import { 
+import {
   getExperiencePostsByTopic,
   getExperienceResponsesByTopic,
+  getPostsByTopic,
 } from "@/lib/appwrite/appwrite";
 import { formatTopic } from "@/utils/stringHelpers";
 import { topics } from "@/constants/constants";
+import Feather from "@expo/vector-icons/Feather";
 
 type TagItem = {
   value: string;
@@ -987,7 +962,7 @@ type ContentItem = {
   content: string;
 };
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 
 const WordCloud = () => {
   const bottomSheetRef = useRef<BottomSheet | null>(null);
@@ -996,49 +971,81 @@ const WordCloud = () => {
   const [loading, setLoading] = useState({
     content: false,
     error: false,
+    tags: false,
   });
   const [refreshing, setRefreshing] = useState(false);
   const [tags, setTags] = useState<TagItem[]>([]);
 
+  const fetchTopicCounts = async (topic: string) => {
+    try {
+      const posts = await getPostsByTopic(topic);
+      return posts.length;
+    } catch (error) {
+      console.error(`Error fetching posts for topic ${topic}:`, error);
+      return 0;
+    }
+  };
+
   useEffect(() => {
-    const formattedTags = topics.map(topic => ({
-      value: formatTopic(topic),
-      count: 1
-    }));
-    setTags(formattedTags);
-  }, []);
+    const loadTopicCounts = async () => {
+      try {
+        setLoading((prev) => ({ ...prev, tags: true }));
+
+        const topicsWithCounts = await Promise.all(
+          topics.map(async (topic) => {
+            const count = await fetchTopicCounts(formatTopic(topic));
+            return {
+              value: formatTopic(topic),
+              count: count,
+            };
+          })
+        );
+
+        setTags(topicsWithCounts);
+      } catch (error) {
+        console.error("Error loading topic counts:", error);
+        setTags(
+          topics.map((topic) => ({ value: formatTopic(topic), count: 1 }))
+        );
+      } finally {
+        setLoading((prev) => ({ ...prev, tags: false }));
+      }
+    };
+
+    loadTopicCounts();
+  }, [topics]);
 
   // Function to fetch experiences for a given tag value.
   const fetchExperiences = async (tagValue: string) => {
-    setLoading(prev => ({ ...prev, content: true, error: false }));
+    setLoading((prev) => ({ ...prev, content: true, error: false }));
     setContentItems([]);
     try {
       const [posts, responses] = await Promise.all([
         getExperiencePostsByTopic(tagValue).catch(() => []),
-        getExperienceResponsesByTopic(tagValue).catch(() => [])
+        getExperienceResponsesByTopic(tagValue).catch(() => []),
       ]);
 
       const combinedContent = [
-        ...posts.map(post => ({
+        ...posts.map((post) => ({
           id: post.$id,
-          content: post.content
+          content: post.content,
         })),
-        ...responses.map(response => ({
+        ...responses.map((response) => ({
           id: response.$id,
-          content: response.content
-        }))
+          content: response.content,
+        })),
       ];
 
       if (combinedContent.length === 0) {
-        setLoading(prev => ({ ...prev, error: true }));
+        setLoading((prev) => ({ ...prev, error: true }));
       }
 
       setContentItems(combinedContent);
     } catch (error) {
       console.error("Error fetching experiences:", error);
-      setLoading(prev => ({ ...prev, error: true }));
+      setLoading((prev) => ({ ...prev, error: true }));
     } finally {
-      setLoading(prev => ({ ...prev, content: false }));
+      setLoading((prev) => ({ ...prev, content: false }));
       bottomSheetRef.current?.expand();
     }
   };
@@ -1049,35 +1056,82 @@ const WordCloud = () => {
     await fetchExperiences(tag.value);
   };
 
+  const refreshTopics = useCallback(async () => {
+    try {
+      setLoading((prev) => ({ ...prev, tags: true }));
+
+      const topicsWithCounts = await Promise.all(
+        topics.map(async (topic) => {
+          const count = await fetchTopicCounts(formatTopic(topic));
+          return {
+            value: formatTopic(topic),
+            count: Math.max(count, 1), // Ensure minimum count of 1
+          };
+        })
+      );
+
+      setTags(topicsWithCounts);
+    } catch (error) {
+      console.error("Error refreshing topics:", error);
+      // Fallback to default counts
+      setTags(
+        topics.map((topic) => ({
+          value: formatTopic(topic),
+          count: 1,
+        }))
+      );
+    } finally {
+      setLoading((prev) => ({ ...prev, tags: false }));
+    }
+  }, []);
+
   // Called when the user pulls to refresh.
-  const handleRefresh = async () => {
+  const refreshExperiences = async () => {
     if (!selectedTag) return;
     setRefreshing(true);
     try {
-      await fetchExperiences(selectedTag);
+      await Promise.all([fetchExperiences(selectedTag), refreshTopics()]);
     } finally {
       setRefreshing(false);
     }
   };
 
+  // function to refresh the tags
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>
         <View style={styles.mainContainer}>
-          <View style={styles.cloudContainer}>
-            <TagCloud
-              minSize={16}
-              maxSize={36}
-              tags={tags}
-              disableRandomColor={false}
-              onPress={handleTagPress}
-              shuffle={false}
-              style={styles.tagCloud}
-            />
-            <Text style={styles.instructionText}>
-              Tap any word from the cloud
-            </Text>
-          </View>
+          {loading.tags ? (
+            <View className="justify-center items-center p-8">
+              <ActivityIndicator color="#1e4635" />
+              <Text className="font-pregular mt-4 text-secondary-dark text-center">
+                Fetching topics...
+              </Text>
+            </View>
+          ) : (
+            <View style={styles.cloudContainer}>
+              <TagCloud
+                minSize={16}
+                maxSize={36}
+                tags={tags}
+                disableRandomColor={false}
+                onPress={handleTagPress}
+                style={styles.tagCloud}
+              />
+              <Text style={styles.instructionText}>
+                Tap any word from the cloud
+              </Text>
+            </View>
+          )}
+
+          <TouchableOpacity
+            onPress={refreshTopics}
+            style={styles.refreshButton}
+            disabled={loading.tags}
+          >
+            <Feather name="refresh-ccw" size={24} color="black" />
+          </TouchableOpacity>
 
           <BottomSheet
             ref={bottomSheetRef}
@@ -1085,15 +1139,16 @@ const WordCloud = () => {
             snapPoints={["40%", "75%"]}
             enablePanDownToClose={true}
           >
-            <BottomSheetScrollView 
+            <BottomSheetScrollView
               contentContainerStyle={styles.contentContainer}
               refreshControl={
-                <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+                <RefreshControl
+                  refreshing={refreshing}
+                  onRefresh={refreshExperiences}
+                />
               }
             >
-              <Text style={styles.bottomSheetTitle}>
-                Shared Experiences:
-              </Text>
+              <Text style={styles.bottomSheetTitle}>Shared Experiences:</Text>
 
               {loading.content ? (
                 <ActivityIndicator size="large" />
@@ -1126,7 +1181,7 @@ const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
     alignItems: "center",
-    paddingTop: 20, // Adjust this value as needed for top padding
+    paddingTop: 20,
   },
   cloudContainer: {
     width: width * 0.9,
@@ -1174,6 +1229,12 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     color: "gray",
+  },
+  refreshButton: {
+    marginTop: 20,
+    padding: 8,
+    borderRadius: 20,
+    backgroundColor: "rgba(30, 70, 53, 0.1)",
   },
 });
 
