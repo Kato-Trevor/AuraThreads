@@ -3,7 +3,6 @@
 // import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 // import { signOut } from "@/lib/appwrite/auth";
 // import { router } from "expo-router";
-// import { useToast } from "./ToastProvider";
 // import { useGlobalContext } from "@/context/GlobalProvider";
 
 // const DrawerContent = ({ onLogOut }: { onLogOut: () => void }) => {
@@ -69,16 +68,13 @@
 
 // export default DrawerContent;
 
-
-
-
-
-import React from "react";
+import React, { useEffect } from "react";
 import { View, Text, TouchableOpacity, Switch } from "react-native";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { signOut } from "@/lib/appwrite/auth";
 import { router } from "expo-router";
 import { useGlobalContext } from "@/context/GlobalProvider";
+import { useToast } from "./ToastProvider";
 
 type DrawerContentProps = {
   onClose: () => void;
@@ -86,6 +82,8 @@ type DrawerContentProps = {
 };
 
 const DrawerContent = ({ onClose, onLogOut }: DrawerContentProps) => {
+  const { showToast } = useToast();
+
   const handleLogOut = async () => {
     onLogOut();
     await signOut();
@@ -101,12 +99,25 @@ const DrawerContent = ({ onClose, onLogOut }: DrawerContentProps) => {
 
   // Anonymous stuff
   const { user, enableAnonymousID, setEnableAnonymousID } = useGlobalContext();
-  // const { showToast } = useToast();
 
-  const DrawerItem = ({ icon, label, onPress, color = "#000" }: DrawerItemProps) => (
+  useEffect(() => {
+    if (enableAnonymousID) {
+      showToast("All engagements will be anonymous", "info");
+    }
+  }, [enableAnonymousID]);
+
+  const DrawerItem = ({
+    icon,
+    label,
+    onPress,
+    color = "#000",
+  }: DrawerItemProps) => (
     <TouchableOpacity onPress={onPress} className="flex-row items-center p-4">
       <Ionicons name={icon} size={24} color={color} />
-      <Text className="font-['Poppins-Medium'] text-base ml-4" style={{ color }}>
+      <Text
+        className="font-['Poppins-Medium'] text-base ml-4"
+        style={{ color }}
+      >
         {label}
       </Text>
     </TouchableOpacity>
@@ -180,30 +191,16 @@ const DrawerContent = ({ onClose, onLogOut }: DrawerContentProps) => {
       </View>
 
       {/* anonymous stuff addition */}
-      {(user && user.role === "student") && (
-        <View className="flex-row items-center justify-between p-3">
-          <View className="flex-row items-center">
-            <MaterialCommunityIcons
-              name="account-eye-outline"
-              size={24}
-              color={enableAnonymousID ? "#F032DA" : "#666"}
-            />
-            <Text className="ml-2 mr-2 font-medium text-gray-700">
-              Use anonymous username
-            </Text>
-            <TouchableOpacity>
-              <Ionicons
-                name="information-circle-outline"
-                size={20}
-                color="#666"
-              />
-            </TouchableOpacity>
-          </View>
+      {user && user.role === "student" && (
+        <View className="flex-row items-center">
+          <Text className="font-['Poppins-Medium'] ml-2 mr-2 font-medium text-gray-700">
+            Go anonymous
+          </Text>
           <Switch
             value={enableAnonymousID}
             onValueChange={() => setEnableAnonymousID(!enableAnonymousID)}
-            trackColor={{ false: "#ccc", true: "#F032DA" }}
-            thumbColor={enableAnonymousID ? "#fff" : "#f4f3f4"}
+            trackColor={{ false: "#ccc", true: "#18392b" }}
+            thumbColor={enableAnonymousID ? "#fff" : "#18392b"}
             style={{
               transform: [{ scaleX: 1.2 }, { scaleY: 1.2 }],
             }}

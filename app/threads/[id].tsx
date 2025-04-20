@@ -7,6 +7,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   StatusBar,
+  ActivityIndicator,
 } from "react-native";
 import { useLocalSearchParams, router, Link } from "expo-router";
 import React, { useEffect, useState, useRef, useCallback } from "react";
@@ -23,6 +24,7 @@ import getSongById from "@/services/get-song";
 import { Audio } from "expo-av";
 import { generateAnonymousUsername } from "@/lib/utils/generateAnonymousId";
 import { categorizeResponse } from "@/components/Categoriser";
+import { rankResponses } from "@/utils/responseRanking";
 
 export default function Thread() {
   const { user, enableAnonymousID } = useGlobalContext();
@@ -31,14 +33,15 @@ export default function Thread() {
   const [response, setResponse] = useState<string>("");
   const [song, setSong] = useState<any>();
   const [isPlaying, setIsPlaying] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSubmittingResponse, setIsSubmittingResponse] = useState(false);
   const [currentSound, setCurrentSound] = useState<Audio.Sound | null>(null);
   const { showToast } = useToast();
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [isLiked, setIsLiked] = useState(false);
-  const [likeCount, setLikeCount] = useState(0);
   const flatListRef = useRef<FlatList>(null);
   const [username, setUsername] = useState("");
+  const [rankedResponses, setRankedResponses] = useState<any[]>([]);
+  const [isRankingResponses, setIsRankingResponses] = useState(false);
 
   const timeAgo = post?.$createdAt
     ? formatDistanceToNow(new Date(post.$createdAt), { addSuffix: true })
@@ -52,9 +55,6 @@ export default function Thread() {
 
         const fetchedPost = await getPostFromDB(`${postId}`);
         setPost(fetchedPost);
-        setLikeCount(
-          fetchedPost.likes?.length || Math.floor(Math.random() * 20)
-        );
       } catch (error) {
         console.error("Error fetching post:", error);
       } finally {
@@ -100,6 +100,26 @@ export default function Thread() {
     }
   }, [post]);
 
+  useEffect(() => {
+    const rankFetchedResponses = async () => {
+      if (!post?.responses) return;
+
+      try {
+        setIsRankingResponses(true);
+        const ranked = await rankResponses(post.responses);
+        setRankedResponses(ranked);
+      } catch (error) {
+        console.error("Error ranking responses:", error);
+        // Fallback to unranked responses
+        setRankedResponses(post.responses);
+      } finally {
+        setIsRankingResponses(false);
+      }
+    };
+
+    rankFetchedResponses();
+  }, [post?.responses]);
+
   const stopSound = async () => {
     try {
       if (currentSound) {
@@ -137,9 +157,17 @@ export default function Thread() {
   const createResponse = async () => {
     if (!response.trim()) return;
     try {
-     const contentType = await categorizeResponse(response)
+      setIsSubmittingResponse(true);
+      const contentType = await categorizeResponse(response);
 
-      await addResponseToDB(response, `${postId}`, user.$id, contentType, enableAnonymousID);
+      await addResponseToDB(
+        response,
+        `${postId}`,
+        user.$id,
+        contentType,
+        enableAnonymousID
+      );
+      setIsSubmittingResponse(false);
       showToast("Response created successfully!", "success");
       setResponse("");
       handleRefresh();
@@ -286,19 +314,28 @@ export default function Thread() {
 
         <FlatList
           ref={flatListRef}
-          data={post?.responses}
+          data={rankedResponses}
           keyExtractor={(item) => item.$id}
           renderItem={({ item }) => <Response response={item} />}
           ListHeaderComponent={ListHeader}
           ListEmptyComponent={
-            <View className="justify-center items-center p-8">
-              <View className="bg-secondary-100/30 p-4 rounded-full">
-                <Feather name="message-circle" size={36} color="#1e4635" />
+            isRankingResponses ? (
+              <View className="justify-center items-center p-8">
+                <ActivityIndicator color="#1e4635" />
+                <Text className="font-pregular mt-4 text-secondary-dark text-center">
+                  Ranking responses...
+                </Text>
               </View>
-              <Text className="font-pregular mt-4 text-secondary-dark text-center">
-                No responses yet. Be the first to respond!
-              </Text>
-            </View>
+            ) : (
+              <View className="justify-center items-center p-8">
+                <View className="bg-secondary-100/30 p-4 rounded-full">
+                  <Feather name="message-circle" size={36} color="#1e4635" />
+                </View>
+                <Text className="font-pregular mt-4 text-secondary-dark text-center">
+                  No responses yet. Be the first to respond!
+                </Text>
+              </View>
+            )
           }
           className="flex-1"
           contentContainerStyle={{ paddingBottom: 16 }}
@@ -323,7 +360,11 @@ export default function Thread() {
             disabled={!response.trim()}
             style={{ opacity: response.trim() ? 1 : 0.5 }}
           >
-            <Ionicons name="send" size={18} color="#ffffff" />
+            {isSubmittingResponse ? (
+              <ActivityIndicator size="small" color="#ffffff" />
+            ) : (
+              <Ionicons name="send" size={18} color="#ffffff" />
+            )}
           </TouchableOpacity>
         </View>
       </SafeAreaView>

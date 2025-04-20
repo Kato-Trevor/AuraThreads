@@ -29,7 +29,7 @@ const Response = ({ response }: { response: ResponseModel }) => {
   const [username, setUsername] = useState("");
 
   useEffect(() => {
-    if (response.userId.role === "student") {
+    if (response.userId.role !== "counselor") {
       if (response.isAnonymous) {
         setUsername(generateAnonymousUsername());
       } else {
