@@ -53,7 +53,7 @@ const Post = ({ post }: { post: PostModel }) => {
       <View className="w-full bg-white border-b border-gray-100 px-4 py-3">
         {/* Header section */}
         <View className="flex-row items-center mb-2">
-          <Avatar username={username} />
+          <Avatar username={username} imageUrl={post.userId.avatar}/>
           <View className="ml-2.5 flex-1">
             <View className="flex-row items-center justify-between">
               <Text className="font-psemibold text-gray-800 text-sm">

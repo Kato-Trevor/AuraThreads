@@ -196,7 +196,7 @@ export default function Thread() {
       {post && (
         <View className="p-4 bg-white border-b border-secondary/10">
           <View className="flex-row items-center mb-3">
-            <Avatar username={username} />
+            <Avatar username={username} imageUrl={post.userId.avatar}/>
             <View className="ml-3 flex-1">
               {post.userId.role === "counselor" ? (
                 <Link
@@ -205,12 +205,14 @@ export default function Thread() {
                     params: { id: `${post.userId.$id}` },
                   }}
                 >
-                  <Text className="font-psemibold text-secondary-darkest">
-                    {username}
-                  </Text>
-                  <Text className="font-pregular text-xs text-secondary-dark opacity-70">
-                    {post.userId.role}
-                  </Text>
+                  <View>
+                    <Text className="font-psemibold text-secondary-darkest">
+                      {username}
+                    </Text>
+                    <Text className="font-pregular text-xs text-secondary-dark opacity-70">
+                      {post.userId.role}
+                    </Text>
+                  </View>
                 </Link>
               ) : (
                 <View>

@@ -131,13 +131,13 @@ export default function Profile() {
         <View className="flex-row border-b border-gray-200">
           <TouchableOpacity
             className={`flex-1 py-3 ${
-              activeTab === "posts" ? "border-b-2 border-[#F032DA]" : ""
+              activeTab === "posts" ? "border-b-2 border-[#18392b]" : ""
             }`}
             onPress={() => setActiveTab("posts")}
           >
             <Text
               className={`text-center font-medium ${
-                activeTab === "posts" ? "text-[#F032DA]" : "text-gray-600"
+                activeTab === "posts" ? "text-[#18392b]" : "text-gray-600"
               }`}
             >
               Posts
@@ -145,13 +145,13 @@ export default function Profile() {
           </TouchableOpacity>
           <TouchableOpacity
             className={`flex-1 py-3 ${
-              activeTab === "responses" ? "border-b-2 border-[#F032DA]" : ""
+              activeTab === "responses" ? "border-b-2 border-[#18392b]" : ""
             }`}
             onPress={() => setActiveTab("responses")}
           >
             <Text
               className={`text-center font-medium ${
-                activeTab === "responses" ? "text-[#F032DA]" : "text-gray-600"
+                activeTab === "responses" ? "text-[#18392b]" : "text-gray-600"
               }`}
             >
               Responses
