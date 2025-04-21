@@ -144,7 +144,7 @@ const DrawerContent = ({ onClose, onLogOut }: DrawerContentProps) => {
           label="Profile"
           onPress={() => {
             onClose();
-            console.log("Navigate to Profile");
+            router.push(`/profile/${user.$id}`);
           }}
           color="#18392b"
         />

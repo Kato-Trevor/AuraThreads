@@ -15,6 +15,7 @@ import Avatar from "@/components/Avatar";
 import Post from "@/components/Post";
 import Response from "@/components/Response";
 import { getResponsesByUserID } from "@/lib/appwrite/responses";
+import { sortByCreatedAt } from "@/utils/helpers";
 
 export default function Profile() {
   const { id: userId } = useLocalSearchParams();
@@ -58,9 +59,11 @@ export default function Profile() {
     try {
       setIsContentLoading(true);
       const fetchedPosts = await getPostsByUserID(`${userId}`);
-      setPosts(fetchedPosts);
+      const sortedPosts = sortByCreatedAt(fetchedPosts, 'desc');
+      setPosts(sortedPosts);
       const fetchedResponses = await getResponsesByUserID(`${userId}`);
-      setResponses(fetchedResponses);
+      const sortedResponses = sortByCreatedAt(fetchedResponses, 'desc');
+      setResponses(sortedResponses);
     } catch (error) {
       console.error("Error fetching posts:", error);
     } finally {
@@ -90,11 +93,12 @@ export default function Profile() {
           <View className="flex-row items-center">
             <Avatar username={username} imageUrl={user?.avatar} />
             <View className="ml-4">
-              <Text className="text-2xl font-bold">
-                {user?.surname} {user?.givenNames}
-              </Text>
-              {user?.role === "student" && (
-                <Text className="text-gray-500">@{user?.username}</Text>
+              {user?.role === "counselor" ? (
+                <Text className="text-2xl font-bold">
+                  {user?.surname} {user?.givenNames}
+                </Text>
+              ) : (
+                <Text className="text-2xl font-bold">@{user?.username}</Text>
               )}
             </View>
           </View>

@@ -89,3 +89,11 @@ export async function rankResponses(responses: ResponseModel[]) {
   // Return only the response objects, not the scoring information
   return nonToxicResponses.map(item => item.response);
 }
+
+export const sortByCreatedAt = (items: any[], order: 'asc' | 'desc' = 'desc') => {
+  return [...items].sort((a, b) => {
+    const dateA = new Date(a.$createdAt).getTime();
+    const dateB = new Date(b.$createdAt).getTime();
+    return order === 'desc' ? dateB - dateA : dateA - dateB;
+  });
+};

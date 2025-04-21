@@ -24,7 +24,7 @@ import getSongById from "@/services/get-song";
 import { Audio } from "expo-av";
 import { generateAnonymousUsername } from "@/lib/utils/generateAnonymousId";
 import { categorizeResponse } from "@/components/Categoriser";
-import { rankResponses } from "@/utils/responseRanking";
+import { rankResponses } from "@/utils/helpers";
 
 export default function Thread() {
   const { user, enableAnonymousID } = useGlobalContext();
