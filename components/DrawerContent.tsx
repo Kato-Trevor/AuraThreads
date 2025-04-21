@@ -68,13 +68,12 @@
 
 // export default DrawerContent;
 
-import React, { useEffect } from "react";
-import { View, Text, TouchableOpacity, Switch } from "react-native";
+import React from "react";
+import { View, Text, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { signOut } from "@/lib/appwrite/auth";
 import { router } from "expo-router";
 import { useGlobalContext } from "@/context/GlobalProvider";
-import { useToast } from "./ToastProvider";
 
 type DrawerContentProps = {
   onClose: () => void;
@@ -82,7 +81,6 @@ type DrawerContentProps = {
 };
 
 const DrawerContent = ({ onClose, onLogOut }: DrawerContentProps) => {
-  const { showToast } = useToast();
 
   const handleLogOut = async () => {
     onLogOut();
@@ -98,13 +96,7 @@ const DrawerContent = ({ onClose, onLogOut }: DrawerContentProps) => {
   };
 
   // Anonymous stuff
-  const { user, enableAnonymousID, setEnableAnonymousID } = useGlobalContext();
-
-  useEffect(() => {
-    if (enableAnonymousID) {
-      showToast("All engagements will be anonymous", "info");
-    }
-  }, [enableAnonymousID]);
+  const { user } = useGlobalContext();
 
   const DrawerItem = ({
     icon,
@@ -184,29 +176,12 @@ const DrawerContent = ({ onClose, onLogOut }: DrawerContentProps) => {
           label="Settings"
           onPress={() => {
             onClose();
-            console.log("Navigate to Settings");
+            router.push("/settings");
           }}
           color="#18392b"
         />
       </View>
 
-      {/* anonymous stuff addition */}
-      {user && user.role === "student" && (
-        <View className="flex-row items-center">
-          <Text className="font-['Poppins-Medium'] ml-2 mr-2 font-medium text-gray-700">
-            Go anonymous
-          </Text>
-          <Switch
-            value={enableAnonymousID}
-            onValueChange={() => setEnableAnonymousID(!enableAnonymousID)}
-            trackColor={{ false: "#ccc", true: "#18392b" }}
-            thumbColor={enableAnonymousID ? "#fff" : "#18392b"}
-            style={{
-              transform: [{ scaleX: 1.2 }, { scaleY: 1.2 }],
-            }}
-          />
-        </View>
-      )}
 
       {/* Spacer */}
       <View className="flex-1" />

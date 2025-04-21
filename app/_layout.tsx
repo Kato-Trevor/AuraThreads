@@ -7,7 +7,7 @@ import { ToastProvider } from "@/components/ToastProvider";
 import * as SplashScreen from "expo-splash-screen";
 import React, { useEffect } from "react";
 import "react-native-reanimated";
-import { StatusBar, View, TouchableOpacity } from "react-native";
+import { StatusBar, View, TouchableOpacity, Text } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Drawer } from "react-native-drawer-layout";
 import DrawerContent from "@/components/DrawerContent";
@@ -57,18 +57,18 @@ export default function RootLayout() {
               <DrawerContent onLogOut={() => setOpenMenu(false)} />
             )}
           > */}
-            <Drawer
-                drawerStyle={{ width: '60%' }}
-                open={openMenu}
-                onOpen={() => setOpenMenu(true)}
+          <Drawer
+            drawerStyle={{ width: "60%" }}
+            open={openMenu}
+            onOpen={() => setOpenMenu(true)}
+            onClose={() => setOpenMenu(false)}
+            renderDrawerContent={() => (
+              <DrawerContent
                 onClose={() => setOpenMenu(false)}
-                renderDrawerContent={() => (
-                  <DrawerContent
-                    onClose={() => setOpenMenu(false)}
-                    onLogOut={() => setOpenMenu(false)}
-                  />
-                )}
-              >
+                onLogOut={() => setOpenMenu(false)}
+              />
+            )}
+          >
             <Stack>
               <Stack.Screen name="index" options={{ headerShown: false }} />
               <Stack.Screen
@@ -134,6 +134,17 @@ export default function RootLayout() {
               <Stack.Screen
                 name="analytics/index"
                 options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="settings/index"
+                options={{
+                  headerTitle: () => (
+                    <Text className="text-lg font-psemibold text-secondary-darkest">
+                      Settings
+                    </Text>
+                  ),
+                  headerTitleAlign: "center",
+                }}
               />
             </Stack>
           </Drawer>
