@@ -1,7 +1,5 @@
 declare module 'react-tagcloud/rn';
 
-export type NotificationFrequency = 'once' | 'twice' | 'thrice';
-
 declare interface UserModel {
   $id?: string;
   avatar?: string;

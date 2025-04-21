@@ -3,8 +3,9 @@ import { View, Text, TouchableOpacity, Switch } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useGlobalContext } from "@/context/GlobalProvider";
 import { useToast } from "@/components/ToastProvider";
-import { NotificationFrequency } from "@/types/type";
 import { Picker } from '@react-native-picker/picker';
+
+type NotificationFrequency = 'once' | 'twice' | 'thrice';
 
 const Settings = () => {
   const {
