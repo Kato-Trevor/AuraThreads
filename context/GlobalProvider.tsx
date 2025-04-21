@@ -9,6 +9,8 @@ const GlobalContext = createContext<{
   setUser: React.Dispatch<React.SetStateAction<any>>;
   enableAnonymousID: boolean;
   setEnableAnonymousID: React.Dispatch<React.SetStateAction<boolean>>;
+  enableMoodReminders: boolean;
+  setEnableMoodReminders: React.Dispatch<React.SetStateAction<boolean>>;
   isLoading: boolean;
 }>({
   isLoggedIn: false,
@@ -17,14 +19,19 @@ const GlobalContext = createContext<{
   setUser: () => {},
   enableAnonymousID: false,
   setEnableAnonymousID: () => {},
+  enableMoodReminders: false,
+  setEnableMoodReminders: () => {},
   isLoading: true,
 });
 
 export const useGlobalContext = () => useContext(GlobalContext);
 
-const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [enableAnonymousID, setEnableAnonymousID] = useState(false);
+  const [enableMoodReminders, setEnableMoodReminders] = useState(false);
   const [user, setUser] = useState<null | any>(null);
   const [isLoading, setLoading] = useState(true);
 
@@ -56,6 +63,8 @@ const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ children }) =
         setUser,
         enableAnonymousID,
         setEnableAnonymousID,
+        enableMoodReminders,
+        setEnableMoodReminders,
         isLoading,
       }}
     >

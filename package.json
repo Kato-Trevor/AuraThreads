@@ -65,7 +65,8 @@
     "react-tagcloud": "^2.3.3",
     "tailwindcss": "3.3.2",
     "uploadthing": "^7.6.0",
-    "yup": "^1.4.0"
+    "yup": "^1.4.0",
+    "@react-native-picker/picker": "2.9.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
