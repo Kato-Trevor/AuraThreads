@@ -58,10 +58,7 @@ const Home = () => {
 
   return (
     <View className="flex-1">
-      <TouchableOpacity
-        className="bg-secondary p-3 mx-4 my-3 rounded-lg"
-        onPress={() => setIsModalVisible(true)}
-      >
+      <TouchableOpacity className="bg-secondary p-3 mx-4 my-3 rounded-lg">
         <Text className="text-white text-center font-medium">
           Log Your Mood
         </Text>
@@ -86,26 +83,13 @@ const Home = () => {
           </View>
         }
       />
-
-      <MoodLogModal
-        visible={isModalVisible}
-        onClose={() => setIsModalVisible(false)}
-        onSuccess={() => {
-          fetchPosts();
-          setIsModalVisible(false);
-          console.log("Mood logged successfully");
-        }}
-      />
     </View>
   );
 };
 
 export default Home;
 
-
-
 // Recommendations
-
 
 // import { FlatList, TouchableOpacity, ActivityIndicator, RefreshControl, Text, View } from "react-native";
 // import React, { useEffect, useState , useCallback} from "react";
@@ -162,7 +146,7 @@ export default Home;
 //   const shouldFetchRecommendations = () => {
 //     // Fetch if cache is empty or expired
 //     return (
-//       cachedRecommendedIds.length === 0 || 
+//       cachedRecommendedIds.length === 0 ||
 //       Date.now() - lastRecommendationFetchTime > CACHE_EXPIRY_MS
 //     );
 //   };
@@ -170,7 +154,7 @@ export default Home;
 //   const processRecommendations = (allPosts: any[], recommendationIds: string[]) => {
 //     // Filter out already seen recommendations
 //     const newRecommendations = recommendationIds.filter(id => !seenRecommendations.has(id));
-    
+
 //     if (newRecommendations.length === 0) {
 //       console.log("No new recommendations to process");
 //       return;
@@ -188,7 +172,7 @@ export default Home;
 
 //     // Create a map for efficient lookup
 //     const postMap = new Map(allPosts.map(post => [post.$id, post]));
-    
+
 //     // Get the actual post objects
 //     const recommendedPosts = nextBatch
 //       .map(id => postMap.get(id))
@@ -204,7 +188,7 @@ export default Home;
 //     try {
 //       // Always fetch posts
 //       const allPosts = await getAllPostsFromDB();
-      
+
 //       // Only fetch recommendations if needed
 //       let recommendations = cachedRecommendedIds;
 //       if (isRefresh || shouldFetchRecommendations()) {
@@ -257,9 +241,9 @@ export default Home;
 //         keyExtractor={(item) => item.$id}
 //         renderItem={({ item }) => <Post post={item} />}
 //         refreshControl={
-//           <RefreshControl 
-//             refreshing={refreshing} 
-//             onRefresh={handleRefresh} 
+//           <RefreshControl
+//             refreshing={refreshing}
+//             onRefresh={handleRefresh}
 //           />
 //         }
 //         ListEmptyComponent={

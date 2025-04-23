@@ -5,9 +5,17 @@ import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import SearchInput from "@/components/SearchInput";
 import { router } from "expo-router";
 import * as SecureStore from "expo-secure-store";
+import { articles, Article } from "@/components/Articles";
+import MoodLogModal from "@/components/MoodLog";
 
 const RECENT_SEARCHES_KEY = "aura_recent_searches";
 const MAX_RECENT_SEARCHES = 5;
+
+// Function to get random articles
+const getRandomArticles = (articles: Article[], count: number): Article[] => {
+  const shuffled = [...articles].sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, count);
+};
 
 const SearchScreen = () => {
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
@@ -19,9 +27,19 @@ const SearchScreen = () => {
     "Burnout",
     "Homesickness",
   ]);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  // State for articles
+  const [displayedArticles, setDisplayedArticles] = useState<Article[]>([]);
+  const [isShowingMoreArticles, setIsShowingMoreArticles] = useState(false);
+
+  // Load articles - in a real app, this would come from your API or data file
+  const allArticles = articles;
 
   useEffect(() => {
     loadRecentSearches();
+    // Initialize with 2 random articles
+    setDisplayedArticles(getRandomArticles(allArticles, 2));
   }, []);
 
   const loadRecentSearches = async () => {
@@ -78,6 +96,102 @@ const SearchScreen = () => {
   const handleSearch = (query: string) => {
     addToRecentSearches(query);
     router.push(`/search-post/${query}` as any);
+  };
+
+  const handleViewMoreResources = () => {
+    // Show 10 random articles total when "View More Resources" is clicked
+    setDisplayedArticles(getRandomArticles(allArticles, 10));
+    setIsShowingMoreArticles(true);
+  };
+
+  const handleArticlePress = (article: Article) => {
+    // Navigate to article detail screen
+    router.push(`/article/${article.id}` as any);
+  };
+
+  // Create a component for article item
+  const ArticleItem = ({ article }: { article: Article }) => {
+    // Determine what icon to show based on article title keywords
+    const getIconName = (title: string) => {
+      const lowerTitle = title.toLowerCase();
+      if (lowerTitle.includes("sleep")) return "sleep";
+      if (lowerTitle.includes("meditation") || lowerTitle.includes("breathing"))
+        return "meditation";
+      if (lowerTitle.includes("exercise") || lowerTitle.includes("physical"))
+        return "run";
+      if (
+        lowerTitle.includes("food") ||
+        lowerTitle.includes("nutrition") ||
+        lowerTitle.includes("eat")
+      )
+        return "food-apple";
+      return "book-open-page-variant"; // default icon
+    };
+
+    // Determine category based on title keywords
+    const getCategory = (title: string) => {
+      const lowerTitle = title.toLowerCase();
+      if (lowerTitle.includes("anxiety")) return "Anxiety";
+      if (lowerTitle.includes("depression")) return "Depression";
+      if (lowerTitle.includes("sleep")) return "Sleep";
+      if (lowerTitle.includes("stress")) return "Stress";
+      if (lowerTitle.includes("mindful")) return "Mindfulness";
+      return "Wellness"; // default category
+    };
+
+    // Calculate a readable time from the article content
+    const getReadTime = (content: string) => {
+      const wordsPerMinute = 200;
+      const words = content.split(/\s+/).length;
+      const minutes = Math.ceil(words / wordsPerMinute);
+      return `${minutes} min read`;
+    };
+
+    // Get date relative to today
+    const getRelativeDate = (dateString: string) => {
+      const date = new Date(dateString);
+      const today = new Date();
+      const diffTime = Math.abs(today.getTime() - date.getTime());
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+      if (diffDays === 0) return "Today";
+      if (diffDays === 1) return "Yesterday";
+      if (diffDays < 7) return `${diffDays} days ago`;
+      if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
+      return `${Math.floor(diffDays / 30)} months ago`;
+    };
+
+    return (
+      <TouchableOpacity
+        className="flex-row mb-3 bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100"
+        onPress={() => handleArticlePress(article)}
+      >
+        <View className="w-24 h-24 bg-secondary-200 items-center justify-center">
+          <MaterialCommunityIcons
+            name={getIconName(article.title)}
+            size={32}
+            color="#295f48"
+          />
+        </View>
+        <View className="flex-1 p-3">
+          <View className="flex-row mb-1">
+            <Text className="text-xs font-pmedium text-secondary bg-secondary-200/50 px-2 py-0.5 rounded-full">
+              {getCategory(article.title)}
+            </Text>
+          </View>
+          <Text
+            className="text-base font-pmedium text-gray-800 mb-1"
+            numberOfLines={2}
+          >
+            {article.title}
+          </Text>
+          <Text className="font-pregular text-xs text-gray-500">
+            Published {getRelativeDate(article.date)} •{" "}
+            {getReadTime(article.fullContent)}
+          </Text>
+        </View>
+      </TouchableOpacity>
+    );
   };
 
   return (
@@ -162,7 +276,10 @@ const SearchScreen = () => {
                 Understand your current state of mind with our quick
                 questionnaire
               </Text>
-              <TouchableOpacity className="bg-secondary py-2 px-4 rounded-lg self-start">
+              <TouchableOpacity
+                className="bg-secondary py-2 px-4 rounded-lg self-start"
+                onPress={() => setIsModalVisible(true)}
+              >
                 <Text className="text-white font-psemibold">
                   Start Assessment
                 </Text>
@@ -171,66 +288,26 @@ const SearchScreen = () => {
           </View>
         </View>
 
-        {/* Popular Resources Section */}
+        {/* Recommended Resources Section (Articles) */}
         <View className="mb-6">
           <Text className="text-lg font-psemibold text-gray-800 mb-2">
             Recommended Resources
           </Text>
 
-          <TouchableOpacity
-            className="flex-row mb-3 bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100"
-            onPress={() => handleTopicSelect("Breathing Techniques")}
-          >
-            <View className="w-24 h-24 bg-secondary-200 items-center justify-center">
-              <MaterialCommunityIcons
-                name="meditation"
-                size={32}
-                color="#295f48"
-              />
-            </View>
-            <View className="flex-1 p-3">
-              <View className="flex-row mb-1">
-                <Text className="text-xs font-pmedium text-secondary bg-secondary-200/50 px-2 py-0.5 rounded-full">
-                  Anxiety
-                </Text>
-              </View>
-              <Text className="text-base font-medium text-gray-800 mb-1">
-                5 Breathing Exercises for Instant Calm
-              </Text>
-              <Text className="font-pregular text-xs text-gray-500">
-                Published 2 days ago • 4 min read
-              </Text>
-            </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            className="flex-row mb-3 bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100"
-            onPress={() => handleTopicSelect("Sleep Hygiene")}
-          >
-            <View className="w-24 h-24 bg-secondary-200 items-center justify-center">
-              <MaterialCommunityIcons name="sleep" size={32} color="#295f48" />
-            </View>
-            <View className="flex-1 p-3">
-              <View className="flex-row mb-1">
-                <Text className="text-xs font-pmedium text-secondary bg-secondary-200/50 px-2 py-0.5 rounded-full">
-                  Sleep
-                </Text>
-              </View>
-              <Text className="text-base font-pmedium text-gray-800 mb-1">
-                Improve Your Sleep Quality Tonight
-              </Text>
-              <Text className="font-pregular text-xs text-gray-500">
-                Published 5 days ago • 3 min read
-              </Text>
-            </View>
-          </TouchableOpacity>
+          {/* Display articles */}
+          {displayedArticles.map((article) => (
+            <ArticleItem key={article.id} article={article} />
+          ))}
 
           <TouchableOpacity
             className="items-center py-3 border border-secondary-200 rounded-lg"
-            // onPress={() => router.push("/resources")}
+            onPress={handleViewMoreResources}
+            disabled={isShowingMoreArticles}
           >
             <Text className="text-secondary font-pmedium">
-              View More Resources
+              {isShowingMoreArticles
+                ? "All Resources Loaded"
+                : "View More Resources"}
             </Text>
           </TouchableOpacity>
         </View>
@@ -279,6 +356,15 @@ const SearchScreen = () => {
             </Text>
           </TouchableOpacity>
         </View>
+
+        <MoodLogModal
+          visible={isModalVisible}
+          onClose={() => setIsModalVisible(false)}
+          onSuccess={() => {
+            setIsModalVisible(false);
+            console.log("Mood logged successfully");
+          }}
+        />
       </ScrollView>
     </SafeAreaView>
   );

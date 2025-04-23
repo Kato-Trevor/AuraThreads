@@ -136,6 +136,10 @@ export default function RootLayout() {
                 options={{ headerShown: false }}
               />
               <Stack.Screen
+                name="article/[id]"
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
                 name="settings/index"
                 options={{
                   headerTitle: () => (
