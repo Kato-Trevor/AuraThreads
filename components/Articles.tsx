@@ -464,4 +464,454 @@ export const articles: Article[] = [
     date: "2024-11-10",
     link: "https://www.mentalhealthfirstaid.org/mental-health-resources/mental-health-education/",
   },
+  {
+    id: 51,
+    title: "Understanding Anxiety Disorders",
+    fullContent:
+      "Anxiety disorders are among the most common mental health conditions, affecting millions of people worldwide. This article explores the different types of anxiety disorders, including generalized anxiety disorder, panic disorder, and social anxiety disorder. It discusses the symptoms, causes, and treatment options available, emphasizing the importance of seeking professional help. The article also provides tips for managing anxiety on a daily basis, such as practicing relaxation techniques and maintaining a healthy lifestyle.",
+    author: "National Institute of Mental Health",
+    date: "2023-01-15",
+    link: "https://www.nimh.nih.gov/health/topics/anxiety-disorders",
+  },
+  {
+    id: 52,
+    title: "The Impact of Depression on Daily Life",
+    fullContent:
+      "Depression can significantly affect a person's ability to function in daily life. This article delves into the various ways depression can manifest, from persistent sadness and loss of interest to physical symptoms like fatigue and changes in appetite. It highlights the importance of recognizing the signs of depression and seeking appropriate treatment, which may include therapy, medication, or a combination of both. The article also offers strategies for coping with depression, such as building a support network and engaging in activities that bring joy.",
+    author: "Mayo Clinic",
+    date: "2023-02-20",
+    link: "https://www.mayoclinic.org/diseases-conditions/depression/symptoms-causes/syc-20356007",
+  },
+  {
+    id: 53,
+    title: "Bipolar Disorder: Symptoms and Treatment",
+    fullContent:
+      "Bipolar disorder is characterized by extreme mood swings, including episodes of mania and depression. This article provides an overview of the symptoms associated with bipolar disorder, such as elevated mood, increased energy, and impulsive behavior during manic episodes, and feelings of hopelessness and low energy during depressive episodes. It discusses the various treatment options available, including mood stabilizers, psychotherapy, and lifestyle changes. The article also emphasizes the importance of early diagnosis and ongoing management to improve quality of life.",
+    author: "American Psychiatric Association",
+    date: "2023-03-10",
+    link: "https://www.psychiatry.org/patients-families/bipolar-disorders/what-are-bipolar-disorders",
+  },
+  {
+    id: 54,
+    title: "Schizophrenia: Myths and Facts",
+    fullContent:
+      "Schizophrenia is a complex mental health disorder often misunderstood by the public. This article aims to dispel common myths about schizophrenia and provide factual information about the condition. It explains that schizophrenia is not a split personality disorder but a chronic mental illness that affects how a person thinks, feels, and behaves. The article discusses the symptoms, such as hallucinations and delusions, and the importance of early intervention and treatment, which may include antipsychotic medications and psychosocial support.",
+    author: "World Health Organization",
+    date: "2023-04-05",
+    link: "https://www.who.int/news-room/fact-sheets/detail/schizophrenia",
+  },
+  {
+    id: 55,
+    title: "Post-Traumatic Stress Disorder (PTSD) Explained",
+    fullContent:
+      "PTSD is a mental health condition that can develop after experiencing or witnessing a traumatic event. This article explores the symptoms of PTSD, which may include flashbacks, nightmares, and severe anxiety. It discusses the various treatment options available, such as cognitive-behavioral therapy (CBT), eye movement desensitization and reprocessing (EMDR), and medication. The article also provides resources for individuals seeking help and emphasizes the importance of support from loved ones.",
+    author: "National Center for PTSD",
+    date: "2023-05-12",
+    link: "https://www.ptsd.va.gov/understand/what/index.asp",
+  },
+  {
+    id: 56,
+    title: "Obsessive-Compulsive Disorder (OCD): Causes and Treatment",
+    fullContent:
+      "OCD is characterized by intrusive thoughts (obsessions) and repetitive behaviors (compulsions). This article examines the potential causes of OCD, including genetic, neurological, and environmental factors. It discusses the various treatment options available, such as exposure and response prevention (ERP) therapy, medication, and mindfulness techniques. The article also provides tips for managing OCD symptoms and emphasizes the importance of seeking professional help.",
+    author: "International OCD Foundation",
+    date: "2023-06-18",
+    link: "https://iocdf.org/about-ocd/",
+  },
+  {
+    id: 57,
+    title: "Eating Disorders: Recognizing the Signs",
+    fullContent:
+      "Eating disorders, such as anorexia nervosa, bulimia nervosa, and binge-eating disorder, can have serious physical and mental health consequences. This article discusses the signs and symptoms of eating disorders, which may include extreme weight loss, preoccupation with food, and distorted body image. It emphasizes the importance of early intervention and treatment, which may include therapy, nutritional counseling, and medical monitoring. The article also provides resources for individuals seeking help and support.",
+    author: "National Eating Disorders Association",
+    date: "2023-07-22",
+    link: "https://www.nationaleatingdisorders.org/learn/general-information/what-are-eating-disorders",
+  },
+  {
+    id: 58,
+    title: "Addiction and Mental Health: The Connection",
+    fullContent:
+      "Addiction and mental health disorders often co-occur, creating a complex interplay that can be challenging to treat. This article explores the relationship between addiction and mental health, discussing how substance use can exacerbate mental health symptoms and vice versa. It highlights the importance of integrated treatment approaches that address both conditions simultaneously. The article also provides resources for individuals seeking help for addiction and mental health issues.",
+    author: "Substance Abuse and Mental Health Services Administration",
+    date: "2023-08-30",
+    link: "https://www.samhsa.gov/find-help/disorders",
+  },
+  {
+    id: 59,
+    title: "Cognitive-Behavioral Therapy (CBT) for Mental Health",
+    fullContent:
+      "CBT is a widely used therapeutic approach that focuses on changing negative thought patterns and behaviors. This article provides an overview of CBT, explaining how it can be used to treat a variety of mental health conditions, including anxiety, depression, and PTSD. It discusses the techniques used in CBT, such as cognitive restructuring and exposure therapy, and emphasizes the importance of working with a trained therapist. The article also provides resources for finding a CBT therapist.",
+    author: "Beck Institute for Cognitive Behavior Therapy",
+    date: "2023-09-14",
+    link: "https://beckinstitute.org/about/what-is-cognitive-behavior-therapy/",
+  },
+  {
+    id: 60,
+    title: "Mindfulness and Meditation for Mental Well-being",
+    fullContent:
+      "Mindfulness and meditation practices have been shown to improve mental health by reducing stress and promoting relaxation. This article explores the benefits of mindfulness and meditation, discussing how these practices can help individuals manage anxiety, depression, and other mental health conditions. It provides tips for incorporating mindfulness and meditation into daily life, such as setting aside time for practice and using guided meditation apps. The article also emphasizes the importance of consistency and patience when starting a mindfulness practice.",
+    author: "Mindful",
+    date: "2023-10-25",
+    link: "https://www.mindful.org/what-is-mindfulness/",
+  },
+  {
+    id: 61,
+    title: "The Role of Exercise in Mental Health",
+    fullContent:
+      "Regular physical activity can have a positive impact on mental health by reducing symptoms of anxiety and depression. This article discusses the benefits of exercise for mental well-being, explaining how physical activity can boost mood, improve sleep, and increase self-esteem. It provides tips for incorporating exercise into daily life, such as setting realistic goals and finding activities that are enjoyable. The article also emphasizes the importance of consulting with a healthcare provider before starting a new exercise program.",
+    author: "American Psychological Association",
+    date: "2023-11-05",
+    link: "https://www.apa.org/topics/exercise-fitness/stress",
+  },
+  {
+    id: 62,
+    title: "Nutrition and Mental Health: What to Eat for Well-being",
+    fullContent:
+      "A balanced diet can play a crucial role in supporting mental health. This article explores the connection between nutrition and mental well-being, discussing how certain foods can affect mood and cognitive function. It provides tips for maintaining a healthy diet, such as eating a variety of fruits and vegetables, choosing whole grains, and limiting processed foods. The article also emphasizes the importance of staying hydrated and avoiding excessive caffeine and alcohol consumption.",
+    author: "Harvard T.H. Chan School of Public Health",
+    date: "2023-12-10",
+    link: "https://www.hsph.harvard.edu/nutritionsource/nutrition-and-mental-health/",
+  },
+  {
+    id: 63,
+    title: "Sleep Hygiene: Tips for Better Sleep and Mental Health",
+    fullContent:
+      "Quality sleep is essential for mental health, yet many people struggle with sleep issues. This article discusses the importance of sleep hygiene and provides tips for improving sleep quality. It covers strategies such as maintaining a consistent sleep schedule, creating a relaxing bedtime routine, and avoiding screens before bed. The article also emphasizes the importance of seeking professional help if sleep problems persist, as they can be a sign of an underlying mental health condition.",
+    author: "Sleep Foundation",
+    date: "2024-01-20",
+    link: "https://www.sleepfoundation.org/sleep-hygiene",
+  },
+  {
+    id: 64,
+    title: "Hotlines and Support Groups for Mental Health",
+    fullContent:
+      "When facing mental health challenges, it's important to know where to turn for help. This article provides a list of hotlines and support groups that offer assistance for various mental health issues. It includes resources for crisis intervention, such as the National Suicide Prevention Lifeline, as well as support groups for specific conditions like depression and anxiety. The article emphasizes the importance of reaching out for help and provides tips for finding the right support group.",
+    author: "Mental Health America",
+    date: "2024-02-15",
+    link: "https://www.mhanational.org/find-support-groups",
+  },
+  {
+    id: 65,
+    title: "Online Communities for Mental Health Support",
+    fullContent:
+      "Online communities can provide a valuable source of support for individuals facing mental health challenges. This article explores the benefits of online communities, such as anonymity and accessibility, and provides a list of reputable online platforms for mental health support. It discusses the importance of finding a community that aligns with one's needs and emphasizes the need for caution when sharing personal information online. The article also provides tips for engaging in online communities in a healthy and constructive way.",
+    author: "7 Cups",
+    date: "2024-03-10",
+    link: "https://www.7cups.com/",
+  },
+  {
+    id: 66,
+    title: "Mental Health in Children and Adolescents",
+    fullContent:
+      "Mental health issues can affect individuals of all ages, including children and adolescents. This article discusses the unique challenges faced by young people with mental health conditions and provides tips for parents and caregivers on how to support them. It covers topics such as recognizing the signs of mental health issues in children, seeking professional help, and creating a supportive home environment. The article also provides resources for finding mental health services for children and adolescents.",
+    author: "Child Mind Institute",
+    date: "2024-04-05",
+    link: "https://childmind.org/guide/mental-health-guide-for-parents/",
+  },
+  {
+    id: 67,
+    title: "Mental Health in Older Adults",
+    fullContent:
+      "Older adults may face unique mental health challenges, such as loneliness, grief, and cognitive decline. This article explores the mental health issues commonly experienced by older adults and provides tips for maintaining mental well-being in later life. It discusses the importance of staying socially connected, engaging in meaningful activities, and seeking professional help when needed. The article also provides resources for finding mental health services for older adults.",
+    author: "National Institute on Aging",
+    date: "2024-05-12",
+    link: "https://www.nia.nih.gov/health/mental-health-and-aging",
+  },
+  {
+    id: 68,
+    title: "Mental Health in Marginalized Communities",
+    fullContent:
+      "Marginalized communities, such as racial and ethnic minorities, LGBTQ+ individuals, and people with disabilities, may face additional barriers to mental health care. This article discusses the unique challenges faced by these communities and provides tips for finding culturally competent mental health services. It emphasizes the importance of addressing systemic inequalities and advocating for inclusive mental health care. The article also provides resources for finding support and services tailored to the needs of marginalized communities.",
+    author: "The Trevor Project",
+    date: "2024-06-18",
+    link: "https://www.thetrevorproject.org/resources/",
+  },
+  {
+    id: 69,
+    title: "Alternative Therapies for Mental Health",
+    fullContent:
+      "In addition to traditional treatments, alternative therapies can play a role in supporting mental health. This article explores various alternative therapies, such as acupuncture, yoga, and art therapy, and discusses their potential benefits for mental well-being. It emphasizes the importance of consulting with a healthcare provider before starting any alternative therapy and provides tips for finding qualified practitioners. The article also provides resources for learning more about alternative therapies for mental health.",
+    author: "National Center for Complementary and Integrative Health",
+    date: "2024-07-22",
+    link: "https://www.nccih.nih.gov/health/mental-health",
+  },
+  {
+    id: 70,
+    title: "The Future of Mental Health Care",
+    fullContent:
+      "Advancements in technology and research are shaping the future of mental health care. This article discusses emerging trends in mental health, such as teletherapy, digital mental health tools, and personalized treatment approaches. It explores the potential benefits and challenges of these innovations and emphasizes the importance of ensuring equitable access to mental health care. The article also provides resources for staying informed about the latest developments in mental health care.",
+    author: "World Economic Forum",
+    date: "2024-08-30",
+    link: "https://www.weforum.org/agenda/2024/01/mental-health-care-future/",
+  },
+  {
+    id: 71,
+    title: "Understanding Panic Attacks",
+    fullContent:
+      "Panic attacks are sudden episodes of intense fear that can be overwhelming. This article explains what panic attacks are, their symptoms, and how they differ from anxiety attacks. It provides strategies for managing panic attacks, such as deep breathing and grounding techniques. The article also discusses when to seek professional help and the importance of addressing underlying anxiety disorders.",
+    author: "Anxiety and Depression Association of America",
+    date: "2023-09-01",
+    link: "https://adaa.org/understanding-anxiety/panic-disorder",
+  },
+  {
+    id: 72,
+    title: "The Benefits of Therapy for Mental Health",
+    fullContent:
+      "Therapy can be a powerful tool for improving mental health. This article explores different types of therapy, including cognitive-behavioral therapy (CBT), dialectical behavior therapy (DBT), and psychodynamic therapy. It discusses how therapy can help individuals develop coping skills, process emotions, and improve relationships. The article also provides tips for finding a therapist and making the most of therapy sessions.",
+    author: "American Psychological Association",
+    date: "2023-10-15",
+    link: "https://www.apa.org/topics/psychotherapy",
+  },
+  {
+    id: 73,
+    title: "Managing Stress in Daily Life",
+    fullContent:
+      "Stress is a common part of life, but chronic stress can have negative effects on mental health. This article provides practical tips for managing stress, such as time management, relaxation techniques, and setting boundaries. It also discusses the importance of self-care and seeking support when needed. The article emphasizes that managing stress is an ongoing process and encourages individuals to find strategies that work for them.",
+    author: "Mayo Clinic",
+    date: "2023-11-20",
+    link: "https://www.mayoclinic.org/healthy-lifestyle/stress-management/in-depth/stress-management/art-20044151",
+  },
+  {
+    id: 74,
+    title: "The Connection Between Physical and Mental Health",
+    fullContent:
+      "Physical health and mental health are closely linked. This article explores how physical activity, nutrition, and sleep can impact mental well-being. It discusses the benefits of regular exercise, a balanced diet, and adequate sleep for mental health. The article also provides tips for incorporating healthy habits into daily life and emphasizes the importance of a holistic approach to health.",
+    author: "Harvard Health Publishing",
+    date: "2023-12-05",
+    link: "https://www.health.harvard.edu/blog/the-connection-between-physical-and-mental-health-202312051012",
+  },
+  {
+    id: 75,
+    title: "Coping with Grief and Loss",
+    fullContent:
+      "Grief is a natural response to loss, but it can be overwhelming. This article provides guidance on coping with grief, including understanding the stages of grief and finding healthy ways to mourn. It discusses the importance of allowing oneself to feel emotions and seeking support from loved ones or professionals. The article also provides resources for grief support and emphasizes that healing takes time.",
+    author: "American Hospice Foundation",
+    date: "2024-01-10",
+    link: "https://americanhospice.org/learning-about-hospice/coping-with-grief-and-loss/",
+  },
+  {
+    id: 76,
+    title: "The Importance of Self-Care for Mental Health",
+    fullContent:
+      "Self-care is essential for maintaining mental health. This article explores various self-care practices, such as mindfulness, journaling, and spending time in nature. It discusses how self-care can help individuals manage stress, improve mood, and enhance overall well-being. The article also provides tips for creating a self-care routine and emphasizes the importance of prioritizing self-care in daily life.",
+    author: "National Alliance on Mental Illness",
+    date: "2024-02-15",
+    link: "https://www.nami.org/Your-Journey/Individuals-with-Mental-Illness/Taking-Care-of-Yourself",
+  },
+  {
+    id: 77,
+    title: "Understanding Personality Disorders",
+    fullContent:
+      "Personality disorders are mental health conditions that affect how individuals think, feel, and behave. This article provides an overview of different types of personality disorders, such as borderline personality disorder and narcissistic personality disorder. It discusses the symptoms, causes, and treatment options available. The article also emphasizes the importance of seeking professional help and the role of therapy in managing personality disorders.",
+    author: "Cleveland Clinic",
+    date: "2024-03-20",
+    link: "https://my.clevelandclinic.org/health/diseases/9636-personality-disorders",
+  },
+  {
+    id: 78,
+    title: "The Role of Medication in Mental Health Treatment",
+    fullContent:
+      "Medication can be an important part of mental health treatment for many individuals. This article discusses the different types of medications used to treat mental health conditions, such as antidepressants, antipsychotics, and mood stabilizers. It explores how medications work, potential side effects, and the importance of working closely with a healthcare provider. The article also emphasizes that medication is often most effective when combined with therapy and lifestyle changes.",
+    author: "National Institute of Mental Health",
+    date: "2024-04-25",
+    link: "https://www.nimh.nih.gov/health/topics/mental-health-medications",
+  },
+  {
+    id: 79,
+    title: "Building Resilience for Better Mental Health",
+    fullContent:
+      "Resilience is the ability to bounce back from adversity. This article explores strategies for building resilience, such as developing a positive mindset, building strong relationships, and practicing self-compassion. It discusses how resilience can help individuals cope with stress and improve mental health. The article also provides tips for fostering resilience in children and emphasizes the importance of resilience in overall well-being.",
+    author: "American Psychological Association",
+    date: "2024-05-30",
+    link: "https://www.apa.org/topics/resilience",
+  },
+  {
+    id: 80,
+    title: "The Impact of Social Media on Mental Health",
+    fullContent:
+      "Social media can have both positive and negative effects on mental health. This article discusses how social media can contribute to feelings of anxiety, depression, and loneliness, as well as how it can provide support and connection. It provides tips for using social media in a healthy way, such as setting boundaries and being mindful of content consumption. The article also emphasizes the importance of balancing online and offline interactions.",
+    author: "Pew Research Center",
+    date: "2024-06-10",
+    link: "https://www.pewresearch.org/internet/2024/06/10/social-media-and-mental-health/",
+  },
+  {
+    id: 81,
+    title: "Understanding and Managing Burnout",
+    fullContent:
+      "Burnout is a state of physical, emotional, and mental exhaustion caused by prolonged stress. This article explores the signs of burnout, such as fatigue, irritability, and decreased performance. It provides strategies for managing burnout, including setting boundaries, practicing self-care, and seeking support. The article also discusses the importance of addressing burnout in the workplace and provides resources for employers and employees.",
+    author: "World Health Organization",
+    date: "2024-07-15",
+    link: "https://www.who.int/news-room/questions-and-answers/item/burn-out-an-occupational-phenomenon",
+  },
+  {
+    id: 82,
+    title: "The Benefits of Art Therapy for Mental Health",
+    fullContent:
+      "Art therapy is a form of expressive therapy that uses creative processes to improve mental health. This article discusses how art therapy can help individuals express emotions, reduce stress, and gain insight into their experiences. It explores different art therapy techniques, such as drawing, painting, and sculpting, and provides tips for incorporating art into self-care routines. The article also emphasizes the importance of working with a trained art therapist for more structured support.",
+    author: "American Art Therapy Association",
+    date: "2024-08-20",
+    link: "https://arttherapy.org/about-art-therapy/",
+  },
+  {
+    id: 83,
+    title: "The Role of Family in Mental Health Recovery",
+    fullContent:
+      "Family support can play a crucial role in mental health recovery. This article discusses how family members can provide emotional support, help with treatment adherence, and create a supportive home environment. It provides tips for families on how to communicate effectively, set boundaries, and seek their own support. The article also emphasizes the importance of educating family members about mental health conditions to foster understanding and empathy.",
+    author: "National Alliance on Mental Illness",
+    date: "2024-09-25",
+    link: "https://www.nami.org/Your-Journey/Family-Members-and-Caregivers",
+  },
+  {
+    id: 84,
+    title: "Understanding and Treating Phobias",
+    fullContent:
+      "Phobias are intense, irrational fears of specific objects or situations. This article explores different types of phobias, such as agoraphobia, social phobia, and specific phobias. It discusses the symptoms, causes, and treatment options available, including exposure therapy and cognitive-behavioral therapy (CBT). The article also provides tips for managing phobias and emphasizes the importance of seeking professional help for effective treatment.",
+    author: "Anxiety and Depression Association of America",
+    date: "2024-10-30",
+    link: "https://adaa.org/understanding-anxiety/specific-phobias",
+  },
+  {
+    id: 85,
+    title: "The Importance of Mental Health Screening",
+    fullContent:
+      "Mental health screening can help identify potential issues early and guide individuals toward appropriate care. This article discusses the benefits of mental health screening, such as early intervention and personalized treatment plans. It provides information on how to access screening tools and emphasizes the importance of regular mental health check-ups. The article also addresses common misconceptions about mental health screening and encourages individuals to prioritize their mental well-being.",
+    author: "Mental Health America",
+    date: "2024-11-05",
+    link: "https://screening.mhanational.org/screening-tools/",
+  },
+  {
+    id: 86,
+    title: "The Impact of Chronic Illness on Mental Health",
+    fullContent:
+      "Living with a chronic illness can take a toll on mental health. This article explores the emotional challenges faced by individuals with chronic conditions, such as anxiety, depression, and grief. It provides strategies for coping with these challenges, including seeking support, practicing self-care, and finding meaning in the experience. The article also emphasizes the importance of integrated care that addresses both physical and mental health needs.",
+    author: "Cleveland Clinic",
+    date: "2024-12-10",
+    link: "https://my.clevelandclinic.org/health/articles/4062-chronic-illness-and-depression",
+  },
+  {
+    id: 87,
+    title: "The Benefits of Nature for Mental Health",
+    fullContent:
+      "Spending time in nature can have a positive impact on mental health. This article discusses the benefits of nature exposure, such as reduced stress, improved mood, and enhanced cognitive function. It provides tips for incorporating nature into daily life, such as taking walks in green spaces or practicing outdoor mindfulness. The article also explores the concept of ecotherapy and its role in mental health treatment.",
+    author: "American Psychological Association",
+    date: "2025-01-15",
+    link: "https://www.apa.org/monitor/2020/04/nurtured-nature",
+  },
+  {
+    id: 88,
+    title: "Understanding and Managing Anger",
+    fullContent:
+      "Anger is a normal emotion, but it can become problematic if not managed effectively. This article explores the causes of anger and provides strategies for managing it, such as deep breathing, physical activity, and cognitive restructuring. It discusses the importance of understanding the root causes of anger and seeking professional help if anger leads to aggression or violence. The article also provides resources for anger management programs and support groups.",
+    author: "Mayo Clinic",
+    date: "2025-02-20",
+    link: "https://www.mayoclinic.org/healthy-lifestyle/adult-health/in-depth/anger-management/art-20045434",
+  },
+  {
+    id: 89,
+    title: "The Role of Spirituality in Mental Health",
+    fullContent:
+      "Spirituality can play a significant role in mental health for many individuals. This article explores how spiritual practices, such as meditation, prayer, and community involvement, can provide comfort, meaning, and support. It discusses the benefits of integrating spirituality into mental health care and provides tips for exploring one's spiritual beliefs. The article also emphasizes the importance of respecting diverse spiritual perspectives and finding practices that resonate personally.",
+    author: "National Alliance on Mental Illness",
+    date: "2025-03-25",
+    link: "https://www.nami.org/Blogs/NAMI-Blog/October-2018/Spirituality-and-Mental-Health",
+  },
+  {
+    id: 90,
+    title: "The Impact of Loneliness on Mental Health",
+    fullContent:
+      "Loneliness can have serious consequences for mental health, including increased risk of depression and anxiety. This article discusses the causes of loneliness and provides strategies for combating it, such as building social connections, engaging in community activities, and seeking professional help. It emphasizes the importance of recognizing loneliness as a significant mental health issue and taking proactive steps to address it. The article also provides resources for finding social support and connection.",
+    author: "Campaign to End Loneliness",
+    date: "2025-04-30",
+    link: "https://www.campaigntoendloneliness.org/the-impact-of-loneliness/",
+  },
+  {
+    id: 91,
+    title: "Understanding and Treating Insomnia",
+    fullContent:
+      "Insomnia is a common sleep disorder that can affect mental health. This article explores the causes of insomnia, such as stress, anxiety, and poor sleep habits. It provides strategies for improving sleep, including cognitive-behavioral therapy for insomnia (CBT-I), relaxation techniques, and sleep hygiene practices. The article also discusses when to seek professional help and the importance of addressing underlying mental health conditions that may contribute to insomnia.",
+    author: "Sleep Foundation",
+    date: "2025-05-05",
+    link: "https://www.sleepfoundation.org/insomnia",
+  },
+  {
+    id: 92,
+    title: "The Benefits of Music Therapy for Mental Health",
+    fullContent:
+      "Music therapy is an evidence-based practice that uses music to improve mental health. This article discusses how music therapy can help individuals express emotions, reduce stress, and enhance communication. It explores different music therapy techniques, such as songwriting, improvisation, and listening to music, and provides tips for incorporating music into self-care routines. The article also emphasizes the importance of working with a trained music therapist for more structured support.",
+    author: "American Music Therapy Association",
+    date: "2025-06-10",
+    link: "https://www.musictherapy.org/about/musictherapy/",
+  },
+  {
+    id: 93,
+    title: "The Role of Pets in Mental Health",
+    fullContent:
+      "Pets can provide companionship and emotional support, which can be beneficial for mental health. This article explores the benefits of pet ownership, such as reduced stress, increased physical activity, and improved mood. It discusses how pets can help individuals with mental health conditions, such as anxiety and depression, and provides tips for choosing the right pet. The article also emphasizes the importance of responsible pet ownership and considering one's lifestyle and resources before adopting a pet.",
+    author: "Human Animal Bond Research Institute",
+    date: "2025-07-15",
+    link: "https://habri.org/research/mental-health/",
+  },
+  {
+    id: 94,
+    title: "Understanding and Managing OCD",
+    fullContent:
+      "Obsessive-Compulsive Disorder (OCD) is characterized by intrusive thoughts and repetitive behaviors. This article provides an overview of OCD, including its symptoms, causes, and treatment options. It discusses the effectiveness of exposure and response prevention (ERP) therapy and medication in managing OCD. The article also provides tips for coping with OCD and emphasizes the importance of seeking professional help for effective treatment.",
+    author: "International OCD Foundation",
+    date: "2025-08-20",
+    link: "https://iocdf.org/about-ocd/",
+  },
+  {
+    id: 95,
+    title: "The Impact of Trauma on Mental Health",
+    fullContent:
+      "Trauma can have lasting effects on mental health, leading to conditions such as PTSD, anxiety, and depression. This article explores the different types of trauma, such as acute, chronic, and complex trauma, and their potential impacts. It discusses treatment options, including trauma-focused therapy and EMDR, and provides tips for coping with trauma. The article also emphasizes the importance of seeking professional help and building a support network.",
+    author: "National Center for PTSD",
+    date: "2025-09-25",
+    link: "https://www.ptsd.va.gov/understand/what/index.asp",
+  },
+  {
+    id: 96,
+    title: "The Benefits of Yoga for Mental Health",
+    fullContent:
+      "Yoga is a mind-body practice that can improve mental health by reducing stress and promoting relaxation. This article discusses the benefits of yoga, such as improved mood, increased mindfulness, and enhanced physical health. It provides tips for starting a yoga practice, including finding a style that suits one's needs and working with a qualified instructor. The article also explores the role of yoga in mental health treatment and its potential as a complementary therapy.",
+    author: "Yoga Alliance",
+    date: "2025-10-30",
+    link: "https://www.yogaalliance.org/About_Yoga/Yoga_for_Health/Mental_Health",
+  },
+  {
+    id: 97,
+    title: "Understanding and Treating Eating Disorders",
+    fullContent:
+      "Eating disorders, such as anorexia, bulimia, and binge eating disorder, can have serious physical and mental health consequences. This article provides an overview of eating disorders, including their symptoms, causes, and treatment options. It discusses the importance of early intervention and the role of therapy, nutrition counseling, and medical monitoring in treatment. The article also provides resources for individuals seeking help and emphasizes the importance of a supportive environment for recovery.",
+    author: "National Eating Disorders Association",
+    date: "2025-11-05",
+    link: "https://www.nationaleatingdisorders.org/learn/general-information/what-are-eating-disorders",
+  },
+  {
+    id: 98,
+    title: "The Role of Peer Support in Mental Health",
+    fullContent:
+      "Peer support involves individuals with lived experience of mental health conditions providing support to others. This article explores the benefits of peer support, such as increased hope, reduced stigma, and improved coping skills. It discusses different types of peer support, including one-on-one support and group programs, and provides tips for finding peer support resources. The article also emphasizes the importance of trained peer supporters and the role of peer support in mental health recovery.",
+    author: "Mental Health America",
+    date: "2025-12-10",
+    link: "https://www.mhanational.org/peer-support",
+  },
+  {
+    id: 99,
+    title: "Understanding and Managing ADHD",
+    fullContent:
+      "Attention-Deficit/Hyperactivity Disorder (ADHD) is a neurodevelopmental disorder that affects both children and adults. This article provides an overview of ADHD, including its symptoms, causes, and treatment options. It discusses the effectiveness of behavioral therapy, medication, and lifestyle changes in managing ADHD. The article also provides tips for coping with ADHD and emphasizes the importance of seeking professional help for effective treatment.",
+    author: "CHADD",
+    date: "2026-01-15",
+    link: "https://chadd.org/understanding-adhd/",
+  },
+  {
+    id: 100,
+    title: "The Impact of Climate Change on Mental Health",
+    fullContent:
+      "Climate change can have significant effects on mental health, including increased anxiety, depression, and trauma. This article explores the mental health impacts of climate change, such as eco-anxiety and the psychological effects of natural disasters. It provides strategies for coping with climate-related stress, including building resilience, engaging in activism, and seeking support. The article also emphasizes the importance of addressing mental health in climate change policies and interventions.",
+    author: "American Psychological Association",
+    date: "2026-02-20",
+    link: "https://www.apa.org/news/press/releases/2017/03/mental-health-climate",
+  },
 ];

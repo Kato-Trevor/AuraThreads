@@ -6,8 +6,7 @@ export async function addPostToDB(
   topic: string,
   isExperience: boolean,
   isAnonymous: boolean,
-  songId?: number,
-  
+  songId?: number
 ) {
   try {
     const newPost = await databases.createDocument(
@@ -20,7 +19,7 @@ export async function addPostToDB(
         topic,
         songId,
         isAnonymous,
-        isExperience
+        isExperience,
       }
     );
 
@@ -148,7 +147,6 @@ export const searchPosts = async (query: any, userId: string) => {
   }
 };
 
-
 export async function getExperiencePostsByTopic(topic: string) {
   try {
     const posts = await databases.listDocuments(
@@ -158,7 +156,7 @@ export async function getExperiencePostsByTopic(topic: string) {
         Query.equal("topic", topic),
         Query.equal("isExperience", true),
         // Optional: Add sorting (e.g., newest first)
-        Query.orderDesc("$createdAt")
+        Query.orderDesc("$createdAt"),
       ]
     );
 
@@ -167,7 +165,6 @@ export async function getExperiencePostsByTopic(topic: string) {
     throw new Error(error);
   }
 }
-
 
 export async function getExperiencePosts() {
   try {
@@ -180,5 +177,39 @@ export async function getExperiencePosts() {
     return posts.documents;
   } catch (error: any) {
     throw new Error(error);
+  }
+}
+
+export async function getMostUsedTopics() {
+  try {
+    const posts = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.postCollectionId,
+      [Query.limit(100)]
+    );
+
+    const topicsCount: { [key: string]: number } = {};
+
+    posts.documents.forEach((post) => {
+      if (post.topic && post.topic !== "None") {
+        topicsCount[post.topic] = (topicsCount[post.topic] || 0) + 1;
+      }
+    });
+
+    // Sort topics by count in descending order
+    const sortedTopics = Object.entries(topicsCount).sort(
+      (a, b) => b[1] - a[1]
+    );
+
+    // Get the top 6 most used topics or default to an empty array if none
+    const mostUsedTopics =
+      sortedTopics.length > 0
+        ? sortedTopics.slice(0, 6).map((topic) => topic[0])
+        : [];
+    console.log("Most used topics:", mostUsedTopics);
+
+    return mostUsedTopics;
+  } catch (error: any) {
+    console.error("Error fetching most used topics:", error);
   }
 }
