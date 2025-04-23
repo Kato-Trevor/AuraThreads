@@ -58,12 +58,6 @@ const Home = () => {
 
   return (
     <View className="flex-1">
-      <TouchableOpacity className="bg-secondary p-3 mx-4 my-3 rounded-lg">
-        <Text className="text-white text-center font-medium">
-          Log Your Mood
-        </Text>
-      </TouchableOpacity>
-
       <FlatList
         data={posts}
         keyExtractor={(item) => item.$id}
