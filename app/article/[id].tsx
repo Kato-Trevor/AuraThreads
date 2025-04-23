@@ -12,7 +12,6 @@ const ArticleDetailScreen = () => {
   const [isBookmarked, setIsBookmarked] = useState(false);
 
   useEffect(() => {
-    // Find the article with the matching ID
     const foundArticle = articles.find((a) => a.id === Number(articleId));
     if (foundArticle) {
       setArticle(foundArticle);
@@ -37,9 +36,7 @@ const ArticleDetailScreen = () => {
     });
   };
 
-  // Format content with paragraphs
   const formatContent = (content: string) => {
-    // Split content by periods, then combine into paragraphs of 2-3 sentences
     const sentences = content.split(". ").filter((s) => s.trim());
     const paragraphs = [];
 
@@ -51,7 +48,6 @@ const ArticleDetailScreen = () => {
     return paragraphs;
   };
 
-  // Determine category based on title keywords
   const getCategory = (title: string) => {
     const lowerTitle = title.toLowerCase();
     if (lowerTitle.includes("anxiety")) return "Anxiety";
@@ -59,7 +55,7 @@ const ArticleDetailScreen = () => {
     if (lowerTitle.includes("sleep")) return "Sleep";
     if (lowerTitle.includes("stress")) return "Stress";
     if (lowerTitle.includes("mindful")) return "Mindfulness";
-    return "Wellness"; // default category
+    return "Wellness";
   };
 
   return (
