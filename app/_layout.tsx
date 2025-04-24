@@ -122,10 +122,7 @@ export default function RootLayout() {
               />
               <Stack.Screen
                 name="profile/[id]"
-                options={{
-                  headerTitle: "Profile",
-                  headerTitleAlign: "center",
-                }}
+                options={{ headerShown: false }}
               />
               <Stack.Screen
                 name="search-post/[query]"
@@ -145,6 +142,10 @@ export default function RootLayout() {
               />
               <Stack.Screen
                 name="journal/index"
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="bookmarks/index"
                 options={{ headerShown: false }}
               />
             </Stack>

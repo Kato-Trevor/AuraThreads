@@ -70,6 +70,7 @@ const Journal = () => {
   const titleInputRef = useRef<TextInput>(null);
   const { user } = useGlobalContext();
   const userId = user ? user.$id : null;
+  const isSaving = useRef(false);
 
   const formatTimestamp = (date: Date) => {
     return {
@@ -218,6 +219,9 @@ const Journal = () => {
 
   const saveToDatabase = useCallback(
     debounce(async (pageNumber: number, pageData: PageData) => {
+      if (isSaving.current) return;
+      isSaving.current = true;
+
       try {
         const { id, title, content, isBookmarked } = pageData;
 
@@ -251,6 +255,8 @@ const Journal = () => {
         }
       } catch (error) {
         console.error("Failed to save to database:", error);
+      } finally {
+        isSaving.current = false;
       }
     }, 1500),
     [userId, entries, currentPage, totalPages]
