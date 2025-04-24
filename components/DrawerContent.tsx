@@ -108,15 +108,20 @@ const DrawerContent = ({ onClose, onLogOut }: DrawerContentProps) => {
               />
             ) : (
               <Text className="text-lg font-bold text-white">
-                {user?.username
+                {user.role === "user" && user?.username
                   ? user.username.substring(0, 1).toUpperCase()
-                  : "U"}
+                  : user.role === "counselor"
+                  ? user?.username.substring(0, 1).toUpperCase() + "C"
+                  : user?.username.substring(0, 1).toUpperCase() + "U"}
               </Text>
             )}
           </View>
           <View className="ml-3">
             <Text className="font-['Poppins-SemiBold'] text-base text-white">
-              {user?.username || "User"}
+              {user?.username ||
+                user?.givenNames?.trim() +
+                  (user?.surname ? " " + user.surname.trim() : "") ||
+                "User"}
             </Text>
             <Text className="font-['Poppins-Regular'] text-xs text-white/70">
               {user?.email || ""}
