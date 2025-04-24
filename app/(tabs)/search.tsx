@@ -5,23 +5,43 @@ import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import SearchInput from "@/components/SearchInput";
 import { router } from "expo-router";
 import * as SecureStore from "expo-secure-store";
+import { articles, Article } from "@/components/Articles";
+import MoodLogModal from "@/components/MoodLog";
+import { getMostUsedTopics } from "@/lib/appwrite/posts";
+import ArticleItem from "@/components/ArticleItem";
 
 const RECENT_SEARCHES_KEY = "aura_recent_searches";
 const MAX_RECENT_SEARCHES = 5;
 
+const getRandomArticles = (articles: Article[], count: number): Article[] => {
+  const shuffled = [...articles].sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, count);
+};
+
 const SearchScreen = () => {
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
-  const [trendingTopics, setTrendingTopics] = useState([
-    "Self-Care Routines",
-    "Sleep Improvement",
-    "ImposterSyndrome",
-    "Procrastination",
-    "Burnout",
-    "Homesickness",
-  ]);
+  const [trendingTopics, setTrendingTopics] = useState<string[]>([]);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [displayedArticles, setDisplayedArticles] = useState<Article[]>([]);
+  const [isShowingMoreArticles, setIsShowingMoreArticles] = useState(false);
+  const allArticles = articles;
 
   useEffect(() => {
     loadRecentSearches();
+    setDisplayedArticles(getRandomArticles(allArticles, 2));
+  }, []);
+
+  const loadTrendingTopics = async () => {
+    try {
+      const topics = await getMostUsedTopics();
+      setTrendingTopics(topics as string[]);
+    } catch (error) {
+      console.error("Error loading trending topics:", error);
+    }
+  };
+
+  useEffect(() => {
+    loadTrendingTopics();
   }, []);
 
   const loadRecentSearches = async () => {
@@ -80,10 +100,15 @@ const SearchScreen = () => {
     router.push(`/search-post/${query}` as any);
   };
 
+  const handleViewMoreResources = () => {
+    setDisplayedArticles(getRandomArticles(allArticles, 10));
+    setIsShowingMoreArticles(true);
+  };
+
   return (
     <SafeAreaView className="flex-1 bg-white" style={{ paddingTop: 0 }}>
       {/* Header */}
-      <View className="px-5 pt-1 pb-2">
+      <View className="px-5 pb-2">
         <Text className="text-2xl font-pbold text-gray-800">Discover</Text>
       </View>
 
@@ -162,7 +187,10 @@ const SearchScreen = () => {
                 Understand your current state of mind with our quick
                 questionnaire
               </Text>
-              <TouchableOpacity className="bg-secondary py-2 px-4 rounded-lg self-start">
+              <TouchableOpacity
+                className="bg-secondary py-2 px-4 rounded-lg self-start"
+                onPress={() => setIsModalVisible(true)}
+              >
                 <Text className="text-white font-psemibold">
                   Start Assessment
                 </Text>
@@ -171,66 +199,26 @@ const SearchScreen = () => {
           </View>
         </View>
 
-        {/* Popular Resources Section */}
+        {/* Recommended Resources Section (Articles) */}
         <View className="mb-6">
           <Text className="text-lg font-psemibold text-gray-800 mb-2">
             Recommended Resources
           </Text>
 
-          <TouchableOpacity
-            className="flex-row mb-3 bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100"
-            onPress={() => handleTopicSelect("Breathing Techniques")}
-          >
-            <View className="w-24 h-24 bg-secondary-200 items-center justify-center">
-              <MaterialCommunityIcons
-                name="meditation"
-                size={32}
-                color="#295f48"
-              />
-            </View>
-            <View className="flex-1 p-3">
-              <View className="flex-row mb-1">
-                <Text className="text-xs font-pmedium text-secondary bg-secondary-200/50 px-2 py-0.5 rounded-full">
-                  Anxiety
-                </Text>
-              </View>
-              <Text className="text-base font-medium text-gray-800 mb-1">
-                5 Breathing Exercises for Instant Calm
-              </Text>
-              <Text className="font-pregular text-xs text-gray-500">
-                Published 2 days ago • 4 min read
-              </Text>
-            </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            className="flex-row mb-3 bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100"
-            onPress={() => handleTopicSelect("Sleep Hygiene")}
-          >
-            <View className="w-24 h-24 bg-secondary-200 items-center justify-center">
-              <MaterialCommunityIcons name="sleep" size={32} color="#295f48" />
-            </View>
-            <View className="flex-1 p-3">
-              <View className="flex-row mb-1">
-                <Text className="text-xs font-pmedium text-secondary bg-secondary-200/50 px-2 py-0.5 rounded-full">
-                  Sleep
-                </Text>
-              </View>
-              <Text className="text-base font-pmedium text-gray-800 mb-1">
-                Improve Your Sleep Quality Tonight
-              </Text>
-              <Text className="font-pregular text-xs text-gray-500">
-                Published 5 days ago • 3 min read
-              </Text>
-            </View>
-          </TouchableOpacity>
+          {/* Display articles */}
+          {displayedArticles.map((article) => (
+            <ArticleItem key={article.id} article={article} />
+          ))}
 
           <TouchableOpacity
             className="items-center py-3 border border-secondary-200 rounded-lg"
-            // onPress={() => router.push("/resources")}
+            onPress={handleViewMoreResources}
+            disabled={isShowingMoreArticles}
           >
             <Text className="text-secondary font-pmedium">
-              View More Resources
+              {isShowingMoreArticles
+                ? "All Resources Loaded"
+                : "View More Resources"}
             </Text>
           </TouchableOpacity>
         </View>
@@ -238,12 +226,12 @@ const SearchScreen = () => {
         {/* Community Support Section */}
         <View className="mb-6">
           <Text className="text-lg font-psemibold text-gray-800 mb-2">
-            Community Support
+            Support
           </Text>
 
           <TouchableOpacity
             className="bg-gradient-to-r from-pink-50 to-purple-50 p-4 rounded-xl mb-3"
-            // onPress={() => router.push("/support-groups")}
+            onPress={() => router.push("/home")}
           >
             <View className="flex-row items-center mb-2">
               <MaterialCommunityIcons
@@ -252,7 +240,7 @@ const SearchScreen = () => {
                 color="#295f48"
               />
               <Text className="ml-2 text-base font-psemibold text-gray-800">
-                Support Groups
+                Community Support
               </Text>
             </View>
             <Text className="font-pregular text-sm text-gray-600">
@@ -279,6 +267,15 @@ const SearchScreen = () => {
             </Text>
           </TouchableOpacity>
         </View>
+
+        <MoodLogModal
+          visible={isModalVisible}
+          onClose={() => setIsModalVisible(false)}
+          onSuccess={() => {
+            setIsModalVisible(false);
+            console.log("Mood logged successfully");
+          }}
+        />
       </ScrollView>
     </SafeAreaView>
   );

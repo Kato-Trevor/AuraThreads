@@ -10,10 +10,17 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { useGlobalContext } from "@/context/GlobalProvider";
 import "react-native-gesture-handler";
+import registerNNPushToken from "native-notify";
 
 const { width, height } = Dimensions.get("window");
 
 const RootLayout = () => {
+  try {
+    registerNNPushToken(29438, "zq1jhhUWGWDhHVZRP5yihC");
+  } catch (error) {
+    console.error("Error registering Native Notify Push Token:", error);
+  }
+
   const { showToast } = useToast();
   const { isLoading, isLoggedIn } = useGlobalContext();
 

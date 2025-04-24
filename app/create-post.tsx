@@ -56,7 +56,6 @@ const CreatePost = () => {
     setEnableAIResponse(!enableAIResponse);
   };
 
-
   const handlePostCreation = async () => {
     setIsPosting(true);
     try {
@@ -68,8 +67,7 @@ const CreatePost = () => {
         formatTopic(topic),
         contentType,
         enableAnonymousID,
-        selectedSong?.id,
-        
+        selectedSong?.id
       );
       showToast("Post created successfully!", "success");
       router.back();
@@ -88,7 +86,6 @@ const CreatePost = () => {
       setIsPosting(false);
     }
   };
-
 
   // const handlePostCreation = async () => {
   //   setIsPosting(true);
