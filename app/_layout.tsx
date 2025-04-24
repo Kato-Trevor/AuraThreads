@@ -141,14 +141,11 @@ export default function RootLayout() {
               />
               <Stack.Screen
                 name="settings/index"
-                options={{
-                  headerTitle: () => (
-                    <Text className="text-lg font-psemibold text-secondary-darkest">
-                      Settings
-                    </Text>
-                  ),
-                  headerTitleAlign: "center",
-                }}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="journal/index"
+                options={{ headerShown: false }}
               />
             </Stack>
           </Drawer>
