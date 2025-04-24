@@ -2,9 +2,10 @@ import { Text, View, ScrollView, TouchableOpacity, Alert } from "react-native";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams, router } from "expo-router";
-import { Feather, AntDesign } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 import { articles, Article } from "@/components/Articles";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import * as WebBrowser from "expo-web-browser";
 
 const ArticleDetailScreen = () => {
   const { id: articleId } = useLocalSearchParams();
@@ -58,6 +59,14 @@ const ArticleDetailScreen = () => {
     return "Wellness";
   };
 
+  const openSourceLink = async () => {
+    if (article && article.link) {
+      await WebBrowser.openBrowserAsync(article.link);
+    } else {
+      Alert.alert("Error", "Source link not available");
+    }
+  };
+
   return (
     <SafeAreaView className="flex-1 bg-white">
       {/* Header */}
@@ -109,34 +118,17 @@ const ArticleDetailScreen = () => {
             ))}
           </View>
 
-          {/* Action Buttons */}
-          <View className="flex-row justify-between mb-8">
+          {/* Source Button */}
+          <View className="mb-8">
             <TouchableOpacity
-              className="flex-1 mr-2 bg-secondary py-3 rounded-lg items-center"
-              onPress={() => {
-                // In a real app, this would share the article
-                Alert.alert(
-                  "Share",
-                  "Sharing functionality would be implemented here"
-                );
-              }}
+              className="bg-secondary py-3 rounded-lg items-center"
+              onPress={openSourceLink}
             >
               <View className="flex-row items-center">
-                <Feather name="share-2" size={18} color="white" />
-                <Text className="text-white font-pmedium ml-2">Share</Text>
-              </View>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              className="flex-1 ml-2 bg-white border border-secondary py-3 rounded-lg items-center"
-              onPress={() => {
-                // In a real app, this would open the source link
-                Alert.alert("Source", `Opening source: ${article.link}`);
-              }}
-            >
-              <View className="flex-row items-center">
-                <Feather name="external-link" size={18} color="#295f48" />
-                <Text className="text-secondary font-pmedium ml-2">Source</Text>
+                <Feather name="external-link" size={18} color="white" />
+                <Text className="text-white font-pmedium ml-2">
+                  Open Source
+                </Text>
               </View>
             </TouchableOpacity>
           </View>
