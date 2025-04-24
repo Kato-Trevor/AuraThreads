@@ -28,7 +28,8 @@ import {
   Feather,
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
-import { BlurView } from "expo-blur"; // You may need to install this package
+import { BlurView } from "expo-blur";
+import { LinearGradient } from "expo-linear-gradient";
 
 const { width } = Dimensions.get("window");
 const HEADER_HEIGHT = 56;
@@ -142,7 +143,7 @@ export default function Profile() {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-white" edges={["top"]}>
+    <SafeAreaView className="flex-1 bg-gray-50" edges={["top"]}>
       {/* Animated Header */}
       <Animated.View
         className="absolute top-0 left-0 right-0 z-10 border-b border-gray-200"
@@ -155,14 +156,14 @@ export default function Profile() {
         <View className="flex-row items-center justify-between px-4 h-full">
           <TouchableOpacity
             onPress={() => router.back()}
-            className="p-2"
+            className="p-2 bg-white/60 rounded-full"
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           >
-            <MaterialIcons name="arrow-back-ios" size={22} color="#588b76" />
+            <MaterialIcons name="arrow-back-ios" size={18} color="#18392b" />
           </TouchableOpacity>
 
           <Text
-            className="text-base font-semibold text-gray-800"
+            className="text-base font-['Poppins-SemiBold'] text-gray-800"
             numberOfLines={1}
           >
             {user?.role === "counselor"
@@ -171,10 +172,10 @@ export default function Profile() {
           </Text>
 
           <TouchableOpacity
-            className="p-2"
+            className="p-2 bg-white/60 rounded-full"
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           >
-            <MaterialIcons name="more-horiz" size={22} color="#588b76" />
+            <MaterialIcons name="more-horiz" size={18} color="#18392b" />
           </TouchableOpacity>
         </View>
       </Animated.View>
@@ -184,7 +185,7 @@ export default function Profile() {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor="#588b76"
+            tintColor="#18392b"
           />
         }
         showsVerticalScrollIndicator={false}
@@ -195,51 +196,61 @@ export default function Profile() {
         scrollEventThrottle={16}
         contentContainerStyle={{ paddingBottom: 20 }}
       >
-        {/* Back Button on Top */}
-        <View className="flex-row justify-between items-center px-4 pt-2 pb-4">
-          <TouchableOpacity
-            onPress={() => router.back()}
-            className="p-2 bg-gray-50 rounded-full"
-            activeOpacity={0.7}
+        <View className="p-3">
+          {/* Header with Gradient */}
+          <LinearGradient
+            colors={["#18392b", "#2a5745"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            className="rounded-2xl mb-5 p-5"
           >
-            <MaterialIcons name="arrow-back" size={22} color="#588b76" />
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            className="p-2 bg-gray-50 rounded-full"
-            activeOpacity={0.7}
-          >
-            <MaterialIcons name="more-horiz" size={22} color="#588b76" />
-          </TouchableOpacity>
+            <View className="flex-row items-center">
+              <TouchableOpacity
+                onPress={() => {
+                  router.back();
+                }}
+                className="bg-white/20 w-10 h-10 rounded-full items-center justify-center"
+              >
+                <Ionicons name="chevron-back" size={24} color="#fff" />
+              </TouchableOpacity>
+              <Text className="font-['Poppins-SemiBold'] text-2xl text-white ml-4">
+                Profile
+              </Text>
+            </View>
+          </LinearGradient>
         </View>
 
         {/* User Profile Card */}
         <Animated.View
-          className="mx-4 mb-6 bg-white rounded-2xl overflow-hidden shadow-sm"
+          className="mx-4 mb-6 bg-white rounded-2xl overflow-hidden shadow-md"
           style={{ opacity: fadeAnim }}
         >
           <View className="p-5">
-            <View className="flex-row items-center mb-4">
-              <Avatar
-                username={username}
-                imageUrl={user?.avatar}
-                size="large"
-              />
+            <View className="flex-row items-center mb-5">
+              <View className="h-20 w-20 bg-white/20 rounded-full justify-center items-center border-4 border-white shadow-sm">
+                <Avatar
+                  username={username}
+                  imageUrl={user?.avatar}
+                  size="large"
+                />
+              </View>
               <View className="ml-4 flex-1">
                 {user?.role === "counselor" ? (
-                  <Text className="text-xl font-bold text-gray-800 flex-wrap">
+                  <Text className="text-xl font-['Poppins-Bold'] text-gray-800 flex-wrap">
                     {user?.surname} {user?.givenNames}
                   </Text>
                 ) : (
-                  <Text className="text-xl font-bold text-gray-800">
+                  <Text className="text-xl font-['Poppins-Bold'] text-gray-800">
                     @{user?.username}
                   </Text>
                 )}
 
                 <View className="flex-row items-center mt-1">
-                  <Ionicons name="mail-outline" size={14} color="#6B7280" />
+                  <View className="bg-green-50 p-1 rounded-full">
+                    <Ionicons name="mail-outline" size={12} color="#18392b" />
+                  </View>
                   <Text
-                    className="text-gray-500 text-sm ml-1"
+                    className="text-gray-500 text-sm ml-1 font-['Poppins-Regular']"
                     numberOfLines={1}
                   >
                     {user?.email}
@@ -250,8 +261,8 @@ export default function Profile() {
 
             {/* Bio */}
             {user?.biography && (
-              <View className="mb-4">
-                <Text className="text-base leading-6 text-gray-700">
+              <View className="mb-5">
+                <Text className="text-base leading-6 text-gray-700 font-['Poppins-Regular']">
                   {user.biography}
                 </Text>
               </View>
@@ -259,12 +270,12 @@ export default function Profile() {
 
             {/* User Details */}
             <View className="p-4 bg-gray-50 rounded-xl">
-              <View className="flex-row justify-between items-center mb-3">
-                <Text className="font-semibold text-gray-800">
+              <View className="flex-row justify-between items-center mb-4">
+                <Text className="font-['Poppins-SemiBold'] text-gray-800">
                   Profile Info
                 </Text>
-                <TouchableOpacity>
-                  <Text className="text-[#588b76] font-medium text-sm">
+                <TouchableOpacity className="bg-green-50 px-3 py-1 rounded-full">
+                  <Text className="text-[#18392b] font-['Poppins-Medium'] text-sm">
                     Edit
                   </Text>
                 </TouchableOpacity>
@@ -272,12 +283,14 @@ export default function Profile() {
 
               <View className="space-y-3">
                 <View className="flex-row items-center">
-                  <View className="w-8 items-center justify-center">
-                    <Ionicons name="mail" size={16} color="#588b76" />
+                  <View className="w-8 h-8 bg-green-50 rounded-full items-center justify-center">
+                    <Ionicons name="mail" size={16} color="#18392b" />
                   </View>
-                  <Text className="text-gray-600 w-20">Email:</Text>
+                  <Text className="text-gray-600 w-20 ml-3 font-['Poppins-Regular']">
+                    Email:
+                  </Text>
                   <Text
-                    className="text-gray-800 font-medium flex-1"
+                    className="text-gray-800 font-['Poppins-Medium'] flex-1"
                     numberOfLines={1}
                   >
                     {user?.email}
@@ -286,11 +299,13 @@ export default function Profile() {
 
                 {user?.phoneNumber && (
                   <View className="flex-row items-center">
-                    <View className="w-8 items-center justify-center">
-                      <Ionicons name="call" size={16} color="#588b76" />
+                    <View className="w-8 h-8 bg-green-50 rounded-full items-center justify-center">
+                      <Ionicons name="call" size={16} color="#18392b" />
                     </View>
-                    <Text className="text-gray-600 w-20">Phone:</Text>
-                    <Text className="text-gray-800 font-medium">
+                    <Text className="text-gray-600 w-20 ml-3 font-['Poppins-Regular']">
+                      Phone:
+                    </Text>
+                    <Text className="text-gray-800 font-['Poppins-Medium']">
                       {user.phoneNumber}
                     </Text>
                   </View>
@@ -298,11 +313,13 @@ export default function Profile() {
 
                 {user?.gender && (
                   <View className="flex-row items-center">
-                    <View className="w-8 items-center justify-center">
-                      <Ionicons name="person" size={16} color="#588b76" />
+                    <View className="w-8 h-8 bg-green-50 rounded-full items-center justify-center">
+                      <Ionicons name="person" size={16} color="#18392b" />
                     </View>
-                    <Text className="text-gray-600 w-20">Gender:</Text>
-                    <Text className="text-gray-800 font-medium">
+                    <Text className="text-gray-600 w-20 ml-3 font-['Poppins-Regular']">
+                      Gender:
+                    </Text>
+                    <Text className="text-gray-800 font-['Poppins-Medium']">
                       {user.gender}
                     </Text>
                   </View>
@@ -310,11 +327,13 @@ export default function Profile() {
 
                 {user?.role && (
                   <View className="flex-row items-center">
-                    <View className="w-8 items-center justify-center">
-                      <Ionicons name="briefcase" size={16} color="#588b76" />
+                    <View className="w-8 h-8 bg-green-50 rounded-full items-center justify-center">
+                      <Ionicons name="briefcase" size={16} color="#18392b" />
                     </View>
-                    <Text className="text-gray-600 w-20">Role:</Text>
-                    <Text className="text-gray-800 font-medium capitalize">
+                    <Text className="text-gray-600 w-20 ml-3 font-['Poppins-Regular']">
+                      Role:
+                    </Text>
+                    <Text className="text-gray-800 font-['Poppins-Medium'] capitalize">
                       {user.role}
                     </Text>
                   </View>
@@ -324,31 +343,36 @@ export default function Profile() {
           </View>
 
           {/* Activity Summary */}
-          <View className="flex-row bg-gray-50 border-t border-gray-100">
-            <View className="flex-1 py-3.5 items-center">
-              <Text className="text-[#588b76] font-bold text-lg">
+          <LinearGradient
+            colors={["#f9f9f9", "#f3f4f6"]}
+            className="flex-row border-t border-gray-100"
+          >
+            <View className="flex-1 py-4 items-center">
+              <Text className="text-[#18392b] font-['Poppins-Bold'] text-lg">
                 {posts.length}
               </Text>
-              <Text className="text-gray-500 text-xs uppercase tracking-wide">
+              <Text className="text-gray-500 text-xs uppercase tracking-wide font-['Poppins-Medium']">
                 Posts
               </Text>
             </View>
-            <View className="flex-1 py-3.5 items-center border-l border-gray-100">
-              <Text className="text-[#588b76] font-bold text-lg">
+            <View className="flex-1 py-4 items-center border-l border-gray-100">
+              <Text className="text-[#18392b] font-['Poppins-Bold'] text-lg">
                 {responses.length}
               </Text>
-              <Text className="text-gray-500 text-xs uppercase tracking-wide">
+              <Text className="text-gray-500 text-xs uppercase tracking-wide font-['Poppins-Medium']">
                 Responses
               </Text>
             </View>
-          </View>
+          </LinearGradient>
         </Animated.View>
 
         {/* Content Tabs */}
-        <View className="mb-1 mx-1">
+        <View className="mx-4 mb-4">
           <View className="flex-row bg-white rounded-xl overflow-hidden shadow-sm">
             <TouchableOpacity
-              className="flex-1 py-4 px-2"
+              className={`flex-1 py-4 px-2 ${
+                activeTab === "posts" ? "bg-green-50" : ""
+              }`}
               onPress={() => setActiveTab("posts")}
               activeOpacity={0.7}
             >
@@ -356,13 +380,13 @@ export default function Profile() {
                 <MaterialCommunityIcons
                   name="post-outline"
                   size={18}
-                  color={activeTab === "posts" ? "#588b76" : "#9CA3AF"}
+                  color={activeTab === "posts" ? "#18392b" : "#9CA3AF"}
                 />
                 <Text
                   className={
                     activeTab === "posts"
-                      ? "text-[#588b76] font-bold"
-                      : "text-gray-400 font-medium"
+                      ? "text-[#18392b] font-['Poppins-Bold']"
+                      : "text-gray-400 font-['Poppins-Medium']"
                   }
                 >
                   Posts
@@ -371,7 +395,9 @@ export default function Profile() {
             </TouchableOpacity>
 
             <TouchableOpacity
-              className="flex-1 py-4 px-2"
+              className={`flex-1 py-4 px-2 ${
+                activeTab === "responses" ? "bg-green-50" : ""
+              }`}
               onPress={() => setActiveTab("responses")}
               activeOpacity={0.7}
             >
@@ -379,13 +405,13 @@ export default function Profile() {
                 <MaterialCommunityIcons
                   name="comment-text-outline"
                   size={18}
-                  color={activeTab === "responses" ? "#588b76" : "#9CA3AF"}
+                  color={activeTab === "responses" ? "#18392b" : "#9CA3AF"}
                 />
                 <Text
                   className={
                     activeTab === "responses"
-                      ? "text-[#588b76] font-bold"
-                      : "text-gray-400 font-medium"
+                      ? "text-[#18392b] font-['Poppins-Bold']"
+                      : "text-gray-400 font-['Poppins-Medium']"
                   }
                 >
                   Responses
@@ -393,72 +419,56 @@ export default function Profile() {
               </View>
             </TouchableOpacity>
           </View>
-
-          {/* Animated indicator */}
-          <Animated.View
-            style={{
-              position: "absolute",
-              bottom: 0,
-              width: width / 2,
-              height: 3,
-              backgroundColor: "#588b76",
-              borderRadius: 1.5,
-              transform: [
-                {
-                  translateX: slideAnim.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [0, width / 2],
-                  }),
-                },
-              ],
-            }}
-          />
         </View>
 
         {/* Content Area */}
-        <View className="px-1 pt-1">
+        <View className="px-4">
           {isContentLoading ? (
-            <View className="py-10 items-center">
-              <ActivityIndicator color="#588b76" size="large" />
-              <Text className="text-gray-500 mt-4 text-center font-medium">
+            <View className="py-10 items-center bg-white rounded-2xl shadow-sm">
+              <ActivityIndicator color="#18392b" size="large" />
+              <Text className="text-gray-500 mt-4 text-center font-['Poppins-Medium']">
                 Loading {activeTab}...
               </Text>
             </View>
           ) : activeTab === "posts" ? (
             posts.length > 0 ? (
-              <View className="space-y-3">
+              <View className="space-y-4">
                 {posts.map((post) => (
                   <View
                     key={post.$id}
-                    className="bg-white rounded-xl overflow-hidden shadow-sm mx-1"
+                    className="bg-white rounded-2xl overflow-hidden shadow-sm"
                   >
                     <Post post={post} />
                   </View>
                 ))}
               </View>
             ) : (
-              <View className="py-16 items-center bg-white mx-1 rounded-xl shadow-sm">
-                <MaterialCommunityIcons
-                  name="post-outline"
-                  size={60}
-                  color="#D1D5DB"
-                />
-                <Text className="text-gray-500 mt-4 text-center font-medium text-lg">
+              <View className="py-16 items-center bg-white rounded-2xl shadow-sm">
+                <View className="w-16 h-16 rounded-full bg-gray-100 items-center justify-center mb-4">
+                  <MaterialCommunityIcons
+                    name="post-outline"
+                    size={40}
+                    color="#9CA3AF"
+                  />
+                </View>
+                <Text className="text-gray-700 font-['Poppins-SemiBold'] text-lg">
                   No posts yet
                 </Text>
-                <Text className="text-gray-400 mt-1 text-center mx-8">
+                <Text className="text-gray-500 mt-2 text-center mx-8 font-['Poppins-Regular']">
                   Share your thoughts and ideas by creating your first post
                 </Text>
                 <TouchableOpacity
-                  className="mt-6 bg-[#588b76] px-8 py-3 rounded-full shadow-sm"
+                  className="mt-6 bg-[#18392b] px-8 py-3 rounded-full shadow-sm"
                   activeOpacity={0.8}
                 >
-                  <Text className="text-white font-bold">Create Post</Text>
+                  <Text className="text-white font-['Poppins-SemiBold']">
+                    Create Post
+                  </Text>
                 </TouchableOpacity>
               </View>
             )
           ) : responses.length > 0 ? (
-            <View className="space-y-3">
+            <View className="space-y-4">
               {responses.map((response: ResponseModel) => (
                 <Link
                   key={response.$id}
@@ -470,7 +480,7 @@ export default function Profile() {
                 >
                   <TouchableOpacity
                     activeOpacity={0.7}
-                    className="bg-white rounded-xl overflow-hidden shadow-sm mx-1"
+                    className="bg-white rounded-2xl overflow-hidden shadow-sm"
                   >
                     <Response response={response} />
                   </TouchableOpacity>
@@ -478,23 +488,27 @@ export default function Profile() {
               ))}
             </View>
           ) : (
-            <View className="py-16 items-center bg-white mx-1 rounded-xl shadow-sm">
-              <MaterialCommunityIcons
-                name="comment-text-outline"
-                size={60}
-                color="#D1D5DB"
-              />
-              <Text className="text-gray-500 mt-4 text-center font-medium text-lg">
+            <View className="py-16 items-center bg-white rounded-2xl shadow-sm">
+              <View className="w-16 h-16 rounded-full bg-gray-100 items-center justify-center mb-4">
+                <MaterialCommunityIcons
+                  name="comment-text-outline"
+                  size={40}
+                  color="#9CA3AF"
+                />
+              </View>
+              <Text className="text-gray-700 font-['Poppins-SemiBold'] text-lg">
                 No responses yet
               </Text>
-              <Text className="text-gray-400 mt-1 text-center mx-8">
+              <Text className="text-gray-500 mt-2 text-center mx-8 font-['Poppins-Regular']">
                 Join conversations by responding to posts from the community
               </Text>
               <TouchableOpacity
-                className="mt-6 bg-[#588b76] px-8 py-3 rounded-full shadow-sm"
+                className="mt-6 bg-[#18392b] px-8 py-3 rounded-full shadow-sm"
                 activeOpacity={0.8}
               >
-                <Text className="text-white font-bold">Browse Discussions</Text>
+                <Text className="text-white font-['Poppins-SemiBold']">
+                  Browse Discussions
+                </Text>
               </TouchableOpacity>
             </View>
           )}
@@ -503,9 +517,9 @@ export default function Profile() {
 
       {/* Action Button */}
       <TouchableOpacity
-        className="absolute bottom-6 right-6 bg-[#588b76] w-14 h-14 rounded-full items-center justify-center shadow-lg"
+        className="absolute bottom-6 right-6 w-14 h-14 rounded-full items-center justify-center"
         style={{
-          shadowColor: "#588b76",
+          shadowColor: "#18392b",
           shadowOffset: { width: 0, height: 4 },
           shadowOpacity: 0.3,
           shadowRadius: 6,
@@ -513,21 +527,26 @@ export default function Profile() {
         }}
         activeOpacity={0.8}
       >
-        {activeTab === "posts" ? (
-          <TouchableOpacity
-            className="bg-[#588b76] w-14 h-14 rounded-full items-center justify-center shadow-lg"
-            onPress={() => router.push("/create-post" as any)}
-          >
-            <MaterialIcons name="post-add" size={26} color="#FFFFFF" />
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity
-            className="bg-[#588b76] w-14 h-14 rounded-full items-center justify-center shadow-lg"
-            onPress={() => router.push("/home" as any)}
-          >
-            <MaterialIcons name="comment" size={24} color="#FFFFFF" />
-          </TouchableOpacity>
-        )}
+        <LinearGradient
+          colors={["#18392b", "#2a5745"]}
+          className="w-14 h-14 rounded-full items-center justify-center"
+        >
+          {activeTab === "posts" ? (
+            <TouchableOpacity
+              className="w-full h-full rounded-full items-center justify-center"
+              onPress={() => router.push("/create-post" as any)}
+            >
+              <MaterialIcons name="post-add" size={26} color="#FFFFFF" />
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              className="w-full h-full rounded-full items-center justify-center"
+              onPress={() => router.push("/home" as any)}
+            >
+              <MaterialIcons name="comment" size={24} color="#FFFFFF" />
+            </TouchableOpacity>
+          )}
+        </LinearGradient>
       </TouchableOpacity>
     </SafeAreaView>
   );

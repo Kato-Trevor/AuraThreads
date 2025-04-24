@@ -49,16 +49,8 @@ export default function RootLayout() {
       <GlobalProvider>
         <ThemeProvider value={DefaultTheme}>
           <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
-          {/* <Drawer
-            open={openMenu}
-            onOpen={() => setOpenMenu(true)}
-            onClose={() => setOpenMenu(false)}
-            renderDrawerContent={() => (
-              <DrawerContent onLogOut={() => setOpenMenu(false)} />
-            )}
-          > */}
           <Drawer
-            drawerStyle={{ width: "60%" }}
+            drawerStyle={{ width: "80%" }}
             open={openMenu}
             onOpen={() => setOpenMenu(true)}
             onClose={() => setOpenMenu(false)}

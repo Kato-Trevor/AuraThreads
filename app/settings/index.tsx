@@ -12,6 +12,7 @@ import { useGlobalContext } from "@/context/GlobalProvider";
 import { useToast } from "@/components/ToastProvider";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
+import { LinearGradient } from "expo-linear-gradient";
 
 type NotificationFrequency = "once" | "twice" | "thrice";
 type PrivacyLevel = "public" | "friends" | "private";
@@ -32,15 +33,20 @@ const Settings = () => {
 
   // Helper function for section headers
   const SectionHeader = ({ title, icon }: any) => (
-    <View className="flex-row items-center mb-2 mt-4">
-      {icon}
-      <Text className="font-['Poppins-SemiBold'] ml-2 text-gray-700 text-xl">
+    <View className="flex-row items-center mb-3 mt-6">
+      <LinearGradient
+        colors={["#18392b", "#2a5745"]}
+        className="w-8 h-8 rounded-full items-center justify-center mr-3"
+      >
+        {icon}
+      </LinearGradient>
+      <Text className="font-['Poppins-SemiBold'] text-gray-800 text-xl">
         {title}
       </Text>
     </View>
   );
 
-  // Helper function for setting items with switch
+  // Enhanced setting item with switch
   const SettingItem = ({
     title,
     description,
@@ -48,10 +54,12 @@ const Settings = () => {
     onValueChange,
     icon,
   }: any) => (
-    <View className="bg-white rounded-lg p-4 mb-3 shadow-sm border border-gray-100">
+    <View className="bg-white rounded-2xl p-4 mb-4 shadow-sm border border-gray-100">
       <View className="flex-row items-center justify-between">
         <View className="flex-row items-center flex-1">
-          {icon}
+          <View className="w-10 h-10 bg-gray-50 rounded-full items-center justify-center">
+            {icon}
+          </View>
           <View className="ml-3 flex-1">
             <Text className="font-['Poppins-Medium'] text-gray-800 text-base">
               {title}
@@ -66,9 +74,9 @@ const Settings = () => {
         <Switch
           value={value}
           onValueChange={onValueChange}
-          trackColor={{ false: "#ccc", true: "#18392b" }}
-          thumbColor={value ? "#fff" : "#f4f3f4"}
-          ios_backgroundColor="#ccc"
+          trackColor={{ false: "#e0e0e0", true: "#a7d1c0" }}
+          thumbColor={value ? "#18392b" : "#f4f3f4"}
+          ios_backgroundColor="#e0e0e0"
           style={{
             transform: [{ scaleX: 1.1 }, { scaleY: 1.1 }],
           }}
@@ -77,7 +85,7 @@ const Settings = () => {
     </View>
   );
 
-  // Custom frequency selector component
+  // Enhanced frequency selector component
   const FrequencySelector = () => {
     const options = [
       { value: "once", label: "Once a day", time: "12:00 PM" },
@@ -90,30 +98,34 @@ const Settings = () => {
     ];
 
     return (
-      <View className="bg-white rounded-lg p-4 mb-3 shadow-sm border border-gray-100">
-        <Text className="font-['Poppins-Medium'] text-gray-800 mb-3">
+      <View className="bg-white rounded-2xl p-5 mb-4 shadow-sm border border-gray-100">
+        <Text className="font-['Poppins-Medium'] text-gray-800 mb-4 text-base">
           Reminder Frequency
         </Text>
-        <View className="flex-row flex-wrap gap-2">
+        <View className="flex-col gap-3">
           {options.map((option) => (
             <TouchableOpacity
               key={option.value}
               onPress={() =>
                 setNotificationsFrequency(option.value as NotificationFrequency)
               }
-              className={`border rounded-full px-4 py-2 flex-row items-center ${
+              className={`border rounded-xl px-4 py-3 flex-row items-center ${
                 notificationsFrequency === option.value
-                  ? "bg-green-100 border-green-500"
-                  : "border-gray-300"
+                  ? "bg-green-50 border-green-200"
+                  : "border-gray-200"
               }`}
             >
               <View
-                className={`h-4 w-4 rounded-full mr-2 ${
+                className={`h-5 w-5 rounded-full mr-3 border-2 flex items-center justify-center ${
                   notificationsFrequency === option.value
-                    ? "bg-green-500"
-                    : "bg-gray-200"
+                    ? "border-green-500"
+                    : "border-gray-300"
                 }`}
-              />
+              >
+                {notificationsFrequency === option.value && (
+                  <View className="h-2.5 w-2.5 rounded-full bg-green-500" />
+                )}
+              </View>
               <View>
                 <Text
                   className={`font-['Poppins-Medium'] ${
@@ -124,21 +136,21 @@ const Settings = () => {
                 >
                   {option.label}
                 </Text>
-                <Text className="font-['Poppins-Regular'] text-xs text-gray-500">
+                <Text className="font-['Poppins-Regular'] text-xs text-gray-500 mt-0.5">
                   {option.time}
                 </Text>
               </View>
             </TouchableOpacity>
           ))}
         </View>
-        <Text className="font-['Poppins-Regular'] text-gray-500 text-sm mt-3">
+        <Text className="font-['Poppins-Regular'] text-gray-500 text-xs mt-4">
           Reminders will be sent at these times daily
         </Text>
       </View>
     );
   };
 
-  // Privacy level selector
+  // Enhanced privacy level selector
   const PrivacyLevelSelector = () => {
     const options = [
       {
@@ -162,17 +174,17 @@ const Settings = () => {
     ];
 
     return (
-      <View className="bg-white rounded-lg p-4 mb-3 shadow-sm border border-gray-100">
-        <Text className="font-['Poppins-Medium'] text-gray-800 mb-3">
+      <View className="bg-white rounded-2xl p-5 mb-4 shadow-sm border border-gray-100">
+        <Text className="font-['Poppins-Medium'] text-gray-800 mb-4 text-base">
           Privacy Level
         </Text>
         {options.map((option) => (
           <TouchableOpacity
             key={option.value}
             onPress={() => setPrivacyLevel(option.value as PrivacyLevel)}
-            className={`flex-row items-center p-3 mb-2 rounded-lg ${
+            className={`flex-row items-center p-3.5 mb-2.5 rounded-xl ${
               privacyLevel === option.value
-                ? "bg-gray-100 border border-gray-200"
+                ? "bg-green-50 border border-green-100"
                 : "border border-gray-100"
             }`}
           >
@@ -180,19 +192,24 @@ const Settings = () => {
               className={`h-5 w-5 rounded-full mr-3 border-2 flex items-center justify-center ${
                 privacyLevel === option.value
                   ? "border-green-500"
-                  : "border-gray-400"
+                  : "border-gray-300"
               }`}
             >
               {privacyLevel === option.value && (
-                <View className="h-3 w-3 rounded-full bg-green-500" />
+                <View className="h-2.5 w-2.5 rounded-full bg-green-500" />
               )}
             </View>
-            <Ionicons
-              name={option.icon as any}
-              size={18}
-              color={privacyLevel === option.value ? "#18392b" : "#666"}
-              style={{ marginRight: 8 }}
-            />
+            <View
+              className={`w-8 h-8 rounded-full mr-3 items-center justify-center ${
+                privacyLevel === option.value ? "bg-green-100" : "bg-gray-100"
+              }`}
+            >
+              <Ionicons
+                name={option.icon as any}
+                size={18}
+                color={privacyLevel === option.value ? "#18392b" : "#666"}
+              />
+            </View>
             <View>
               <Text
                 className={`font-['Poppins-Medium'] ${
@@ -203,7 +220,7 @@ const Settings = () => {
               >
                 {option.label}
               </Text>
-              <Text className="font-['Poppins-Regular'] text-xs text-gray-500">
+              <Text className="font-['Poppins-Regular'] text-xs text-gray-500 mt-0.5">
                 {option.description}
               </Text>
             </View>
@@ -213,35 +230,62 @@ const Settings = () => {
     );
   };
 
+  // Enhanced link item component
+  const LinkItem = ({ icon, title, description, onPress }: any) => (
+    <TouchableOpacity
+      className="bg-white rounded-2xl p-4 mb-4 shadow-sm border border-gray-100 flex-row items-center"
+      onPress={onPress}
+    >
+      <View className="w-10 h-10 bg-gray-50 rounded-full items-center justify-center mr-3">
+        <Ionicons name={icon} size={20} color="#18392b" />
+      </View>
+      <View className="flex-1">
+        <Text className="font-['Poppins-Medium'] text-gray-800">{title}</Text>
+        <Text className="font-['Poppins-Regular'] text-gray-500 text-sm mt-0.5">
+          {description}
+        </Text>
+      </View>
+      <View className="bg-gray-50 w-8 h-8 rounded-full items-center justify-center ml-2">
+        <Ionicons name="chevron-forward" size={18} color="#18392b" />
+      </View>
+    </TouchableOpacity>
+  );
+
   return (
     <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.contentContainer}
+        showsVerticalScrollIndicator={false}
       >
-        <View className="flex-col gap-2 p-5 w-full">
-          <View className="flex-row items-center mb-4">
-            <TouchableOpacity
-              onPress={() => {
-                router.back();
-              }}
-            >
-              <Ionicons name="chevron-back" size={28} color="#18392b" />
-            </TouchableOpacity>
-            <Text className="font-['Poppins-SemiBold'] text-2xl text-gray-800 ml-3">
-              Settings
-            </Text>
-          </View>
+        <View className="flex-col p-5 w-full">
+          {/* Header with gradient background */}
+          <LinearGradient
+            colors={["#18392b", "#2a5745"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            className="rounded-2xl mb-5 p-5"
+          >
+            <View className="flex-row items-center">
+              <TouchableOpacity
+                onPress={() => {
+                  router.back();
+                }}
+                className="bg-white/20 w-10 h-10 rounded-full items-center justify-center"
+              >
+                <Ionicons name="chevron-back" size={24} color="#fff" />
+              </TouchableOpacity>
+              <Text className="font-['Poppins-SemiBold'] text-2xl text-white ml-4">
+                Settings
+              </Text>
+            </View>
+          </LinearGradient>
 
           {/* Account Section */}
           <SectionHeader
             title="Account"
             icon={
-              <Ionicons
-                name="person-circle-outline"
-                size={24}
-                color="#18392b"
-              />
+              <Ionicons name="person-circle-outline" size={18} color="#fff" />
             }
           />
 
@@ -259,7 +303,9 @@ const Settings = () => {
                   "info"
                 );
               }}
-              icon={<Ionicons name="glasses-outline" size={22} color="#666" />}
+              icon={
+                <Ionicons name="glasses-outline" size={20} color="#18392b" />
+              }
             />
           )}
 
@@ -269,11 +315,7 @@ const Settings = () => {
           <SectionHeader
             title="Notifications"
             icon={
-              <Ionicons
-                name="notifications-outline"
-                size={24}
-                color="#18392b"
-              />
+              <Ionicons name="notifications-outline" size={18} color="#fff" />
             }
           />
 
@@ -282,7 +324,7 @@ const Settings = () => {
             description="Get reminders to record your daily mood"
             value={enableMoodReminders}
             onValueChange={() => setEnableMoodReminders(!enableMoodReminders)}
-            icon={<Ionicons name="happy-outline" size={22} color="#666" />}
+            icon={<Ionicons name="happy-outline" size={20} color="#18392b" />}
           />
 
           {enableMoodReminders && <FrequencySelector />}
@@ -293,86 +335,35 @@ const Settings = () => {
             icon={
               <Ionicons
                 name="information-circle-outline"
-                size={24}
-                color="#18392b"
+                size={18}
+                color="#fff"
               />
             }
           />
 
-          <TouchableOpacity
-            className="bg-white rounded-lg p-4 mb-3 shadow-sm border border-gray-100 flex-row items-center"
+          <LinkItem
+            icon="code-outline"
+            title="Version Info"
+            description="Check for updates"
             onPress={() => showToast("Version 2.1.0", "info")}
-          >
-            <Ionicons
-              name="code-outline"
-              size={22}
-              color="#666"
-              style={{ marginRight: 12 }}
-            />
-            <View>
-              <Text className="font-['Poppins-Medium'] text-gray-800">
-                Version Info
-              </Text>
-              <Text className="font-['Poppins-Regular'] text-gray-500 text-sm">
-                Check for updates
-              </Text>
-            </View>
-            <Ionicons
-              name="chevron-forward"
-              size={22}
-              color="#666"
-              style={{ marginLeft: "auto" }}
-            />
-          </TouchableOpacity>
+          />
 
-          <TouchableOpacity
-            className="bg-white rounded-lg p-4 mb-3 shadow-sm border border-gray-100 flex-row items-center"
+          <LinkItem
+            icon="help-circle-outline"
+            title="Help & Support"
+            description="FAQs and contact information"
             onPress={() => showToast("Help Center opened", "info")}
-          >
-            <Ionicons
-              name="help-circle-outline"
-              size={22}
-              color="#666"
-              style={{ marginRight: 12 }}
-            />
-            <View>
-              <Text className="font-['Poppins-Medium'] text-gray-800">
-                Help & Support
-              </Text>
-              <Text className="font-['Poppins-Regular'] text-gray-500 text-sm">
-                FAQs and contact information
-              </Text>
-            </View>
-            <Ionicons
-              name="chevron-forward"
-              size={22}
-              color="#666"
-              style={{ marginLeft: "auto" }}
-            />
-          </TouchableOpacity>
+          />
 
-          <TouchableOpacity className="bg-white rounded-lg p-4 mb-8 shadow-sm border border-gray-100 flex-row items-center">
-            <Ionicons
-              name="document-text-outline"
-              size={22}
-              color="#666"
-              style={{ marginRight: 12 }}
-            />
-            <View>
-              <Text className="font-['Poppins-Medium'] text-gray-800">
-                Privacy Policy
-              </Text>
-              <Text className="font-['Poppins-Regular'] text-gray-500 text-sm">
-                How we handle your data
-              </Text>
-            </View>
-            <Ionicons
-              name="chevron-forward"
-              size={22}
-              color="#666"
-              style={{ marginLeft: "auto" }}
-            />
-          </TouchableOpacity>
+          <LinkItem
+            icon="document-text-outline"
+            title="Privacy Policy"
+            description="How we handle your data"
+            onPress={() => {}}
+          />
+
+          {/* Add some space at the bottom */}
+          <View className="h-4"></View>
         </View>
       </ScrollView>
     </SafeAreaView>
