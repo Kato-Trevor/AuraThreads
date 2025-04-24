@@ -1,80 +1,11 @@
-// import React from "react";
-// import { View, Text, TouchableOpacity, Switch } from "react-native";
-// import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-// import { signOut } from "@/lib/appwrite/auth";
-// import { router } from "expo-router";
-// import { useGlobalContext } from "@/context/GlobalProvider";
-
-// const DrawerContent = ({ onLogOut }: { onLogOut: () => void }) => {
-//   const { user, enableAnonymousID, setEnableAnonymousID } = useGlobalContext();
-//   const { showToast } = useToast();
-
-//   const handleLogOut = async () => {
-//     onLogOut();
-//     await signOut();
-//     router.replace("/sign-in");
-//   };
-
-//   return (
-//     <View className="flex-1 bg-white pt-20">
-//       {(user && user.role === "student") && (
-//         <View className="flex-row items-center justify-between p-3">
-//           <View className="flex-row items-center">
-//             <MaterialCommunityIcons
-//               name="account-eye-outline"
-//               size={24}
-//               color={enableAnonymousID ? "#F032DA" : "#666"}
-//             />
-//             <Text
-//               className={"ml-2 mr-2 font-medium text-gray-700"}
-//             >
-//               Use anonymous username
-//             </Text>
-//             <TouchableOpacity
-//               onPress={() =>
-//                 showToast("All engagements will be anonymous", "info")
-//               }
-//             >
-//               <Ionicons
-//                 name="information-circle-outline"
-//                 size={20}
-//                 color="#666"
-//               />
-//             </TouchableOpacity>
-//           </View>
-//           <Switch
-//             value={enableAnonymousID}
-//             onValueChange={() => setEnableAnonymousID(!enableAnonymousID)}
-//             trackColor={{ false: "#ccc", true: "#F032DA" }}
-//             thumbColor={enableAnonymousID ? "#fff" : "#f4f3f4"}
-//             style={{
-//               transform: [{ scaleX: 1.2 }, { scaleY: 1.2 }],
-//             }}
-//           />
-//         </View>
-//       )}
-//       <TouchableOpacity
-//         className="flex-row items-center p-4 border-t border-gray-200"
-//         onPress={() => handleLogOut()}
-//       >
-//         <Ionicons name="log-out-outline" size={24} color="#e74c3c" />
-//         <Text className="font-['Poppins-Medium'] text-base text-red-500 ml-4">
-//           Logout
-//         </Text>
-//       </TouchableOpacity>
-//     </View>
-//   );
-// };
-
-// export default DrawerContent;
-
 import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { signOut } from "@/lib/appwrite/auth";
-import { router } from "expo-router";
+import { router, usePathname } from "expo-router";
 import { useGlobalContext } from "@/context/GlobalProvider";
 import { unregisterIndieDevice } from "native-notify";
+import { LinearGradient } from "expo-linear-gradient";
 
 type DrawerContentProps = {
   onClose: () => void;
@@ -82,18 +13,27 @@ type DrawerContentProps = {
 };
 
 const DrawerContent = ({ onClose, onLogOut }: DrawerContentProps) => {
+  const { user } = useGlobalContext();
+  const pathname = usePathname();
+  console.log("User in DrawerContent:", user);
+
   const handleLogOut = async () => {
     try {
       onLogOut();
-
-      // await unregisterIndieDevice(
-      //   `${user.$id}`,
-      //   29438,
-      //   "zq1jhhUWGWDhHVZRP5yihC"
-      // );
+      if (user && user.$id) {
+        try {
+          await unregisterIndieDevice(
+            `${user.$id}`,
+            29438,
+            "zq1jhhUWGWDhHVZRP5yihC"
+          );
+        } catch (error) {
+          console.log("Error unregistering device:", error);
+        }
+      }
       await signOut();
       router.replace("/sign-in");
-    } catch (error: any) {
+    } catch (error) {
       console.error("Error during logout:", error);
     }
   };
@@ -103,106 +43,147 @@ const DrawerContent = ({ onClose, onLogOut }: DrawerContentProps) => {
     label: string;
     onPress: () => void;
     color?: string;
+    badgeCount?: number;
+    route: string;
   };
-
-  // Anonymous stuff
-  const { user } = useGlobalContext();
 
   const DrawerItem = ({
     icon,
     label,
     onPress,
-    color = "#000",
-  }: DrawerItemProps) => (
-    <TouchableOpacity onPress={onPress} className="flex-row items-center p-4">
-      <Ionicons name={icon} size={24} color={color} />
-      <Text
-        className="font-['Poppins-Medium'] text-base ml-4"
-        style={{ color }}
+    color = "#18392b",
+    badgeCount,
+    route,
+  }: DrawerItemProps) => {
+    const isActive = pathname.includes(route);
+
+    return (
+      <TouchableOpacity
+        onPress={onPress}
+        className={`flex-row items-center py-2.5 px-3 my-0.5 rounded-lg active:bg-green-50 ${
+          isActive ? "bg-green-50" : ""
+        }`}
       >
-        {label}
-      </Text>
-    </TouchableOpacity>
-  );
+        <View
+          className={`w-8 h-8 rounded-full flex items-center justify-center ${
+            isActive ? "bg-green-100" : "bg-gray-50"
+          }`}
+        >
+          <Ionicons name={icon} size={24} color={color} />
+        </View>
+        <Text
+          className={`font-pmedium text-base ml-2.5 ${
+            isActive ? "text-green-800" : "text-gray-700"
+          }`}
+        >
+          {label}
+        </Text>
+        {badgeCount ? (
+          <View className="bg-green-500 rounded-full h-4 min-w-4 ml-auto items-center justify-center px-1">
+            <Text className="text-white text-xs font-bold">
+              {badgeCount > 99 ? "99+" : badgeCount}
+            </Text>
+          </View>
+        ) : null}
+      </TouchableOpacity>
+    );
+  };
 
   return (
-    <View className="flex-1 bg-white pt-20 px-6">
-      {/* Centered leaf icon with proper spacing */}
-      {/* <View className="items-center mb-5">
-        <View className="bg-white rounded-full p-2 shadow-md">
-          <View
-            style={{ backgroundColor: "#18392b" }}
-            className="rounded-full p-3 w-12 h-12 items-center justify-center"
-          >
-            <Ionicons name="leaf-outline" size={24} color="#ffffff" />
+    <View className="flex-1 bg-white">
+      {/* Header with gradient */}
+      <LinearGradient
+        colors={["#18392b", "#2a5745"]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 0 }}
+        className="pt-12 pb-4 px-4 rounded-b-2xl"
+      >
+        <View className="flex-row items-center">
+          <View className="h-14 w-14 bg-white/20 rounded-full justify-center items-center border border-white/30">
+            {user?.avatar ? (
+              <Image
+                source={{ uri: user.avatar }}
+                className="h-12 w-12 rounded-full"
+                resizeMode="cover"
+              />
+            ) : (
+              <Text className="text-lg font-bold text-white">
+                {user?.username
+                  ? user.username.substring(0, 1).toUpperCase()
+                  : "U"}
+              </Text>
+            )}
+          </View>
+          <View className="ml-3">
+            <Text className="font-['Poppins-SemiBold'] text-base text-white">
+              {user?.username || "User"}
+            </Text>
+            <Text className="font-['Poppins-Regular'] text-xs text-white/70">
+              {user?.email || ""}
+            </Text>
           </View>
         </View>
-      </View> */}
+      </LinearGradient>
 
-      {/* <View className="border-t" style={{ borderColor: "#d0ded8" }} /> */}
-      <View>
+      {/* Main content */}
+      <View className="flex-1 px-3 pt-3">
+        {/* Main Navigation Items */}
         <DrawerItem
           icon="person-outline"
           label="Profile"
+          route="profile"
           onPress={() => {
             onClose();
             router.push(`/profile/${user.$id}`);
           }}
-          color="#18392b"
         />
-        {/* <DrawerItem
-          icon="cloud-outline"
-          label="Bookmarks"
-          onPress={() => {
-            onClose();
-            router.push("/Bookmarks");
-          }}
-          color="#18392b"
-        /> */}
         <DrawerItem
           icon="book-outline"
           label="Journal"
+          route="journal"
           onPress={() => {
             onClose();
             router.push("/journal");
           }}
-          color="#18392b"
         />
         <DrawerItem
           icon="bookmark-outline"
           label="Bookmarks"
+          route="bookmarks"
           onPress={() => {
             onClose();
             router.push("/bookmarks");
           }}
-          color="#18392b"
         />
 
-        {/* Divider below Bookmarks
-        <View className="border-t" style={{ borderColor: "#d0ded8" }} /> */}
-        {/* Settings Drawer Item */}
+        <View className="border-t border-gray-200 my-2 opacity-60" />
+
+        {/* Settings */}
         <DrawerItem
           icon="settings-outline"
           label="Settings"
+          route="settings"
           onPress={() => {
             onClose();
             router.push("/settings");
           }}
-          color="#18392b"
         />
+
+        <View className="flex-1" />
+
+        {/* Logout button with improved styling */}
+        <View className="mb-4 mx-1">
+          <TouchableOpacity
+            onPress={handleLogOut}
+            className="flex-row items-center justify-center py-2.5 px-3 bg-red-50 rounded-lg border border-red-100"
+          >
+            <Ionicons name="log-out-outline" size={24} color="#e74c3c" />
+            <Text className="font-pmedium text-base text-red-500 ml-2">
+              Logout
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
-
-      {/* Spacer */}
-      <View className="flex-1" />
-
-      <View className="border-t" style={{ borderColor: "#d0ded8" }} />
-      {/* Logout at the bottom */}
-      <DrawerItem
-        icon="log-out-outline"
-        label="Logout"
-        onPress={handleLogOut}
-        color="#18392b"
-      />
     </View>
   );
 };
