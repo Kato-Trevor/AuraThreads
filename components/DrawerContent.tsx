@@ -74,6 +74,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { signOut } from "@/lib/appwrite/auth";
 import { router } from "expo-router";
 import { useGlobalContext } from "@/context/GlobalProvider";
+import { unregisterIndieDevice } from "native-notify";
 
 type DrawerContentProps = {
   onClose: () => void;
@@ -81,11 +82,20 @@ type DrawerContentProps = {
 };
 
 const DrawerContent = ({ onClose, onLogOut }: DrawerContentProps) => {
-
   const handleLogOut = async () => {
-    onLogOut();
-    await signOut();
-    router.replace("/sign-in");
+    try {
+      onLogOut();
+
+      // await unregisterIndieDevice(
+      //   `${user.$id}`,
+      //   29438,
+      //   "zq1jhhUWGWDhHVZRP5yihC"
+      // );
+      await signOut();
+      router.replace("/sign-in");
+    } catch (error: any) {
+      console.error("Error during logout:", error);
+    }
   };
 
   type DrawerItemProps = {
@@ -181,7 +191,6 @@ const DrawerContent = ({ onClose, onLogOut }: DrawerContentProps) => {
           color="#18392b"
         />
       </View>
-
 
       {/* Spacer */}
       <View className="flex-1" />

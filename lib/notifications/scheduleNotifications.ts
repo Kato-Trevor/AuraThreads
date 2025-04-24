@@ -1,10 +1,18 @@
 import { Alert } from "react-native";
 import * as Notifications from "expo-notifications";
 
-interface Notification {
+export interface Notification {
   date: string;
   title: string;
   body?: string;
+}
+
+export interface RepeatingNotification {
+  id: string;
+  title: string;
+  body?: string;
+  hour: number;
+  minute: number;
 }
 
 const scheduleNotifications = async (notifications: Notification[]) => {
@@ -20,38 +28,24 @@ const scheduleNotifications = async (notifications: Notification[]) => {
   try {
     for (const { date, title, body } of notifications) {
       const notificationDate = new Date(date);
-      const trigger = new Date(date);
-
-      if (
-        notificationDate.getHours() === 0 &&
-        notificationDate.getMinutes() === 0 &&
-        notificationDate.getSeconds() === 0
-      ) {
-        trigger.setHours(9, 0, 0);
-      } else {
-        trigger.setHours(
-          notificationDate.getHours(),
-          notificationDate.getMinutes(),
-          notificationDate.getSeconds()
-        );
-      }
-
       if (isNaN(notificationDate.getTime())) {
+        console.warn(`Invalid date: ${date}`);
         continue;
       }
 
       const now = new Date();
       if (notificationDate <= now) {
+        console.warn(`Notification date is in the past: ${date}`);
         continue;
       }
 
-      const identifier = await Notifications.scheduleNotificationAsync({
+      await Notifications.scheduleNotificationAsync({
         content: {
           title: title,
           body: body || "You have a new notification!",
           sound: true,
         },
-        trigger,
+        trigger: notificationDate,
       });
     }
   } catch (error: any) {
@@ -63,4 +57,35 @@ const scheduleNotifications = async (notifications: Notification[]) => {
   }
 };
 
-export default scheduleNotifications;
+const scheduleRepeatingNotification = async (
+  notification: RepeatingNotification
+) => {
+  const { status } = await Notifications.requestPermissionsAsync();
+  if (status !== "granted") {
+    console.warn("Notification permissions not granted.");
+    return;
+  }
+
+  try {
+    const identifier = await Notifications.scheduleNotificationAsync({
+      content: {
+        title: notification.title,
+        body: notification.body || "You have a new notification!",
+        sound: true,
+      },
+      trigger: {
+        hour: notification.hour,
+        minute: notification.minute,
+        repeats: true,
+      },
+    });
+
+    console.log(`Scheduled repeating notification with ID: ${identifier}`);
+    return identifier;
+  } catch (error) {
+    console.error("Error scheduling repeating notification:", error);
+    throw error;
+  }
+};
+
+export default { scheduleNotifications, scheduleRepeatingNotification };

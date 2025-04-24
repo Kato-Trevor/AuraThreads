@@ -11,6 +11,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useGlobalContext } from "@/context/GlobalProvider";
 import { useToast } from "@/components/ToastProvider";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { router } from "expo-router";
 
 type NotificationFrequency = "once" | "twice" | "thrice";
 type PrivacyLevel = "public" | "friends" | "private";
@@ -219,9 +220,18 @@ const Settings = () => {
         contentContainerStyle={styles.contentContainer}
       >
         <View className="flex-col gap-2 p-5 w-full">
-          <Text className="font-['Poppins-SemiBold'] text-2xl text-gray-800 mb-4">
-            Settings
-          </Text>
+          <View className="flex-row items-center mb-4">
+            <TouchableOpacity
+              onPress={() => {
+                router.back();
+              }}
+            >
+              <Ionicons name="chevron-back" size={28} color="#18392b" />
+            </TouchableOpacity>
+            <Text className="font-['Poppins-SemiBold'] text-2xl text-gray-800 ml-3">
+              Settings
+            </Text>
+          </View>
 
           {/* Account Section */}
           <SectionHeader
@@ -238,7 +248,7 @@ const Settings = () => {
           {user && user.role === "student" && (
             <SettingItem
               title="Anonymous Username"
-              description="Hide your real name from other students"
+              description="Hide your real name from others"
               value={enableAnonymousID}
               onValueChange={() => {
                 setEnableAnonymousID(!enableAnonymousID);

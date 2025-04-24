@@ -26,6 +26,7 @@ import ButtonLoadAnimation from "@/components/LoadButtonAnimation";
 import { useToast } from "@/components/ToastProvider";
 import { getCurrentUser, signIn } from "@/lib/appwrite/auth";
 import { useGlobalContext } from "@/context/GlobalProvider";
+import { registerIndieID } from "native-notify";
 
 const { width, height } = Dimensions.get("window");
 
@@ -73,6 +74,8 @@ const Login = () => {
       setUser(result);
       setIsLoggedIn(true);
       setIsSubmitting(false);
+
+      registerIndieID(`${result?.$id}`, 29438, "zq1jhhUWGWDhHVZRP5yihC");
 
       router.replace("/home");
     } catch (error: any) {
