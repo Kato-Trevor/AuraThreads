@@ -549,7 +549,13 @@ const Journal = () => {
 
   return (
     <>
-    <Stack.Screen options={{ title: 'My Journal' }} />
+    <Stack.Screen
+            name="Journal"
+            options={{
+              title: 'Journal',
+              headerTitleAlign: 'center',
+            }}
+          />
     <TouchableWithoutFeedback onPress={toggleEditing}>
         
       <View style={styles.container}>

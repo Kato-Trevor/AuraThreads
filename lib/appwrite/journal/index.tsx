@@ -83,3 +83,23 @@ export async function deleteJournalPage(pageId: string): Promise<void> {
     throw new Error(`Failed to delete journal page: ${error.message}`);
   }
 }
+
+// Get bookmarked journal pages for a user (sorted by page number)
+export async function getBookmarkedJournalPages(
+  userId: string
+): Promise<any[]> {
+  try {
+    const pages = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.journalsCollectionId,
+      [
+        Query.equal("userId", userId),
+        Query.equal("isBookmarked", true),
+        Query.orderAsc("pageNumber") // Sort by pageNumber
+      ]
+    );
+    return pages.documents;
+  } catch (error: any) {
+    throw new Error(`Failed to get bookmarked journal pages: ${error.message}`);
+  }
+}
