@@ -152,31 +152,31 @@ const DrawerContent = ({ onClose, onLogOut }: DrawerContentProps) => {
         />
         {/* <DrawerItem
           icon="cloud-outline"
-          label="Word Cloud"
+          label="Bookmarks"
           onPress={() => {
             onClose();
-            router.push("/WordCloud");
+            router.push("/Bookmarks");
           }}
           color="#18392b"
         /> */}
         <DrawerItem
           icon="book-outline"
-          label="My Journal"
+          label="Journal"
           onPress={() => {
             onClose();
             router.push("/journal");
           }}
           color="#18392b"
         />
-        {/* <DrawerItem
+        <DrawerItem
           icon="bookmark-outline"
           label="Bookmarks"
           onPress={() => {
             onClose();
-            console.log("Navigate to Bookmarks");
+            router.push("/bookmarks");
           }}
           color="#18392b"
-        /> */}
+        />
 
         {/* Divider below Bookmarks
         <View className="border-t" style={{ borderColor: "#d0ded8" }} /> */}
