@@ -92,28 +92,23 @@ export async function addAIResponseToDB(
 
 export async function getExperienceResponsesByTopic(topic: string) {
   try {
-    // 1. Get all posts with the specified topic
     const topicPosts = await databases.listDocuments(
       appwriteConfig.databaseId,
       appwriteConfig.postCollectionId,
       [Query.equal("topic", topic)]
     );
 
-    // 2. Extract post IDs
     const postIds = topicPosts.documents.map(post => post.$id);
 
-    // 3. Fetch responses linked to these posts AND isExperience=true
     const responses = await databases.listDocuments(
       appwriteConfig.databaseId,
       appwriteConfig.responsesCollectionId,
       [
         Query.equal("isExperience", true),
-        Query.equal("postId", postIds), // Works like SQL's "IN" clause
-        Query.orderDesc("$createdAt") // Optional: sort newest first
+        Query.equal("postId", postIds), 
+        Query.orderDesc("$createdAt") 
       ]
     );
-
-    console.log(responses.documents)
     return responses.documents;
   } catch (error: any) {
     throw new Error(`Failed to fetch responses: ${error.message}`);

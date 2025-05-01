@@ -155,7 +155,6 @@ export async function getExperiencePostsByTopic(topic: string) {
       [
         Query.equal("topic", topic),
         Query.equal("isExperience", true),
-        // Optional: Add sorting (e.g., newest first)
         Query.orderDesc("$createdAt"),
       ]
     );
