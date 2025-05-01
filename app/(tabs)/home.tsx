@@ -1,14 +1,10 @@
-import {
-  Text,
-  View,
-  FlatList,
-  ActivityIndicator,
-  RefreshControl,
-} from "react-native";
-import React, { useEffect, useState, useCallback } from "react";
+import { Text, View, FlatList, RefreshControl } from "react-native";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getAllPostsFromDB } from "@/lib/appwrite/appwrite";
 import Post from "@/components/Post";
+import LoadingSpinner from "@/components/LoadingSpinner";
+import { Feather } from "@expo/vector-icons";
 
 const BATCH_SIZE = 4; // Number of recommended posts per batch
 // const RECOMMENDATIONS_API = "http://192.168.123.114:8000/postRecommendations";
@@ -139,8 +135,8 @@ const Home = () => {
 
   if (loading && !refreshing && posts.length === 0) {
     return (
-      <SafeAreaView style={{ flex: 1, justifyContent: "center" }}>
-        <ActivityIndicator size="large" />
+      <SafeAreaView className="flex-1 justify-center items-center bg-white">
+        <LoadingSpinner visible={true} loadingText="Fetching posts..." />
       </SafeAreaView>
     );
   }
@@ -165,8 +161,13 @@ const Home = () => {
         }
         contentContainerStyle={{ paddingBottom: 20 }}
         ListEmptyComponent={
-          <View className="flex-1 justify-center items-center mt-10">
-            <Text className="text-gray-500 text-lg">No posts available</Text>
+          <View className="justify-center items-center p-8">
+            <View className="bg-secondary-100/30 p-4 rounded-full">
+              <Feather name="message-circle" size={36} color="#1e4635" />
+            </View>
+            <Text className="font-pregular mt-4 text-secondary-dark text-center">
+              No posts available. Click the '+' button to create a post!
+            </Text>
           </View>
         }
       />

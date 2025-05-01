@@ -843,6 +843,7 @@ export default function Thread() {
   const [response, setResponse] = useState<string>("");
   const [song, setSong] = useState<any>();
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isLoadingSong, setIsLoadingSong] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmittingResponse, setIsSubmittingResponse] = useState(false);
   const [currentSound, setCurrentSound] = useState<Audio.Sound | null>(null);
@@ -956,6 +957,7 @@ export default function Thread() {
   };
 
   const playSound = async () => {
+    setIsLoadingSong(true);
     try {
       const { sound } = await Audio.Sound.createAsync(
         { uri: song.preview },
@@ -972,22 +974,32 @@ export default function Thread() {
       setIsPlaying(true);
     } catch (error) {
       console.error("Error playing sound:", error);
+    } finally {
+      setIsLoadingSong(false);
     }
   };
 
   const createResponse = async () => {
     if (!response.trim()) return;
+
     try {
       setIsSubmittingResponse(true);
-      const contentType = await categorizeResponse(response);
+      const result = await categorizeResponse(response);
+      
+      if (!result.isSafe) {
+        showToast("This response is toxic!", "error");
+        setIsSubmittingResponse(false);
+        return;
+      }
 
       await addResponseToDB(
         response,
         `${postId}`,
         user.$id,
-        contentType,
+        result.isExperience,
         enableAnonymousID
       );
+      
       setIsSubmittingResponse(false);
       showToast("Response created successfully!", "success");
       setResponse("");
@@ -1098,11 +1110,15 @@ export default function Thread() {
               className="flex-row items-center mt-2 mb-3 bg-secondary-100/40 p-3 rounded-lg border border-secondary/10"
             >
               <View className="w-9 h-9 bg-secondary rounded-full justify-center items-center mr-3 shadow-sm">
-                <Ionicons
-                  name={isPlaying ? "pause" : "play"}
-                  size={18}
-                  color="#ffffff"
-                />
+                {isLoadingSong ? (
+                  <ActivityIndicator color="#ffffff" />
+                ) : (
+                  <Ionicons
+                    name={isPlaying ? "pause" : "play"}
+                    size={18}
+                    color="#ffffff"
+                  />
+                )}
               </View>
               <View className="flex-1">
                 <Text
@@ -1126,9 +1142,7 @@ export default function Thread() {
                 />
               </View>
             </TouchableOpacity>
-
           )}
-
         </View>
       )}
 

@@ -65,7 +65,6 @@ const Login = () => {
   }, []);
 
   const handleSubmit = async (values: { email: string; password: string }) => {
-    console.log("pressed");
     setIsSubmitting(true);
 
     try {
@@ -73,14 +72,14 @@ const Login = () => {
       const result = await getCurrentUser();
       setUser(result);
       setIsLoggedIn(true);
-      setIsSubmitting(false);
 
       registerIndieID(`${result?.$id}`, 29438, "zq1jhhUWGWDhHVZRP5yihC");
-
+      showToast("Log in successful!", "success");
       router.replace("/home");
     } catch (error: any) {
       console.error("Error logging in:", error);
-      showToast("An error occurred", "error");
+      showToast("An error occurred!", "error");
+    } finally {
       setIsSubmitting(false);
     }
   };

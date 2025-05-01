@@ -42,5 +42,5 @@ export const topics = [
   "Fear",
   "Self-Harm",
   "Social Pressure",
-  "None",
+  "General",
 ];

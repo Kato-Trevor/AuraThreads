@@ -7,6 +7,7 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   FlatList,
+  ActivityIndicator,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { router } from "expo-router";
@@ -15,12 +16,16 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useGlobalContext } from "@/context/GlobalProvider";
 import Avatar from "@/components/Avatar";
 import { addPostToDB, addAIResponseToDB } from "@/lib/appwrite/appwrite";
-import SongsList from "@/components/SongsList";
 import { formatTopic } from "@/lib/utils/stringHelpers";
-// import { categorizePostTopic } from "@/components/TopicAssigner";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import {
+  FontAwesome,
+  Ionicons,
+  MaterialCommunityIcons,
+} from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { categorizePost } from "@/components/Categoriser";
+import SongsModal from "@/components/SongsModal";
+import { Audio } from "expo-av";
 
 const CreatePost = () => {
   const { user, enableAnonymousID } = useGlobalContext();
@@ -30,6 +35,10 @@ const CreatePost = () => {
   const [enableAIResponse, setEnableAIResponse] = useState(false);
   const [characterCount, setCharacterCount] = useState(0);
   const [isPosting, setIsPosting] = useState(false);
+  const [isSongsModalVisible, setIsSongsModalVisible] = useState(false);
+  const [isLoadingSong, setIsLoadingSongSong] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentSound, setCurrentSound] = useState<Audio.Sound | null>(null);
 
   const MAX_POST_LENGTH = 1000;
   const CHARACTER_WARNING = 950;
@@ -86,6 +95,49 @@ const CreatePost = () => {
       setIsPosting(false);
     }
   };
+
+  const stopSound = async () => {
+    try {
+      if (currentSound) {
+        await currentSound.stopAsync();
+        await currentSound.unloadAsync();
+      }
+    } catch (error) {
+      console.log("Error stopping current sound:", error);
+    } finally {
+      setCurrentSound(null);
+      setIsPlaying(false);
+    }
+  };
+
+  const playSound = async () => {
+    setIsLoadingSongSong(true);
+    try {
+      const { sound } = await Audio.Sound.createAsync(
+        { uri: selectedSong.preview },
+        { shouldPlay: true }
+      );
+      sound.setOnPlaybackStatusUpdate(async (status) => {
+        if (status.isLoaded && status.didJustFinish) {
+          await sound.unloadAsync();
+          setCurrentSound(null);
+          setIsPlaying(false);
+        }
+      });
+      setCurrentSound(sound);
+      setIsPlaying(true);
+    } catch (error) {
+      console.error("Error playing sound:", error);
+    } finally {
+      setIsLoadingSongSong(false);
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      if (currentSound) currentSound.unloadAsync();
+    };
+  }, [currentSound]);
 
   // const handlePostCreation = async () => {
   //   setIsPosting(true);
@@ -169,7 +221,7 @@ const CreatePost = () => {
                   Express Yourself
                 </Text>
                 <View className="flex-row items-start mb-4">
-                  <Avatar username={user.username} />
+                  <Avatar username={user.username} imageUrl={user.avatar} />
                   <View className="flex-1 ml-3">
                     <TextInput
                       className="bg-gray-100 p-4 rounded-lg text-base min-h-60 shadow-md font-pregular"
@@ -197,6 +249,76 @@ const CreatePost = () => {
                 </View>
               </View>
 
+              {/* Attach Song */}
+              {selectedSong ? (
+                <View
+                  className="flex-row items-center mt-2 mb-3 bg-secondary-100/40 p-3 rounded-lg border border-secondary/10"
+                >
+                  <View className="w-9 h-9 bg-secondary rounded-full justify-center items-center mr-3 shadow-sm">
+                    {isLoadingSong ? (
+                      <ActivityIndicator color="#ffffff" />
+                    ) : (
+                      <TouchableOpacity
+                        onPress={() => (isPlaying ? stopSound() : playSound())}
+                      >
+                        <Ionicons
+                          name={isPlaying ? "pause" : "play"}
+                          size={18}
+                          color="#ffffff"
+                        />
+                      </TouchableOpacity>
+                    )}
+                  </View>
+                  <View className="flex-1">
+                    <Text
+                      className="font-pmedium text-secondary-darkest truncate"
+                      numberOfLines={1}
+                    >
+                      {selectedSong?.title_short}
+                    </Text>
+                    <Text
+                      className="text-xs font-plight text-secondary-dark"
+                      numberOfLines={1}
+                    >
+                      {selectedSong?.artist?.name}
+                    </Text>
+                  </View>
+                  <View className="bg-secondary/10 p-1.5 rounded-full">
+                    <TouchableOpacity
+                      onPress={() => {
+                        isPlaying && stopSound();
+                        setSelectedSong(null);
+                      }}
+                    >
+                      <Ionicons name="close" size={24} color="#333" />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              ) : (
+                <TouchableOpacity
+                  onPress={() => setIsSongsModalVisible(true)}
+                  className="flex-row items-center mt-2 mb-3 bg-secondary-100/40 p-3 rounded-lg border border-secondary/10"
+                >
+                  <View className="w-9 h-9 bg-secondary rounded-full justify-center items-center mr-3 shadow-sm">
+                    <FontAwesome name="music" size={18} color="black" />
+                  </View>
+                  <View className="flex-1">
+                    <Text
+                      className="font-pmedium text-secondary-darkest truncate"
+                      numberOfLines={1}
+                    >
+                      Select a song
+                    </Text>
+                    <Text
+                      className="text-xs font-plight text-secondary-dark"
+                      numberOfLines={1}
+                    >
+                      Pick a song that resonates with you
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              )}
+
               {/* AI Toggle */}
               {user.role === "student" && (
                 <View className="mb-4">
@@ -216,10 +338,7 @@ const CreatePost = () => {
                       </Text>
                       <TouchableOpacity
                         onPress={() =>
-                          showToast(
-                            "AI will generate a thoughtful response to your post",
-                            "info"
-                          )
+                          showToast("Get an instant AI response", "info")
                         }
                       >
                         <Ionicons
@@ -239,27 +358,17 @@ const CreatePost = () => {
                   </View>
                 </View>
               )}
-
-              {/* Attach Music */}
-              <View className="mb-4">
-                <Text className="text-lg font-pbold mb-2">
-                  Attach Music (Optional)
-                </Text>
-                <Text className="text-gray-500 mb-4 font-pregular">
-                  Add a song that matches your mood
-                </Text>
-              </View>
             </View>
-          }
-          ListFooterComponent={
-            <SongsList
-              selectedSong={selectedSong}
-              onSongSelect={setSelectedSong}
-            />
           }
           keyboardShouldPersistTaps="handled"
         />
       </TouchableWithoutFeedback>
+      <SongsModal
+        setSelectedSong={setSelectedSong}
+        visible={isSongsModalVisible}
+        selectedSong={selectedSong}
+        onClose={() => setIsSongsModalVisible(false)}
+      />
     </SafeAreaView>
   );
 };
