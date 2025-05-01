@@ -2,13 +2,13 @@ import {
   Text,
   View,
   FlatList,
-  ActivityIndicator,
   RefreshControl,
 } from "react-native";
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getAllPostsFromDB } from "@/lib/appwrite/appwrite";
 import Post from "@/components/Post";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 const BATCH_SIZE = 4; // Number of recommended posts per batch
 // const RECOMMENDATIONS_API = "http://192.168.123.114:8000/postRecommendations";
@@ -139,8 +139,8 @@ const Home = () => {
 
   if (loading && !refreshing && posts.length === 0) {
     return (
-      <SafeAreaView style={{ flex: 1, justifyContent: "center" }}>
-        <ActivityIndicator size="large" />
+      <SafeAreaView className="flex-1 justify-center items-center bg-white">
+        <LoadingSpinner visible={true} loadingText="Fetching posts..."/>
       </SafeAreaView>
     );
   }

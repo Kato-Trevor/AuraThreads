@@ -44,7 +44,7 @@ const WordCloud = () => {
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [contentItems, setContentItems] = useState<ContentItem[]>([]);
   const [loading, setLoading] = useState({
-    tags: false,
+    topics: false,
     content: false,
     error: false,
   });
@@ -64,7 +64,7 @@ const WordCloud = () => {
   useEffect(() => {
     const loadTopicCounts = async () => {
       try {
-        setLoading((prev) => ({ ...prev, tags: true }));
+        setLoading((prev) => ({ ...prev, topics: true }));
 
         const topicsWithCounts = await Promise.all(
           topics.map(async (topic) => {
@@ -83,7 +83,7 @@ const WordCloud = () => {
           topics.map((topic) => ({ value: formatTopic(topic), count: 1 }))
         );
       } finally {
-        setLoading((prev) => ({ ...prev, tags: false }));
+        setLoading((prev) => ({ ...prev, topics: false }));
       }
     };
 
@@ -92,7 +92,7 @@ const WordCloud = () => {
 
   const refreshTopics = useCallback(async () => {
     try {
-      setLoading((prev) => ({ ...prev, tags: true }));
+      setLoading((prev) => ({ ...prev, topics: true }));
 
       const topicsWithCounts = await Promise.all(
         topics.map(async (topic) => {
@@ -115,17 +115,15 @@ const WordCloud = () => {
         }))
       );
     } finally {
-      setLoading((prev) => ({ ...prev, tags: false }));
+      setLoading((prev) => ({ ...prev, topics: false }));
     }
   }, []);
 
   const fetchContent = async (tagValue: string) => {
-    const originalTopic =
-      tagValue === "General Reflections" ? "None" : tagValue;
     try {
       const [posts, responses] = await Promise.all([
-        getExperiencePostsByTopic(originalTopic).catch(() => []),
-        getExperienceResponsesByTopic(originalTopic).catch(() => []),
+        getExperiencePostsByTopic(tagValue).catch(() => []),
+        getExperienceResponsesByTopic(tagValue).catch(() => []),
       ]);
 
       const combinedContent = [
@@ -197,14 +195,23 @@ const WordCloud = () => {
       <SafeAreaView className="flex-1">
         <View style={styles.mainContainer}>
           <View style={styles.cloudContainer}>
-            <TagCloud
-              minSize={16}
-              maxSize={36}
-              tags={tags}
-              disableRandomColor={false}
-              onPress={handleTagPress}
-              style={styles.tagCloud}
-            />
+            {loading.topics ? (
+              <View className="justify-center items-center p-8">
+                <ActivityIndicator color="#1e4635" />
+                <Text className="font-pregular mt-4 text-secondary-dark text-center">
+                  Fetching topics...
+                </Text>
+              </View>
+            ) : (
+              <TagCloud
+                minSize={16}
+                maxSize={36}
+                tags={tags}
+                disableRandomColor={false}
+                onPress={handleTagPress}
+                style={styles.tagCloud}
+              />
+            )}
             <Text style={styles.instructionText}>
               Tap any word from the cloud
             </Text>
@@ -213,7 +220,7 @@ const WordCloud = () => {
           <TouchableOpacity
             onPress={refreshTopics}
             className="mt-5 p-2 rounded-full bg-secondary-dark/10"
-            disabled={loading.tags}
+            disabled={loading.topics}
           >
             <Feather name="refresh-ccw" size={24} color="black" />
           </TouchableOpacity>

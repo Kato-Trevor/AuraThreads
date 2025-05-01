@@ -32,7 +32,7 @@ export async function categorizePost(content: string): Promise<{ topic: string; 
     - Fear
     - Self-Harm
     - Social Pressure
-    - None
+    - General
 
     On top of that, categorize the text as either a story/experience or not. If it's an experience then return true, if not then return false.
     Respond ONLY with the exact topic name from the list above and the type category in the format "topic, true/false", nothing else.`,
@@ -78,7 +78,7 @@ export async function categorizePost(content: string): Promise<{ topic: string; 
       "Fear",
       "Self-Harm",
       "Social Pressure",
-      "None",
+      "General",
     ];
 
     // Validate that the topic is in our list.

@@ -190,7 +190,7 @@ export async function getMostUsedTopics() {
     const topicsCount: { [key: string]: number } = {};
 
     posts.documents.forEach((post) => {
-      if (post.topic && post.topic !== "None") {
+      if (post.topic) {
         topicsCount[post.topic] = (topicsCount[post.topic] || 0) + 1;
       }
     });
