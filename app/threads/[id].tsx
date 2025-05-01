@@ -981,17 +981,25 @@ export default function Thread() {
 
   const createResponse = async () => {
     if (!response.trim()) return;
+
     try {
       setIsSubmittingResponse(true);
-      const contentType = await categorizeResponse(response);
+      const result = await categorizeResponse(response);
+      
+      if (!result.isSafe) {
+        showToast("This response is toxic!", "error");
+        setIsSubmittingResponse(false);
+        return;
+      }
 
       await addResponseToDB(
         response,
         `${postId}`,
         user.$id,
-        contentType,
+        result.isExperience,
         enableAnonymousID
       );
+      
       setIsSubmittingResponse(false);
       showToast("Response created successfully!", "success");
       setResponse("");

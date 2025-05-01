@@ -1,6 +1,8 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-export async function categorizePost(content: string): Promise<{ topic: string; contentType: boolean }> {
+export async function categorizePost(
+  content: string
+): Promise<{ topic: string; contentType: boolean }> {
   const apiKey = process.env.EXPO_PUBLIC_GEN_AI_API_KEY;
   if (!apiKey) {
     throw new Error("API key is not defined");
@@ -107,15 +109,14 @@ export async function categorizePost(content: string): Promise<{ topic: string; 
   }
 }
 
-
-
-
-export async function categorizeResponse(content: string): Promise<boolean> {
+export async function categorizeResponse(
+  content: string
+): Promise<{ isExperience: boolean; isSafe: boolean }> {
   const apiKey = process.env.EXPO_PUBLIC_GEN_AI_API_KEY_2;
   if (!apiKey) {
     throw new Error("API key is not defined");
   }
-  
+
   const genAI = new GoogleGenerativeAI(apiKey);
   const model = genAI.getGenerativeModel({
     model: "gemini-1.5-flash",
@@ -124,11 +125,20 @@ export async function categorizeResponse(content: string): Promise<boolean> {
       topP: 0.8,
       maxOutputTokens: 50,
     },
-    systemInstruction: `You are a mental health classifier. Analyze the given response text  and categorize the text as either a meaningful story/experience or not. If it's an experience then return true, if not then return false.
-Respond ONLY with true/false, nothing else.`,
+    systemInstruction: `You are a mental health content moderator. Analyze the given response text for two things:
+1. Is it a meaningful story/experience? (true/false)
+2. Is it safe and constructive content? Check for:
+   - Hate speech or discrimination
+   - Explicit violence or self-harm
+   - Cyberbullying or harassment
+   - Inappropriate sexual content
+   - Harmful misinformation
+   Return false if any toxic content is detected, true if content is safe.
+
+Respond ONLY with two values in format "experience,safe" where both values are true/false. Example: "true,true" or "false,false"`,
   });
 
-  // Validate content first.
+  // Validate content first
   if (!content.trim()) {
     throw new Error("Empty content cannot be categorized");
   }
@@ -139,13 +149,24 @@ Respond ONLY with true/false, nothing else.`,
     const responseText = result.response.text().trim().toLowerCase();
     console.log("Generated response:", responseText);
 
-    if (responseText === "true") {
-      return true;
-    } else if (responseText === "false") {
-      return false;
-    } else {
-      throw new Error(`Unexpected response: "${responseText}"`);
+    const [experienceStr, safetyStr] = responseText.split(",");
+
+    if (!experienceStr || !safetyStr) {
+      throw new Error(`Invalid response format: "${responseText}"`);
     }
+
+    const isExperience = experienceStr === "true";
+    const isSafe = safetyStr === "true";
+
+    if (
+      ![experienceStr, safetyStr].every(
+        (val) => val === "true" || val === "false"
+      )
+    ) {
+      throw new Error(`Unexpected response values: "${responseText}"`);
+    }
+
+    return { isExperience, isSafe };
   } catch (error) {
     console.error("Content categorization failed:", error);
     throw new Error(
