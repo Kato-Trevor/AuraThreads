@@ -1,11 +1,18 @@
-import { 
-  Text, 
-  View, 
-  StyleSheet, 
-  ActivityIndicator, 
-  Dimensions, 
+import {
+  Text,
+  View,
+  StyleSheet,
+  ActivityIndicator,
+  Dimensions,
+  TouchableOpacity,
 } from "react-native";
-import React, { useRef, useState, useEffect, useCallback, useMemo } from "react";
+import React, {
+  useRef,
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+} from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { TagCloud } from "react-tagcloud/rn";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -13,11 +20,11 @@ import BottomSheet, { BottomSheetFlatList } from "@gorhom/bottom-sheet";
 import {
   getExperiencePostsByTopic,
   getExperienceResponsesByTopic,
+  getPostsByTopic,
 } from "@/lib/appwrite/appwrite";
 import { formatTopic } from "@/utils/stringHelpers";
 import { topics } from "@/constants/constants";
-
-
+import { Feather } from "@expo/vector-icons";
 
 type TagItem = {
   value: string;
@@ -29,11 +36,11 @@ type ContentItem = {
   content: string;
 };
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 
 const WordCloud = () => {
   const bottomSheetRef = useRef<BottomSheet | null>(null);
-  const snapPoints = useMemo(() => ['75%'], []);
+  const snapPoints = useMemo(() => ["75%"], []);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [contentItems, setContentItems] = useState<ContentItem[]>([]);
   const [loading, setLoading] = useState({
@@ -44,60 +51,122 @@ const WordCloud = () => {
   const [tags, setTags] = useState<TagItem[]>([]);
   const [refreshing, setRefreshing] = useState(false);
 
+  const fetchTopicCounts = async (topic: string) => {
+    try {
+      const posts = await getPostsByTopic(topic);
+      return posts.length;
+    } catch (error) {
+      console.error(`Error fetching posts for topic ${topic}:`, error);
+      return 0;
+    }
+  };
+
   useEffect(() => {
-    const formattedTags = topics.map(topic => ({
-      value: topic === "None" ? "General Reflections" : formatTopic(topic),
-      count: 1
-    }));
-    setTags(formattedTags);
+    const loadTopicCounts = async () => {
+      try {
+        setLoading((prev) => ({ ...prev, tags: true }));
+
+        const topicsWithCounts = await Promise.all(
+          topics.map(async (topic) => {
+            const count = await fetchTopicCounts(formatTopic(topic));
+            return {
+              value: formatTopic(topic),
+              count: count,
+            };
+          })
+        );
+
+        setTags(topicsWithCounts);
+      } catch (error) {
+        console.error("Error loading topic counts:", error);
+        setTags(
+          topics.map((topic) => ({ value: formatTopic(topic), count: 1 }))
+        );
+      } finally {
+        setLoading((prev) => ({ ...prev, tags: false }));
+      }
+    };
+
+    loadTopicCounts();
+  }, [topics]);
+
+  const refreshTopics = useCallback(async () => {
+    try {
+      setLoading((prev) => ({ ...prev, tags: true }));
+
+      const topicsWithCounts = await Promise.all(
+        topics.map(async (topic) => {
+          const count = await fetchTopicCounts(formatTopic(topic));
+          return {
+            value: formatTopic(topic),
+            count: Math.max(count, 1), // Ensure minimum count of 1
+          };
+        })
+      );
+
+      setTags(topicsWithCounts);
+    } catch (error) {
+      console.error("Error refreshing topics:", error);
+      // Fallback to default counts
+      setTags(
+        topics.map((topic) => ({
+          value: formatTopic(topic),
+          count: 1,
+        }))
+      );
+    } finally {
+      setLoading((prev) => ({ ...prev, tags: false }));
+    }
   }, []);
 
   const fetchContent = async (tagValue: string) => {
-    const originalTopic = tagValue === "General Reflections" ? "None" : tagValue;
+    const originalTopic =
+      tagValue === "General Reflections" ? "None" : tagValue;
     try {
       const [posts, responses] = await Promise.all([
         getExperiencePostsByTopic(originalTopic).catch(() => []),
-        getExperienceResponsesByTopic(originalTopic).catch(() => [])
+        getExperienceResponsesByTopic(originalTopic).catch(() => []),
       ]);
 
       const combinedContent = [
-        ...posts.map(post => ({
+        ...posts.map((post) => ({
           id: post.$id,
-          content: post.content
+          content: post.content,
         })),
-        ...responses.map(response => ({
+        ...responses.map((response) => ({
           id: response.$id,
-          content: response.content
-        }))
+          content: response.content,
+        })),
       ];
 
       if (combinedContent.length === 0) {
-        setLoading(prev => ({ ...prev, error: true }));
+        setLoading((prev) => ({ ...prev, error: true }));
       }
 
       setContentItems(combinedContent);
     } catch (error) {
       console.error("Error fetching experiences:", error);
-      setLoading(prev => ({ ...prev, error: true }));
+      setLoading((prev) => ({ ...prev, error: true }));
     }
   };
 
   const handleTagPress = async (tag: { value: string }) => {
     setSelectedTag(tag.value);
-    setLoading(prev => ({ ...prev, content: true, error: false }));
+    setLoading((prev) => ({ ...prev, content: true, error: false }));
     setContentItems([]);
 
     await fetchContent(tag.value);
-    
-    setLoading(prev => ({ ...prev, content: false }));
-    bottomSheetRef.current?.snapToIndex(1)
+
+    setLoading((prev) => ({ ...prev, content: false }));
+    bottomSheetRef.current?.snapToIndex(1);
   };
 
   const onRefresh = useCallback(async () => {
     if (!selectedTag) return;
-    
+
     setRefreshing(true);
     await fetchContent(selectedTag);
+    await refreshTopics();
     setRefreshing(false);
   }, [selectedTag]);
 
@@ -111,7 +180,7 @@ const WordCloud = () => {
     if (loading.content) {
       return <ActivityIndicator size="large" style={styles.emptyContainer} />;
     }
-    
+
     if (loading.error) {
       return (
         <View style={styles.errorContainer}>
@@ -121,7 +190,6 @@ const WordCloud = () => {
         </View>
       );
     }
-
   };
 
   return (
@@ -135,7 +203,6 @@ const WordCloud = () => {
               tags={tags}
               disableRandomColor={false}
               onPress={handleTagPress}
-              shuffle={false}
               style={styles.tagCloud}
             />
             <Text style={styles.instructionText}>
@@ -143,10 +210,18 @@ const WordCloud = () => {
             </Text>
           </View>
 
+          <TouchableOpacity
+            onPress={refreshTopics}
+            className="mt-5 p-2 rounded-full bg-secondary-dark/10"
+            disabled={loading.tags}
+          >
+            <Feather name="refresh-ccw" size={24} color="black" />
+          </TouchableOpacity>
+
           <BottomSheet
             ref={bottomSheetRef}
             snapPoints={snapPoints}
-            index={-1} 
+            index={-1}
             enablePanDownToClose
           >
             <BottomSheetFlatList
@@ -159,11 +234,8 @@ const WordCloud = () => {
                   <Text style={styles.contentText}>{item.content}</Text>
                 </View>
               )}
-
               refreshing={refreshing}
               onRefresh={onRefresh}
-
-
               contentContainerStyle={styles.listContentContainer}
             />
           </BottomSheet>
@@ -239,11 +311,6 @@ const styles = StyleSheet.create({
 });
 
 export default WordCloud;
-
-
-
-
-
 
 // import React, { useRef, useState, useEffect, useCallback } from "react";
 // import {
