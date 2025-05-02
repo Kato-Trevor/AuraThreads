@@ -309,7 +309,7 @@ const Settings = () => {
             />
           )}
 
-          <PrivacyLevelSelector />
+          {/* <PrivacyLevelSelector /> */}
 
           {/* Notifications Section */}
           <SectionHeader

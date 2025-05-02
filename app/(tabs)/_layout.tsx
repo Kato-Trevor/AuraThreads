@@ -73,9 +73,9 @@ const TabsLayout = () => {
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <TabIcon
-                iconName="search"
+                iconName="compass"
                 color={color}
-                name="Search"
+                name="Discover"
                 focused={focused}
               />
             ),
@@ -90,7 +90,7 @@ const TabsLayout = () => {
               <TabIcon
                 iconName="flame"
                 color={color}
-                name="Trending"
+                name="Trends"
                 focused={focused}
               />
             ),

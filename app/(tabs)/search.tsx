@@ -154,9 +154,6 @@ const SearchScreen = () => {
             <Text className="text-lg font-psemibold text-gray-800">
               Trending Mental Health Topics
             </Text>
-            <TouchableOpacity>
-              <Text className="text-secondary font-pmedium">See all</Text>
-            </TouchableOpacity>
           </View>
 
           <View className="flex-row flex-wrap mt-1">
@@ -178,14 +175,13 @@ const SearchScreen = () => {
             Your Wellbeing
           </Text>
           <View className="bg-secondary-200/40 rounded-xl overflow-hidden">
-            <View className="h-28 bg-secondary-200 opacity-70" />
+            
             <View className="p-3">
               <Text className="text-lg font-psemibold text-gray-800 mb-1">
                 Take a mental health assessment
               </Text>
               <Text className="font-pregular text-gray-600 mb-3">
-                Understand your current state of mind with our quick
-                questionnaire
+                Select how you feel on our simple mood scale
               </Text>
               <TouchableOpacity
                 className="bg-secondary py-2 px-4 rounded-lg self-start"

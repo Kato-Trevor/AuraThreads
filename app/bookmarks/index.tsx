@@ -12,7 +12,7 @@ import {
 import { PostsBookmarks } from "@/components/PostsBookmarks";
 import { JournalBookmarks } from "@/components/JournalBookmarks";
 import { router } from "expo-router";
-import { MaterialIcons, FontAwesome, Ionicons } from "@expo/vector-icons";
+import { MaterialIcons, FontAwesome } from "@expo/vector-icons";
 
 const { width } = Dimensions.get("window");
 
@@ -57,7 +57,7 @@ const Bookmarks = () => {
   });
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-white pt-6">
       <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
 
       {/* Custom Header with Shadow */}

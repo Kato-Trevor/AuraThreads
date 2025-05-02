@@ -53,10 +53,10 @@ const Post = ({ post }: { post: PostModel }) => {
       <View className="w-full bg-white border-b border-gray-100 px-4 py-3">
         {/* Header section */}
         <View className="flex-row items-center mb-2">
-          <Avatar username={username} imageUrl={post.userId.avatar}/>
+          <Avatar username={username} imageUrl={post.userId.avatar} />
           <View className="ml-2.5 flex-1">
             <View className="flex-row items-center justify-between">
-              <Text className="font-psemibold text-gray-800 text-sm">
+              <Text className="font-pregular text-gray-400 text-sm">
                 {post.userId.role === "counselor" ? username : `@${username}`}
               </Text>
               <Text className="text-xs text-gray-400 font-plight">
@@ -99,7 +99,7 @@ const Post = ({ post }: { post: PostModel }) => {
                 className="mr-1"
               />
               <Text
-                className="text-xs text-gray-600 ml-1 font-pregular"
+                className="text-[10px] text-gray-400 ml-1 font-pregular"
                 numberOfLines={1}
               >
                 {song?.title_short} • {song?.artist?.name}

@@ -164,13 +164,19 @@ const WordCloud = () => {
 
     setRefreshing(true);
     await fetchContent(selectedTag);
-    await refreshTopics();
     setRefreshing(false);
   }, [selectedTag]);
 
   const renderHeader = () => (
     <View style={styles.headerContainer}>
-      <Text style={styles.bottomSheetTitle}>Shared Experiences:</Text>
+      <Text className="text-xl font-pbold text-gray-900">Shared Experiences:</Text>
+      <TouchableOpacity
+        onPress={onRefresh}
+        className="p-2 rounded-full bg-secondary-dark/10"
+        disabled={loading.topics}
+      >
+        <Feather name="refresh-ccw" size={15} color="black" />
+      </TouchableOpacity>
     </View>
   );
 
@@ -181,9 +187,12 @@ const WordCloud = () => {
 
     if (loading.error) {
       return (
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>
-            No experiences found yet for {selectedTag}
+        <View className="justify-center items-center p-8">
+          <View className="bg-secondary-100/30 p-4 rounded-full">
+            <Feather name="message-circle" size={36} color="#1e4635" />
+          </View>
+          <Text className="font-pregular mt-4 text-secondary-dark text-center">
+            No experiences found under this topic
           </Text>
         </View>
       );
@@ -192,7 +201,7 @@ const WordCloud = () => {
 
   return (
     <GestureHandlerRootView className="flex-1">
-      <SafeAreaView className="flex-1">
+      <SafeAreaView className="flex-1 bg-white">
         <View style={styles.mainContainer}>
           <View style={styles.cloudContainer}>
             {loading.topics ? (
@@ -213,7 +222,7 @@ const WordCloud = () => {
               />
             )}
             <Text style={styles.instructionText}>
-              Tap any word from the cloud
+              Tap any topic from the cloud
             </Text>
           </View>
 
@@ -242,7 +251,6 @@ const WordCloud = () => {
                 </View>
               )}
               refreshing={refreshing}
-              onRefresh={onRefresh}
               contentContainerStyle={styles.listContentContainer}
             />
           </BottomSheet>
@@ -280,6 +288,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 20,
     paddingBottom: 10,
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   bottomSheetTitle: {
     fontSize: 18,
@@ -303,6 +315,7 @@ const styles = StyleSheet.create({
   },
   contentText: {
     fontSize: 14,
+    fontFamily: 'Poppins-Regular',
   },
   emptyText: {
     color: "gray",
