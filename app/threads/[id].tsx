@@ -803,6 +803,8 @@
 
 
 
+//Okay
+
 import {
   View,
   Text,
@@ -996,7 +998,7 @@ export default function Thread() {
         response,
         `${postId}`,
         user.$id,
-        result.isExperience,
+        result.contentType,
         enableAnonymousID
       );
       
@@ -1240,3 +1242,4 @@ export default function Thread() {
     </KeyboardAvoidingView>
   );
 }
+

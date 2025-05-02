@@ -65,11 +65,27 @@ const CreatePost = () => {
     setEnableAIResponse(!enableAIResponse);
   };
 
+
   const handlePostCreation = async () => {
     setIsPosting(true);
     try {
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      const { topic, contentType } = await categorizePost(postContent);
+      // 1) classify + safety check
+      const { topic, contentType, isSafe } = await categorizePost(postContent);
+
+      // 2) prevent unsafe posts
+      if (!isSafe) {
+        // optional haptic feedback for warning
+        await Haptics.notificationAsync(
+          Haptics.NotificationFeedbackType.Warning
+        );
+        showToast("This post contains unsafe content and was blocked.", "error");
+        return;
+      }
+
+      // 3) proceed with creating the post
+      await Haptics.notificationAsync(
+        Haptics.NotificationFeedbackType.Success
+      );
       const newPost = await addPostToDB(
         postContent,
         user.$id,
@@ -81,16 +97,22 @@ const CreatePost = () => {
       showToast("Post created successfully!", "success");
       router.back();
 
+      // 4) optional AI follow‑up
       if (newPost?.$id && enableAIResponse) {
         try {
           await addAIResponseToDB(postContent, newPost.$id);
-        } catch (error) {
-          console.error("Error generating AI response:", error);
+        } catch (err) {
+          console.error("Error generating AI response:", err);
         }
       }
     } catch (error: any) {
-      console.log("Error creating post:", error);
-      showToast("Failed to create post", "error");
+      console.error("Error creating post:", error);
+      showToast(
+        error.message?.includes("categorize")
+          ? "Unable to classify your post. Please try again."
+          : "Failed to create post.",
+        "error"
+      );
     } finally {
       setIsPosting(false);
     }
@@ -194,21 +216,19 @@ const CreatePost = () => {
                 <TouchableOpacity
                   onPress={handlePostCreation}
                   disabled={isPosting || postContent.trim() === ""}
-                  className={`py-3 px-8 rounded-full shadow-md transition-all duration-200 ${
-                    isPosting || postContent.trim() === ""
+                  className={`py-3 px-8 rounded-full shadow-md transition-all duration-200 ${isPosting || postContent.trim() === ""
                       ? "bg-gray-300"
                       : "bg-secondary hover:bg-secondary-dark"
-                  }`}
+                    }`}
                   style={{
                     opacity: isPosting || postContent.trim() === "" ? 0.6 : 1,
                   }}
                 >
                   <Text
-                    className={`text-base font-psemibold ${
-                      isPosting || postContent.trim() === ""
+                    className={`text-base font-psemibold ${isPosting || postContent.trim() === ""
                         ? "text-gray-500"
                         : "text-white"
-                    }`}
+                      }`}
                   >
                     {isPosting ? "Posting..." : "Post"}
                   </Text>
@@ -238,11 +258,10 @@ const CreatePost = () => {
                 </View>
                 <View className="flex-row justify-end">
                   <Text
-                    className={`text-xs font-pregular ${
-                      characterCount > CHARACTER_WARNING
+                    className={`text-xs font-pregular ${characterCount > CHARACTER_WARNING
                         ? "text-red-500"
                         : "text-gray-500"
-                    }`}
+                      }`}
                   >
                     {characterCount}/{MAX_POST_LENGTH}
                   </Text>
@@ -330,9 +349,8 @@ const CreatePost = () => {
                         color={enableAIResponse ? "#588b76" : "#666"}
                       />
                       <Text
-                        className={`ml-2 mr-2 font-pmedium ${
-                          enableAIResponse ? "text-[#588b76]" : "text-gray-700"
-                        }`}
+                        className={`ml-2 mr-2 font-pmedium ${enableAIResponse ? "text-[#588b76]" : "text-gray-700"
+                          }`}
                       >
                         AuraThreads AI Response
                       </Text>

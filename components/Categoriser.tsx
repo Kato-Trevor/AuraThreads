@@ -1,12 +1,14 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
+
 export async function categorizePost(
   content: string
-): Promise<{ topic: string; contentType: boolean }> {
+): Promise<{ topic: string; contentType: boolean; isSafe: boolean }> {
   const apiKey = process.env.EXPO_PUBLIC_GEN_AI_API_KEY;
   if (!apiKey) {
     throw new Error("API key is not defined");
   }
+
   const genAI = new GoogleGenerativeAI(apiKey);
   const model = genAI.getGenerativeModel({
     model: "gemini-1.5-flash",
@@ -15,29 +17,37 @@ export async function categorizePost(
       topP: 0.8,
       maxOutputTokens: 50,
     },
-    systemInstruction: `You are a mental health classifier. Analyze the given text and categorize it into the most appropriate of these specific topics:
-    - Anxiety
-    - Depression
-    - Confidence
-    - Relationships
-    - Stress
-    - Trauma
-    - Grief
-    - Loneliness
-    - Burnout
-    - Addiction
-    - Sleep
-    - Anger
-    - Identity
-    - Motivation
-    - Focus
-    - Fear
-    - Self-Harm
-    - Social Pressure
-    - General
+    systemInstruction: `You are a mental health classifier and moderator. Analyze the given text and:
+1. Categorize it into the most appropriate of these specific topics:
+   - Anxiety
+   - Depression
+   - Confidence
+   - Relationships
+   - Stress
+   - Trauma
+   - Grief
+   - Loneliness
+   - Burnout
+   - Addiction
+   - Sleep
+   - Anger
+   - Identity
+   - Motivation
+   - Focus
+   - Fear
+   - Self-Harm
+   - Social Pressure
+   - General
 
-    On top of that, categorize the text as either a story/experience or not. If it's an experience then return true, if not then return false.
-    Respond ONLY with the exact topic name from the list above and the type category in the format "topic, true/false", nothing else.`,
+2. Determine if it's a story/experience (true/false)
+3. Check if it's safe content (true/false) by looking for:
+   - Hate speech or discrimination
+   - Explicit violence or self-harm
+   - Cyberbullying or harassment
+   - Inappropriate sexual content
+   - Harmful misinformation
+
+Respond ONLY with the topic, experience flag, and safety flag in the exact format "topic, true/false, true/false". Example: "Depression, true, true" or "General, false, false"`,
   });
 
   // Validate content first
@@ -51,15 +61,16 @@ export async function categorizePost(
     const responseText = result.response.text().trim();
     console.log("Generated response:", responseText);
 
-    // Expecting a format like: "Depression, true"
+    // Expecting a format like: "Depression, true, true"
     const parts = responseText.split(",");
-    if (parts.length !== 2) {
+    if (parts.length !== 3) {
       throw new Error(`Unexpected response format: "${responseText}"`);
     }
 
     // Trim the parts to clean up any extra spaces.
     const topic = parts[0].trim();
-    const contentTypeStr = parts[1].trim().toLowerCase();
+    const isExperienceStr = parts[1].trim().toLowerCase();
+    const isSafeStr = parts[2].trim().toLowerCase();
 
     const validTopics = [
       "Anxiety",
@@ -90,28 +101,40 @@ export async function categorizePost(
 
     // Validate and convert contentType to boolean.
     let contentType: boolean;
-    if (contentTypeStr === "true") {
+    if (isExperienceStr === "true") {
       contentType = true;
-    } else if (contentTypeStr === "false") {
+    } else if (isExperienceStr === "false") {
       contentType = false;
     } else {
-      throw new Error(`Unexpected content type response: "${contentTypeStr}"`);
+      throw new Error(`Unexpected experience response: "${isExperienceStr}"`);
     }
 
-    return { topic, contentType };
+    // Validate and convert isSafe to boolean.
+    let isSafe: boolean;
+    if (isSafeStr === "true") {
+      isSafe = true;
+    } else if (isSafeStr === "false") {
+      isSafe = false;
+    } else {
+      throw new Error(`Unexpected safety response: "${isSafeStr}"`);
+    }
+
+    return { topic, contentType, isSafe };
   } catch (error) {
-    console.error("Topic categorization failed:", error);
+    console.error("Post categorization failed:", error);
     throw new Error(
-      `Failed to categorize content: ${
+      `Failed to categorize post: ${
         error instanceof Error ? error.message : String(error)
       }`
     );
   }
 }
 
+
+
 export async function categorizeResponse(
   content: string
-): Promise<{ isExperience: boolean; isSafe: boolean }> {
+): Promise<{ contentType: boolean; isSafe: boolean }> {
   const apiKey = process.env.EXPO_PUBLIC_GEN_AI_API_KEY_2;
   if (!apiKey) {
     throw new Error("API key is not defined");
@@ -155,7 +178,7 @@ Respond ONLY with two values in format "experience,safe" where both values are t
       throw new Error(`Invalid response format: "${responseText}"`);
     }
 
-    const isExperience = experienceStr === "true";
+    const contentType = experienceStr === "true";
     const isSafe = safetyStr === "true";
 
     if (
@@ -166,7 +189,7 @@ Respond ONLY with two values in format "experience,safe" where both values are t
       throw new Error(`Unexpected response values: "${responseText}"`);
     }
 
-    return { isExperience, isSafe };
+    return { contentType, isSafe };
   } catch (error) {
     console.error("Content categorization failed:", error);
     throw new Error(
@@ -176,3 +199,4 @@ Respond ONLY with two values in format "experience,safe" where both values are t
     );
   }
 }
+

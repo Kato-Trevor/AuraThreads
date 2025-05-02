@@ -6,7 +6,7 @@ import Post from "@/components/Post";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { Feather } from "@expo/vector-icons";
 
-const BATCH_SIZE = 4; // Number of recommended posts per batch
+const BATCH_SIZE = 15; // Number of recommended posts per batch
 // const RECOMMENDATIONS_API = "http://192.168.123.114:8000/postRecommendations";
 const RECOMMENDATIONS_API =
   "https://post-recommender.onrender.com/postRecommendations";
