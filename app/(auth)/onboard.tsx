@@ -14,7 +14,6 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { images } from "@/constants";
 import CustomButton from "@/components/CustomButton";
-// import GoogleLoginButton from "@/components/GoogleLoginButton";
 
 const { width, height } = Dimensions.get("window");
 

@@ -1,10 +1,7 @@
-import { Alert } from "react-native";
 import { useToast } from "@/components/ToastProvider";
-import { useGlobalContext } from "@/context/GlobalProvider";
 import { useEffect, useState } from "react";
 
 const useAppwrite = (fn: () => Promise<any>) => {
-  // const { user } = useGlobalContext();
   const { showToast } = useToast();
   const [data, setData] = useState<any>([]);
   const [error, setError] = useState<string | null>(null);

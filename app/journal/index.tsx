@@ -16,7 +16,6 @@ import {
   StatusBar,
   Platform,
 } from "react-native";
-// import AsyncStorage from '@react-native-async-storage/async-storage';
 import debounce from "lodash.debounce";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { Calendar } from "react-native-calendars";

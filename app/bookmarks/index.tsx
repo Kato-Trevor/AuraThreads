@@ -169,28 +169,6 @@ const Bookmarks = () => {
           </>
         )}
       </Animated.View>
-
-      {/* Empty State - Uncomment and customize as needed */}
-      {/* {!isLoading && ((selectedTab === "posts" && bookmarksCount.posts === 0) || 
-          (selectedTab === "journal" && bookmarksCount.journal === 0)) && (
-        <Animated.View 
-          className="absolute inset-0 flex items-center justify-center bg-gray-50"
-          style={{ opacity: fadeAnim }}
-        >
-          <View className="items-center px-6">
-            <MaterialIcons name="bookmark-border" size={80} color="#D1D5DB" />
-            <Text className="text-xl font-pbold text-gray-500 mt-4">
-              No bookmarks yet
-            </Text>
-            <Text className="text-gray-400 text-center mt-2 mb-4">
-              Items you bookmark will appear here for easy access.
-            </Text>
-            <TouchableOpacity className="bg-green-600 px-6 py-3 rounded-full">
-              <Text className="text-white font-pbold">Browse Content</Text>
-            </TouchableOpacity>
-          </View>
-        </Animated.View>
-      )} */}
     </SafeAreaView>
   );
 };
