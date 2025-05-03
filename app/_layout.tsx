@@ -7,7 +7,7 @@ import { ToastProvider } from "@/components/ToastProvider";
 import * as SplashScreen from "expo-splash-screen";
 import React, { useEffect } from "react";
 import "react-native-reanimated";
-import { StatusBar, View, TouchableOpacity } from "react-native";
+import { StatusBar, View, TouchableOpacity, Text } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Drawer } from "react-native-drawer-layout";
 import DrawerContent from "@/components/DrawerContent";
@@ -50,11 +50,15 @@ export default function RootLayout() {
         <ThemeProvider value={DefaultTheme}>
           <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
           <Drawer
+            drawerStyle={{ width: "80%" }}
             open={openMenu}
             onOpen={() => setOpenMenu(true)}
             onClose={() => setOpenMenu(false)}
             renderDrawerContent={() => (
-              <DrawerContent onLogOut={() => setOpenMenu(false)} />
+              <DrawerContent
+                onClose={() => setOpenMenu(false)}
+                onLogOut={() => setOpenMenu(false)}
+              />
             )}
           >
             <Stack>
@@ -78,11 +82,11 @@ export default function RootLayout() {
                   ),
                   headerTitle: () => (
                     <View className="bg-white rounded-full p-2 shadow-md">
-                      <View className="bg-secondary-100 rounded-full p-2">
+                      <View className="bg-secondary rounded-full p-2">
                         <Ionicons
                           name="leaf-outline"
                           size={24}
-                          color="#FFE4E1"
+                          color="#fff"
                         />
                       </View>
                     </View>
@@ -110,10 +114,7 @@ export default function RootLayout() {
               />
               <Stack.Screen
                 name="profile/[id]"
-                options={{
-                  headerTitle: "Profile",
-                  headerTitleAlign: "center",
-                }}
+                options={{ headerShown: false }}
               />
               <Stack.Screen
                 name="search-post/[query]"
@@ -121,6 +122,22 @@ export default function RootLayout() {
               />
               <Stack.Screen
                 name="analytics/index"
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="article/[id]"
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="settings/index"
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="journal/index"
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="bookmarks/index"
                 options={{ headerShown: false }}
               />
             </Stack>

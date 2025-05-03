@@ -2,7 +2,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useEffect, useRef } from "react";
 import { Modal, Animated, Easing, Text, View } from "react-native";
 
-const LoadingSpinner = ({ visible }: { visible: boolean }) => {
+const LoadingSpinner = ({ visible, loadingText }: { visible: boolean, loadingText?: string }) => {
   const scaleBall1 = useRef(new Animated.Value(1)).current;
   const scaleBall2 = useRef(new Animated.Value(0.5)).current;
   const translateXBall1 = useRef(new Animated.Value(0)).current;
@@ -90,13 +90,13 @@ const LoadingSpinner = ({ visible }: { visible: boolean }) => {
             style={{
               width: 30,
               height: 30,
-              backgroundColor: "#F032DA",
+              backgroundColor: "#588b76",
               borderRadius: 15,
               transform: [
                 { scale: scaleBall1 },
                 { translateX: translateXBall1 },
               ],
-              shadowColor: "#B620A7",
+              shadowColor: "#295f48",
               shadowOpacity: 0.5,
               shadowRadius: 10,
               elevation: 5,
@@ -108,13 +108,13 @@ const LoadingSpinner = ({ visible }: { visible: boolean }) => {
             style={{
               width: 30,
               height: 30,
-              backgroundColor: "#F032DA",
+              backgroundColor: "#588b76",
               borderRadius: 15,
               transform: [
                 { scale: scaleBall2 },
                 { translateX: translateXBall2 },
               ],
-              shadowColor: "#B620A7",
+              shadowColor: "#295f48",
               shadowOpacity: 0.5,
               shadowRadius: 10,
               elevation: 5,
@@ -124,7 +124,7 @@ const LoadingSpinner = ({ visible }: { visible: boolean }) => {
         </View>
 
         <Text className="text-white text-lg font-psemibold mt-1">
-          Loading...
+          {loadingText ?? "Loading..."}
         </Text>
       </SafeAreaView>
     </Modal>

@@ -15,6 +15,9 @@
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts",
-    "constants/images.js"
+    "constants/images.js",
+    "lib/DataAPI/*.py",
+    "lib/DataAPI/**/*.py",
+    "lib/DataAPI/**/*.json"
   ]
 }

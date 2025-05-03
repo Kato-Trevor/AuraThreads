@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { View, Text, TextInput, FlatList } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import { Audio } from "expo-av";
 import { searchSongs } from "@/services/search-songs";
 import SongItem from "./SongItem";
@@ -121,35 +121,56 @@ const SongsList: React.FC<SongListProps> = ({ selectedSong, onSongSelect }) => {
     />
   );
 
+  const EmptyListMessage = () => (
+    <View className="flex-1 items-center justify-center p-8">
+      <View className="bg-secondary-100/30 p-4 rounded-full">
+        <FontAwesome name="music" size={36} color="black" />
+      </View>
+      <Text className="text-gray-500 text-center mt-4 font-pregular">
+        {searchQuery.trim()
+          ? "No songs found. Try a different search."
+          : "Search for a song that matches your mood"}
+      </Text>
+    </View>
+  );
+
   return (
     <>
-      <View className="flex-row items-center p-3 my-3 bg-white rounded-full shadow-sm border border-gray-300">
-        <Ionicons
-          name="search"
-          size={20}
-          color="gray"
-          style={{ marginRight: 8 }}
-        />
-        <TextInput
-          style={{
-            fontSize: 16,
-            color: "gray",
-            paddingVertical: 0,
-            lineHeight: 20,
-            textAlignVertical: "center",
-          }}
-          placeholder="What song resonates with you?"
-          placeholderTextColor="gray"
-          value={searchQuery}
-          onChangeText={setSearchQuery}
+      <View className="flex-1 bg-white px-2">
+        <View className="flex-row items-center p-3 my-3 bg-white rounded-full shadow-sm border border-gray-300">
+          <Ionicons
+            name="search"
+            size={20}
+            color="gray"
+            style={{ marginRight: 8 }}
+          />
+          <TextInput
+            style={{
+              fontSize: 14,
+              color: "gray",
+              paddingVertical: 0,
+              textAlignVertical: "center",
+            }}
+            placeholder="What song resonates with you?"
+            placeholderTextColor="gray"
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            className="font-pregular"
+          />
+        </View>
+        {error && (
+          <Text className="text-red-500 text-center font-pregular">
+            {error}
+          </Text>
+        )}
+        <FlatList
+          data={songs}
+          renderItem={renderSong}
+          keyExtractor={(item: Song) => item.id.toString()}
+          ListEmptyComponent={EmptyListMessage}
+          contentContainerStyle={!songs?.length ? { flex: 1 } : {}}
         />
       </View>
-      {error && <Text className="text-red-500 text-center">{error}</Text>}
-      <FlatList
-        data={songs}
-        renderItem={renderSong}
-        keyExtractor={(item: Song) => item.id.toString()}
-      />
     </>
   );
 };

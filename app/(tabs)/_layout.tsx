@@ -35,19 +35,19 @@ const TabIcon = ({
 const TabsLayout = () => {
   return (
     <>
-      <StatusBar style="dark" backgroundColor="#F5F5F5" />
+      <StatusBar style="dark" backgroundColor="#FFFFFF" />
       <Tabs
         screenOptions={{
           tabBarShowLabel: false,
           tabBarStyle: {
-            backgroundColor: "#F5F5F5",
-            borderTopWidth: 1,
-            borderTopColor: "#CDCDE0",
+            backgroundColor: "#Fff",
+            // borderTopWidth: 1,
+            // borderTopColor: "#CDCDE0",
             height: 80,
-            elevation: 0,
+            elevation: 5,
             paddingTop: 10,
           },
-          tabBarActiveTintColor: "#F032DA",
+          tabBarActiveTintColor: "#588b76",
           tabBarInactiveTintColor: "#7D7D7D",
         }}
       >
@@ -73,9 +73,9 @@ const TabsLayout = () => {
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <TabIcon
-                iconName="search"
+                iconName="compass"
                 color={color}
-                name="Search"
+                name="Discover"
                 focused={focused}
               />
             ),
@@ -90,7 +90,7 @@ const TabsLayout = () => {
               <TabIcon
                 iconName="flame"
                 color={color}
-                name="Trending"
+                name="Trends"
                 focused={focused}
               />
             ),

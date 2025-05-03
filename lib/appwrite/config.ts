@@ -22,6 +22,8 @@ export const appwriteConfig = {
   responsesCollectionId: "67cef94300024a0db8ef",
   moodsCollectionId: "67cef98a00360b795eb3",
   reactionsCollectionId: "67da7da70000bd42f55d",
+  journalsCollectionId: "67f968be001277e36b11",
+  bookmarksCollectionId: "6809f4db00316d909513"
 };
 
 export const client = new Client()

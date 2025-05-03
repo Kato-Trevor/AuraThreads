@@ -132,7 +132,7 @@ const MoodLogModal: React.FC<MoodLogModalProps> = ({
 
                 <View className="flex-row justify-between items-center px-6 py-4">
                   <View>
-                    <Text className="text-xs font-pmedium text-violet-500">
+                    <Text className="text-xs font-pmedium text-[#85aa9b]">
                       Create New
                     </Text>
                     <Text className="text-xl font-pbold text-gray-900">
@@ -223,7 +223,7 @@ const MoodLogModal: React.FC<MoodLogModalProps> = ({
                       <MaterialCommunityIcons
                         name="pencil-box"
                         size={18}
-                        color="#6D28D9"
+                        color="#588b76"
                       />
                       <Text className="ml-2 text-sm font-pmedium text-gray-700">
                         Why do you feel this way?
@@ -257,7 +257,7 @@ const MoodLogModal: React.FC<MoodLogModalProps> = ({
                   </TouchableOpacity>
                   <TouchableOpacity
                     onPress={handleSubmit}
-                    className="flex-1 py-3.5 rounded-xl bg-violet-600 shadow-sm"
+                    className="flex-1 py-3.5 rounded-xl bg-secondary-100 shadow-sm"
                     disabled={isLoading}
                   >
                     {isLoading ? (
