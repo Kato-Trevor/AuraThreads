@@ -179,6 +179,41 @@ export async function getExperiencePosts() {
   }
 }
 
+// export async function getMostUsedTopics() {
+//   try {
+//     const posts = await databases.listDocuments(
+//       appwriteConfig.databaseId,
+//       appwriteConfig.postCollectionId,
+//       [Query.limit(100)]
+//     );
+
+//     const topicsCount: { [key: string]: number } = {};
+
+//     posts.documents.forEach((post) => {
+//       if (post.topic) {
+//         topicsCount[post.topic] = (topicsCount[post.topic] || 0) + 1;
+//       }
+//     });
+
+//     // Sort topics by count in descending order
+//     const sortedTopics = Object.entries(topicsCount).sort(
+//       (a, b) => b[1] - a[1]
+//     );
+
+//     // Get the top 6 most used topics or default to an empty array if none
+//     const mostUsedTopics =
+//       sortedTopics.length > 0
+//         ? sortedTopics.slice(0, 6).map((topic) => topic[0])
+//         : [];
+//     console.log("Most used topics:", mostUsedTopics);
+
+//     return mostUsedTopics;
+//   } catch (error: any) {
+//     console.error("Error fetching most used topics:", error);
+//   }
+// }
+
+
 export async function getMostUsedTopics() {
   try {
     const posts = await databases.listDocuments(
@@ -190,7 +225,7 @@ export async function getMostUsedTopics() {
     const topicsCount: { [key: string]: number } = {};
 
     posts.documents.forEach((post) => {
-      if (post.topic) {
+      if (post.topic && post.topic !== "General") {  // Added check for "General"
         topicsCount[post.topic] = (topicsCount[post.topic] || 0) + 1;
       }
     });

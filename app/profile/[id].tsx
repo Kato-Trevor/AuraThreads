@@ -220,7 +220,7 @@ export default function Profile() {
         <View className="p-3">
           {/* Header with Gradient */}
           <LinearGradient
-            colors={["#18392b", "#2a5745"]}
+            colors={["#588b76", "#588b76"]} // #588b76 "#18392b", "#2a5745"
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
             className="rounded-2xl mb-5 p-5"
@@ -295,7 +295,7 @@ export default function Profile() {
                 <Text className="font-['Poppins-SemiBold'] text-gray-800">
                   Profile Info
                 </Text>
-                <TouchableOpacity className="bg-green-50 px-3 py-1 rounded-full">
+                <TouchableOpacity  style={{ backgroundColor: '#d0ded8'}} className="px-3 py-1 rounded-full">
                   <Text className="text-[#18392b] font-['Poppins-Medium'] text-sm">
                     Edit
                   </Text>
@@ -365,7 +365,7 @@ export default function Profile() {
 
           {/* Activity Summary */}
           <LinearGradient
-            colors={["#f9f9f9", "#f3f4f6"]}
+            colors={["#f9f9f9", "#f3f4f6"]} // #588b76 
             className="flex-row border-t border-gray-100"
           >
             <View className="flex-1 py-4 items-center">
@@ -516,7 +516,7 @@ export default function Profile() {
                   Share your thoughts and ideas by creating your first post
                 </Text>
                 <TouchableOpacity
-                  className="mt-6 bg-[#18392b] px-8 py-3 rounded-full shadow-sm"
+                  className="mt-6 bg-[#588b76] px-8 py-3 rounded-full shadow-sm"
                   activeOpacity={0.8}
                 >
                   <Text className="text-white font-['Poppins-SemiBold']">
@@ -615,7 +615,7 @@ export default function Profile() {
         activeOpacity={0.8}
       >
         <LinearGradient
-          colors={["#18392b", "#2a5745"]}
+          colors={["#588b76", "#588b76"]} // "#18392b", "#2a5745"
           className="w-14 h-14 rounded-full items-center justify-center"
         >
           {activeTab === "posts" ? (

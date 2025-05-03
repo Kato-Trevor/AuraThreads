@@ -549,7 +549,7 @@ const Journal = () => {
         <View style={styles.container}>
           {/* Top action bar with gradient */}
           <LinearGradient
-            colors={["#F5F5F5", "#FFFFFF"]}
+            colors={["#ffffff", "#FFFFFF"]}
             style={styles.topGradient}
           >
             <View style={styles.topIconsContainer}>

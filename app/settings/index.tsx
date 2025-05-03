@@ -35,7 +35,7 @@ const Settings = () => {
   const SectionHeader = ({ title, icon }: any) => (
     <View className="flex-row items-center mb-3 mt-6">
       <LinearGradient
-        colors={["#18392b", "#2a5745"]}
+        colors={["#588b76", "#588b76"]} // #588b76, "#18392b", "#2a5745"
         className="w-8 h-8 rounded-full items-center justify-center mr-3"
       >
         {icon}
@@ -75,7 +75,7 @@ const Settings = () => {
           value={value}
           onValueChange={onValueChange}
           trackColor={{ false: "#e0e0e0", true: "#a7d1c0" }}
-          thumbColor={value ? "#18392b" : "#f4f3f4"}
+          thumbColor={value ? "#588b76" : "#f4f3f4"}
           ios_backgroundColor="#e0e0e0"
           style={{
             transform: [{ scaleX: 1.1 }, { scaleY: 1.1 }],
@@ -261,7 +261,7 @@ const Settings = () => {
         <View className="flex-col p-5 w-full">
           {/* Header with gradient background */}
           <LinearGradient
-            colors={["#18392b", "#2a5745"]}
+            colors={["#588b76", "#588b76"]} // #588b76 , "#18392b", "#2a5745"
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
             className="rounded-2xl mb-5 p-5"

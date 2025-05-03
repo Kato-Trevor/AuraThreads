@@ -82,11 +82,11 @@ export default function RootLayout() {
                   ),
                   headerTitle: () => (
                     <View className="bg-white rounded-full p-2 shadow-md">
-                      <View className="bg-secondary-100 rounded-full p-2">
+                      <View className="bg-secondary rounded-full p-2">
                         <Ionicons
                           name="leaf-outline"
                           size={24}
-                          color="#FFE4E1"
+                          color="#fff"
                         />
                       </View>
                     </View>
