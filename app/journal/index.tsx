@@ -586,7 +586,7 @@ const Journal = () => {
                   }
                   size={24}
                   color={
-                    entries[currentPage]?.isBookmarked ? "#FFD700" : "#588b76"
+                    entries[currentPage]?.isBookmarked ? "#588b76" : "#588b76"
                   }
                 />
               </TouchableOpacity>
