@@ -42,7 +42,7 @@ export async function categorizePost(
 2. Determine if it's a story/experience (true/false)
 3. Check if it's safe content (true/false) by looking for:
    - Hate speech or discrimination
-   - Explicit violence or self-harm
+   - Explicit violence
    - Cyberbullying or harassment
    - Inappropriate sexual content
    - Harmful misinformation

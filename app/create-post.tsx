@@ -78,7 +78,7 @@ const CreatePost = () => {
         await Haptics.notificationAsync(
           Haptics.NotificationFeedbackType.Warning
         );
-        showToast("This post contains unsafe content and was blocked.", "error");
+        showToast("This post is toxic!", "error");
         return;
       }
 

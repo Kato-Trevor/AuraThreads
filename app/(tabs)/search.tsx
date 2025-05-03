@@ -1,14 +1,24 @@
-import { Text, View, TouchableOpacity, ScrollView, Alert } from "react-native";
+import {
+  Text,
+  View,
+  TouchableOpacity,
+  ScrollView,
+  ActivityIndicator,
+  Image,
+  Modal,
+} from "react-native";
 import React, { useState, useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import SearchInput from "@/components/SearchInput";
-import { router } from "expo-router";
+import { Link, router } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { articles, Article } from "@/components/Articles";
 import MoodLogModal from "@/components/MoodLog";
 import { getMostUsedTopics } from "@/lib/appwrite/posts";
 import ArticleItem from "@/components/ArticleItem";
+import { getUsersByRole } from "@/lib/appwrite/auth";
+import { FlatList } from "react-native-gesture-handler";
 
 const RECENT_SEARCHES_KEY = "aura_recent_searches";
 const MAX_RECENT_SEARCHES = 5;
@@ -25,6 +35,29 @@ const SearchScreen = () => {
   const [displayedArticles, setDisplayedArticles] = useState<Article[]>([]);
   const [isShowingMoreArticles, setIsShowingMoreArticles] = useState(false);
   const allArticles = articles;
+
+  const [isLoadingCounselors, setIsLoadingCounselors] = useState(false);
+  const [counselors, setCounselors] = useState<any>([]);
+  const [isCounselorsVisible, setIsCounselorsVisible] = useState(false);
+
+  const fetchCounselors = async () => {
+    try {
+      setIsLoadingCounselors(true);
+      const counselors = await getUsersByRole("counselor");
+      setCounselors(counselors);
+    } catch (error) {
+      console.error("Error fetching counselors:", error);
+    } finally {
+      setIsLoadingCounselors(false);
+    }
+  };
+
+  const openCounselorsModal = async () => {
+    setIsCounselorsVisible(true);
+    setIsLoadingCounselors(true);
+    await fetchCounselors();
+    setIsLoadingCounselors(false);
+  };
 
   useEffect(() => {
     loadRecentSearches();
@@ -105,6 +138,37 @@ const SearchScreen = () => {
     setIsShowingMoreArticles(true);
   };
 
+  const renderCounselor = ({ item }: { item: any }) => {
+    return (
+      <Link
+        href={{
+          pathname: "/profile/[id]",
+          params: { id: `${item.$id}` },
+        }}
+      >
+        <View className="flex-row items-center p-4 rounded-xl mb-5 bg-secondary-200/40 border border-secondary-200/10">
+          <View className="relative mr-4">
+            <Image
+              source={{ uri: item.avatar }}
+              className="w-14 h-14 rounded-lg"
+            />
+          </View>
+          <View className="flex-1 justify-center">
+            <Text
+              numberOfLines={1}
+              className="text-base font-pbold text-secondary-darkest"
+            >
+              {item.surname} {item.givenNames}
+            </Text>
+            <Text numberOfLines={1} className="text-sm text-secondary-dark">
+              {item.email}
+            </Text>
+          </View>
+        </View>
+      </Link>
+    );
+  };
+
   return (
     <SafeAreaView className="flex-1 bg-white" style={{ paddingTop: 0 }}>
       {/* Header */}
@@ -175,7 +239,6 @@ const SearchScreen = () => {
             Your Wellbeing
           </Text>
           <View className="bg-secondary-200/40 rounded-xl overflow-hidden">
-            
             <View className="p-3">
               <Text className="text-lg font-psemibold text-gray-800 mb-1">
                 Take a mental health assessment
@@ -246,7 +309,7 @@ const SearchScreen = () => {
 
           <TouchableOpacity
             className="bg-gradient-to-r from-pink-50 to-blue-50 p-4 rounded-xl"
-            // onPress={() => router.push("/therapists")}
+            onPress={openCounselorsModal}
           >
             <View className="flex-row items-center mb-2">
               <MaterialCommunityIcons
@@ -255,7 +318,7 @@ const SearchScreen = () => {
                 color="#295f48"
               />
               <Text className="ml-2 text-base font-psemibold text-gray-800">
-                Find a Therapist
+                Find a Counselor
               </Text>
             </View>
             <Text className="font-pregular text-sm text-gray-600">
@@ -272,6 +335,57 @@ const SearchScreen = () => {
             console.log("Mood logged successfully");
           }}
         />
+
+        <Modal
+          animationType="slide"
+          transparent={false}
+          visible={isCounselorsVisible}
+        >
+          <View className="flex-1 bg-white">
+            {/* Header */}
+            <View className="bg-gradient-to-r from-violet-50 to-indigo-50 pt-safe">
+              <View className="flex-row justify-between items-center px-6 py-4">
+                <Text className="text-xl font-pbold text-gray-900">
+                  Counselors
+                </Text>
+                <TouchableOpacity
+                  onPress={() => {
+                    setIsCounselorsVisible(false);
+                  }}
+                  className="w-9 h-9 items-center justify-center rounded-full bg-white/70 border border-gray-100"
+                >
+                  <MaterialCommunityIcons
+                    name="close"
+                    size={18}
+                    color="#4B5563"
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            <FlatList
+              data={counselors}
+              keyExtractor={(item) => item.$id}
+              renderItem={renderCounselor}
+              ListEmptyComponent={
+                isLoadingCounselors ? (
+                  <View className="justify-center items-center p-8">
+                    <ActivityIndicator size="large" color="#1e4635" />
+                  </View>
+                ) : (
+                  <View className="justify-center items-center p-8">
+                    <View className="bg-secondary-100/30 p-4 rounded-full">
+                      <Feather name="search" size={36} color="#1e4635" />
+                    </View>
+                    <Text className="font-pregular mt-4 text-secondary-dark text-center">
+                      No counselors found
+                    </Text>
+                  </View>
+                )
+              }
+            />
+          </View>
+        </Modal>
       </ScrollView>
     </SafeAreaView>
   );

@@ -96,6 +96,20 @@ export const getUserById = async (userId: string) => {
   }
 };
 
+export const getUsersByRole = async (role: string) => {
+  try {
+    const users = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.userCollectionId,
+      [Query.equal("role", role)]
+    );
+
+    return users.documents;
+  } catch (error: any) {
+    throw new Error(error);
+  }
+};
+
 export const deleteUser = async (userId: string) => {
   try {
     const response = await databases.deleteDocument(
