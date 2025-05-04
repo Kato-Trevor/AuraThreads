@@ -138,8 +138,7 @@ const Home = () => {
   };
 
   return (
-    // <View className="bg-white">
-    <SafeAreaView className="flex-1 bg-white">
+    <View  className=" flex-1 bg-white">
       <FlatList
         style={{ backgroundColor: 'white' }}
         data={posts}
@@ -191,10 +190,7 @@ const Home = () => {
       >
         <Ionicons name="add" size={24} color="#FFFFFF" />
       </TouchableOpacity>
-
-
-    </SafeAreaView>
-    // </View>
+    </View>
   );
 };
 
