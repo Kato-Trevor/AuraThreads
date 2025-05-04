@@ -5,6 +5,9 @@ import { getAllPostsFromDB } from "@/lib/appwrite/appwrite";
 import Post from "@/components/Post";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { Feather } from "@expo/vector-icons";
+import { ActivityIndicator, TouchableOpacity } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
 
 const BATCH_SIZE = 30; // Number of recommended posts per batch
 // const RECOMMENDATIONS_API = "http://192.168.74.114:8000/postRecommendations";
@@ -120,9 +123,13 @@ const Home = () => {
 
   if (loading && !refreshing && posts.length === 0) {
     return (
-      <SafeAreaView className="flex-1 justify-center items-center bg-white">
-        <LoadingSpinner visible={true} loadingText="Fetching posts..." />
-      </SafeAreaView>
+      
+      <View className="flex-1 justify-start items-center bg-white pt-40">
+        <ActivityIndicator size={40} color="#1e4635" />
+        <Text className="font-pregular mt-4 text-secondary-dark text-center">
+          Fetching Posts...
+        </Text>
+      </View>
     );
   }
 
@@ -131,8 +138,10 @@ const Home = () => {
   };
 
   return (
-    <View className="bg-white">
+    // <View className="bg-white">
+    <SafeAreaView className="flex-1 bg-white">
       <FlatList
+        style={{ backgroundColor: 'white' }}
         data={posts}
         keyExtractor={(item) => item.$id}
         renderItem={renderPost}
@@ -144,9 +153,9 @@ const Home = () => {
             tintColor="#588b76"
           />
         }
-        contentContainerStyle={{ paddingBottom: 20 }}
+        contentContainerStyle={{ paddingBottom: 20, backgroundColor: 'white' }}
         ListEmptyComponent={
-          <View className="justify-center items-center p-8">
+          <View className="justify-center items-center p-8 bg-white">
             <View className="bg-secondary-100/30 p-4 rounded-full">
               <Feather name="message-circle" size={36} color="#1e4635" />
             </View>
@@ -159,7 +168,33 @@ const Home = () => {
           minIndexForVisible: 0,
         }}
       />
-    </View>
+
+      <TouchableOpacity
+        style={{
+          position: 'absolute',
+          bottom: 30,
+          right: 20,
+          width: 60,
+          height: 60,
+          borderRadius: 30,
+          backgroundColor: '#588b76',
+          justifyContent: 'center',
+          alignItems: 'center',
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 1 },
+          shadowOpacity: 0.1,
+          shadowRadius: 2.84,
+          elevation: 5,
+        }}
+
+        onPress={() => router.push("/create-post")}
+      >
+        <Ionicons name="add" size={24} color="#FFFFFF" />
+      </TouchableOpacity>
+
+
+    </SafeAreaView>
+    // </View>
   );
 };
 
