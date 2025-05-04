@@ -29,8 +29,9 @@ import { useGlobalContext } from "@/context/GlobalProvider";
 import { Ionicons } from "@expo/vector-icons";
 import { router, Stack } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
+import { KeyboardAvoidingView } from "react-native";
 
-const MAX_PAGES = 10;
+const MAX_PAGES = 200;
 
 interface PageData {
   id?: string;
@@ -494,6 +495,10 @@ const Journal = () => {
     }
   };
 
+
+  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+
+
   const renderPageItem = ({
     item,
   }: {
@@ -545,6 +550,7 @@ const Journal = () => {
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
       <TouchableWithoutFeedback onPress={toggleEditing}>
+
         <View style={styles.container}>
           {/* Top action bar with gradient */}
           <LinearGradient
@@ -650,10 +656,18 @@ const Journal = () => {
           </LinearGradient>
 
           {/* Main Content Area */}
+          <KeyboardAvoidingView
+  behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+  style={styles.container}
+>
           <View style={styles.content}>
             {isEditing ? (
               <TextInput
-                style={styles.textInput}
+                // style={styles.textInput}
+                style={[
+                  styles.textInput,
+                  isKeyboardVisible && styles.keyboardActiveInput
+                ]}
                 multiline
                 autoFocus={!isEditingTitle}
                 value={entries[currentPage]?.content || ""}
@@ -662,6 +676,7 @@ const Journal = () => {
                 placeholderTextColor="#B8B8B8"
                 textAlignVertical="top"
                 scrollEnabled={true}
+ 
               />
             ) : (
               <ScrollView
@@ -684,6 +699,8 @@ const Journal = () => {
               </ScrollView>
             )}
           </View>
+        </KeyboardAvoidingView>
+
 
           {/* Navigation and Page Count at bottom */}
           <LinearGradient
@@ -936,7 +953,7 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    paddingHorizontal: 20,
+    paddingHorizontal: 15,
   },
   scrollViewContent: {
     paddingVertical: 20,
@@ -1003,6 +1020,10 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 15,
     textAlignVertical: "top",
+    paddingBottom: 10,
+  },
+  keyboardActiveInput: {
+    paddingBottom: 35, 
   },
   pageCountContainer: {
     alignItems: "center",
