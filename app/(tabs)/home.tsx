@@ -6,8 +6,8 @@ import Post from "@/components/Post";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { Feather } from "@expo/vector-icons";
 
-const BATCH_SIZE = 15; // Number of recommended posts per batch
-// const RECOMMENDATIONS_API = "http://192.168.123.114:8000/postRecommendations";
+const BATCH_SIZE = 30; // Number of recommended posts per batch
+// const RECOMMENDATIONS_API = "http://192.168.74.114:8000/postRecommendations";
 const RECOMMENDATIONS_API =
   "https://post-recommender.onrender.com/postRecommendations";
 const CACHE_EXPIRY_MS = 5 * 60 * 1000; // 5 minutes cache expiry
@@ -40,21 +40,6 @@ const Home = () => {
     }
   };
 
-  // const fetchRecommendedIds = async () => {
-  //   try {
-  //     const response = await fetch(RECOMMENDATIONS_API);
-  //     if (!response.ok) {
-  //       throw new Error(`HTTP error! status: ${response.status}`);
-  //     }
-  //     const data = await response.json();
-  //     console.log("Fetched recommendations:", data);
-  //     const arrayData = Array.isArray(data) ? data : [];
-  //     return arrayData.reverse(); // This reverses the array order
-  //   } catch (error) {
-  //     console.error("Error fetching recommendations:", error);
-  //     return [];
-  //   }
-  // };
 
   const shouldFetchRecommendations = () => {
     // Fetch if cache is empty or expired
@@ -146,7 +131,7 @@ const Home = () => {
   };
 
   return (
-    <View className="flex-1">
+    <View className="bg-white">
       <FlatList
         data={posts}
         keyExtractor={(item) => item.$id}
@@ -170,9 +155,13 @@ const Home = () => {
             </Text>
           </View>
         }
+        maintainVisibleContentPosition={{
+          minIndexForVisible: 0,
+        }}
       />
     </View>
   );
 };
 
 export default Home;
+

@@ -13,7 +13,9 @@ import { PostsBookmarks } from "@/components/PostsBookmarks";
 import { JournalBookmarks } from "@/components/JournalBookmarks";
 import { router } from "expo-router";
 import { MaterialIcons, FontAwesome } from "@expo/vector-icons";
-
+// import { LinearGradient } from "react-native-svg";
+import { LinearGradient } from "expo-linear-gradient";
+import { Ionicons } from "@expo/vector-icons";
 const { width } = Dimensions.get("window");
 
 const Bookmarks = () => {
@@ -57,11 +59,11 @@ const Bookmarks = () => {
   });
 
   return (
-    <SafeAreaView className="flex-1 bg-white pt-6">
-      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+    <SafeAreaView className="flex-1 bg-white ">
+      {/* <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" /> */}
 
       {/* Custom Header with Shadow */}
-      <View className="px-4 py-3 border-b border-gray-200 bg-white shadow-sm">
+      {/* <View className="px-4 py-3 border-b border-gray-200 bg-white shadow-sm">
         <View className="flex-row items-center justify-between">
           <TouchableOpacity
             onPress={() => router.back()}
@@ -82,10 +84,34 @@ const Bookmarks = () => {
             <MaterialIcons name="more-vert" size={20} color="#4B5563" />
           </TouchableOpacity>
         </View>
-      </View>
+      </View> */}
 
+       <View className="pl-3 pr-3 pt-12 pb-0">
+                 {/* Header with Gradient */}
+                 <LinearGradient
+                   colors={["#588b76", "#588b76"]} // #588b76 "#18392b", "#2a5745"
+                   start={{ x: 0, y: 0 }}
+                   end={{ x: 1, y: 0 }}
+                   className="rounded-2xl mb-5 p-5"
+                 >
+                   <View className="flex-row items-center">
+                     <TouchableOpacity
+                       onPress={() => {
+                         router.back();
+                       }}
+                       className="bg-white/20 w-10 h-10 rounded-full items-center justify-center"
+                     >
+                       <Ionicons name="chevron-back" size={24} color="#fff" />
+                     </TouchableOpacity>
+                     <Text className="font-['Poppins-SemiBold'] text-2xl text-white ml-4">
+                       Bookmarks
+                     </Text>
+                   </View>
+                 </LinearGradient>
+               </View>
+       
       {/* Animated Tab Selector */}
-      <View className="bg-white py-4 relative">
+      <View className="bg-white py-0 relative">
         <View className="flex-row justify-around">
           <TouchableOpacity
             className="items-center px-6 py-1"

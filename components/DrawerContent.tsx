@@ -93,7 +93,7 @@ const DrawerContent = ({ onClose, onLogOut }: DrawerContentProps) => {
     <View className="flex-1 bg-white">
       {/* Header with gradient */}
       <LinearGradient
-        colors={["#18392b", "#2a5745"]}
+        colors={["#588b76", "#588b76"]} // #18392b, #2a5745
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 0 }}
         className="pt-12 pb-4 px-4 rounded-b-2xl"
@@ -177,16 +177,17 @@ const DrawerContent = ({ onClose, onLogOut }: DrawerContentProps) => {
         <View className="flex-1" />
 
         {/* Logout button with improved styling */}
+        <View className="border-t border-gray-200 my-2 opacity-60" />
         <View className="mb-4 mx-1">
-          <TouchableOpacity
-            onPress={handleLogOut}
-            className="flex-row items-center justify-center py-2.5 px-3 bg-red-50 rounded-lg border border-red-100"
-          >
-            <Ionicons name="log-out-outline" size={24} color="#e74c3c" />
-            <Text className="font-pmedium text-base text-red-500 ml-2">
-              Logout
-            </Text>
-          </TouchableOpacity>
+        <TouchableOpacity
+          onPress={handleLogOut}
+          className="flex-row items-center py-2.5 px-3 my-0.5 rounded-lg active:bg-green-50"
+        >
+          <Ionicons name="log-out-outline" size={24} color="#18392b" />
+          <Text className="font-pmedium text-base ml-2.5" style={{color: "#18392b"}}>
+            Logout
+          </Text>
+        </TouchableOpacity>
         </View>
       </View>
     </View>

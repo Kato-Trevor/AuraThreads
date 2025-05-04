@@ -36,7 +36,7 @@ const SearchInput = ({
   };
 
   return (
-    <View className="border border-gray-300 mb-4 w-full h-12 px-4 bg-gray-100 rounded-xl flex-row items-center">
+    <View className=" border-gray-300 mb-4 w-full h-12 px-4 bg-gray-100 rounded-xl flex-row items-center">
       <TextInput
         className="flex-1 text-black font-pregular text-base"
         value={query}
@@ -46,7 +46,7 @@ const SearchInput = ({
         onSubmitEditing={handleSearch}
         style={{
           paddingVertical: 0,
-          lineHeight: 20,
+          lineHeight: 30,
           textAlignVertical: "center",
         }}
       />
