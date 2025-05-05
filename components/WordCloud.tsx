@@ -5,18 +5,12 @@ import {
   ActivityIndicator,
   Dimensions,
   TouchableOpacity,
+  Modal,
+  FlatList,
 } from "react-native";
-import React, {
-  useRef,
-  useState,
-  useEffect,
-  useCallback,
-  useMemo,
-} from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { TagCloud } from "react-tagcloud/rn";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import BottomSheet, { BottomSheetFlatList } from "@gorhom/bottom-sheet";
 import {
   getExperiencePostsByTopic,
   getExperienceResponsesByTopic,
@@ -24,7 +18,9 @@ import {
 } from "@/lib/appwrite/appwrite";
 import { formatTopic } from "@/utils/stringHelpers";
 import { topics } from "@/constants/constants";
-import { Feather } from "@expo/vector-icons";
+import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
+import { BlurView } from "expo-blur";
+import { useToast } from "./ToastProvider";
 
 type TagItem = {
   value: string;
@@ -39,8 +35,7 @@ type ContentItem = {
 const { width } = Dimensions.get("window");
 
 const WordCloud = () => {
-  const bottomSheetRef = useRef<BottomSheet | null>(null);
-  const snapPoints = useMemo(() => ["75%"], []);
+  const { showToast } = useToast();
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [contentItems, setContentItems] = useState<ContentItem[]>([]);
   const [loading, setLoading] = useState({
@@ -50,6 +45,7 @@ const WordCloud = () => {
   });
   const [tags, setTags] = useState<TagItem[]>([]);
   const [refreshing, setRefreshing] = useState(false);
+  const [isExperiencesVisible, setIsExperiencesVisible] = useState(false);
 
   const fetchTopicCounts = async (topic: string) => {
     try {
@@ -149,14 +145,20 @@ const WordCloud = () => {
   };
 
   const handleTagPress = async (tag: { value: string }) => {
-    setSelectedTag(tag.value);
-    setLoading((prev) => ({ ...prev, content: true, error: false }));
-    setContentItems([]);
-
-    await fetchContent(tag.value);
-
-    setLoading((prev) => ({ ...prev, content: false }));
-    bottomSheetRef.current?.snapToIndex(1);
+    try {
+      setSelectedTag(tag.value);
+      setLoading((prev) => ({ ...prev, content: true, error: false }));
+      setIsExperiencesVisible(true);
+      setContentItems([]);
+      await fetchContent(tag.value);
+      setLoading((prev) => ({ ...prev, content: false }));
+    } catch (error) {
+      showToast("Failed to fetch content", "error");
+      setLoading((prev) => ({ ...prev, content: false, error: true }));
+      setSelectedTag(null);
+      setContentItems([]);
+      setIsExperiencesVisible(false);
+    }
   };
 
   const onRefresh = useCallback(async () => {
@@ -169,7 +171,9 @@ const WordCloud = () => {
 
   const renderHeader = () => (
     <View style={styles.headerContainer}>
-      <Text className="text-xl font-pbold text-gray-900">Shared Experiences:</Text>
+      <Text className="text-xl font-pbold text-gray-900">
+        Shared Experiences:
+      </Text>
       <TouchableOpacity
         onPress={onRefresh}
         className="p-2 rounded-full bg-secondary-dark/10"
@@ -182,7 +186,14 @@ const WordCloud = () => {
 
   const renderEmptyComponent = () => {
     if (loading.content) {
-      return <ActivityIndicator size="large" style={styles.emptyContainer} />;
+      return (
+        <View className="justify-center items-center p-8">
+          <ActivityIndicator color="#295f48" />
+          <Text className="font-pregular mt-4 text-secondary text-center">
+            Fetching shared experiences...
+          </Text>
+        </View>
+      );
     }
 
     if (loading.error) {
@@ -200,63 +211,100 @@ const WordCloud = () => {
   };
 
   return (
-    <GestureHandlerRootView className="flex-1">
-      <SafeAreaView className="flex-1 bg-white">
-        <View style={styles.mainContainer}>
-          <View style={styles.cloudContainer}>
-            {loading.topics ? (
-              <View className="justify-center items-center p-8">
-                <ActivityIndicator color="#588b76" /> 
-                <Text className="font-pregular mt-4 text-secondary text-center">
-                  Fetching topics...
-                </Text>
-              </View>
-            ) : (
-              <TagCloud
-                minSize={16}
-                maxSize={36}
-                tags={tags}
-                disableRandomColor={false}
-                onPress={handleTagPress}
-                style={styles.tagCloud}
-              />
-            )}
-            <Text style={styles.instructionText}>
-              Tap any topic from the cloud
-            </Text>
-          </View>
-
-          <TouchableOpacity
-            onPress={refreshTopics}
-            className="mt-5 p-2 rounded-full bg-secondary-dark/10"
-            disabled={loading.topics}
-          >
-            <Feather name="refresh-ccw" size={24} color="black" />
-          </TouchableOpacity>
-
-          <BottomSheet
-            ref={bottomSheetRef}
-            snapPoints={snapPoints}
-            index={-1}
-            enablePanDownToClose
-          >
-            <BottomSheetFlatList
-              data={contentItems}
-              keyExtractor={(item) => item.id}
-              ListHeaderComponent={renderHeader()}
-              ListEmptyComponent={renderEmptyComponent()}
-              renderItem={({ item }) => (
-                <View style={styles.contentItem}>
-                  <Text style={styles.contentText}>{item.content}</Text>
-                </View>
-              )}
-              refreshing={refreshing}
-              contentContainerStyle={styles.listContentContainer}
+    <SafeAreaView className="flex-1 bg-white">
+      <View style={styles.mainContainer}>
+        <View style={styles.cloudContainer}>
+          {loading.topics ? (
+            <View className="justify-center items-center p-8">
+              <ActivityIndicator color="#588b76" />
+              <Text className="font-pregular mt-4 text-secondary text-center">
+                Fetching topics...
+              </Text>
+            </View>
+          ) : (
+            <TagCloud
+              minSize={16}
+              maxSize={36}
+              tags={tags}
+              disableRandomColor={false}
+              onPress={handleTagPress}
+              style={styles.tagCloud}
             />
-          </BottomSheet>
+          )}
+          <Text style={styles.instructionText}>
+            Tap any topic from the cloud
+          </Text>
         </View>
-      </SafeAreaView>
-    </GestureHandlerRootView>
+
+        <TouchableOpacity
+          onPress={refreshTopics}
+          className="mt-5 p-2 rounded-full bg-secondary-dark/10"
+          disabled={loading.topics}
+        >
+          <Feather name="refresh-ccw" size={24} color="black" />
+        </TouchableOpacity>
+
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={isExperiencesVisible}
+        >
+          <View style={StyleSheet.absoluteFill}>
+            <BlurView
+              intensity={25}
+              tint="dark"
+              style={StyleSheet.absoluteFill}
+            >
+              <View className="flex-1 bg-black/30" />
+            </BlurView>
+            <View className="flex-1 justify-end">
+              <View
+                className="bg-white rounded-t-3xl shadow-2xl"
+                style={{ maxHeight: "70%" }}
+              >
+                {/* Header */}
+                <View className="bg-gradient-to-r from-violet-50 to-indigo-50 pt-1.5 rounded-t-3xl">
+                  <View className="w-10 h-1 bg-gray-300 rounded-full mx-auto mb-1.5" />
+                  <View className="flex-row justify-between items-center px-6 py-4">
+                    <Text className="text-xl font-pbold text-gray-900">
+                      Shared Experiences:
+                    </Text>
+                    <TouchableOpacity
+                      onPress={() => {
+                        setIsExperiencesVisible(false);
+                        setSelectedTag(null);
+                      }}
+                      className="w-9 h-9 items-center justify-center rounded-full bg-white/70 border border-gray-100"
+                    >
+                      <MaterialCommunityIcons
+                        name="close"
+                        size={18}
+                        color="#4B5563"
+                      />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+
+                {/* Content */}
+                <View className="max-h-[70vh]">
+                  <FlatList
+                    data={contentItems}
+                    keyExtractor={(item) => item.id}
+                    renderItem={({ item }) => (
+                      <View style={styles.contentItem}>
+                        <Text style={styles.contentText}>{item.content}</Text>
+                      </View>
+                    )}
+                    ListEmptyComponent={renderEmptyComponent()}
+                    refreshing={refreshing}
+                  />
+                </View>
+              </View>
+            </View>
+          </View>
+        </Modal>
+      </View>
+    </SafeAreaView>
   );
 };
 
@@ -293,19 +341,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
   },
-  bottomSheetTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  errorContainer: {
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 16,
-  },
-  errorText: {
-    color: "gray",
-    marginBottom: 8,
-  },
   contentItem: {
     marginHorizontal: 20,
     marginBottom: 16,
@@ -315,18 +350,7 @@ const styles = StyleSheet.create({
   },
   contentText: {
     fontSize: 14,
-    fontFamily: 'Poppins-Regular',
-  },
-  emptyText: {
-    color: "gray",
-    textAlign: "center",
-    padding: 20,
-  },
-  emptyContainer: {
-    paddingVertical: 40,
-  },
-  listContentContainer: {
-    paddingBottom: 20,
+    fontFamily: "Poppins-Regular",
   },
 });
 
