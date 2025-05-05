@@ -39,7 +39,7 @@ export async function categorizePost(
    - Social Pressure
    - General
 
-2. Determine if it's a story/experience (true/false)
+2. Determine if it's a meaningful story/experience (true/false)
 3. Check if it's safe content (true/false) by looking for:
    - Hate speech or discrimination
    - Explicit violence
