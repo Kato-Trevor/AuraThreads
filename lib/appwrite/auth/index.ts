@@ -101,7 +101,7 @@ export const getUsersByRole = async (role: string) => {
     const users = await databases.listDocuments(
       appwriteConfig.databaseId,
       appwriteConfig.userCollectionId,
-      [Query.equal("role", role)]
+      [Query.equal("role", role), Query.orderDesc("$createdAt")]
     );
 
     return users.documents;

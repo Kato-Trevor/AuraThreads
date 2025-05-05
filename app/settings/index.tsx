@@ -352,7 +352,7 @@ const Settings = () => {
             icon="help-circle-outline"
             title="Help & Support"
             description="FAQs and contact information"
-            onPress={() => showToast("Help Center opened", "info")}
+            onPress={() => router.push("/support")}
           />
 
           <LinkItem

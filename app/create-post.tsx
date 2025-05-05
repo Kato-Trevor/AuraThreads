@@ -161,36 +161,6 @@ const CreatePost = () => {
     };
   }, [currentSound]);
 
-  // const handlePostCreation = async () => {
-  //   setIsPosting(true);
-  //   try {
-  //     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-  //     const derivedTopic = await categorizePostTopic(postContent);
-  //     const newPost = await addPostToDB(
-  //       postContent,
-  //       user.$id,
-  //       formatTopic(derivedTopic),
-  //       enableAnonymousID,
-  //       selectedSong?.id
-  //     );
-  //     showToast("Post created successfully!", "success");
-  //     router.back();
-
-  //     if (newPost?.$id && enableAIResponse) {
-  //       try {
-  //         await addAIResponseToDB(postContent, newPost.$id);
-  //       } catch (error) {
-  //         console.error("Error generating AI response:", error);
-  //       }
-  //     }
-  //   } catch (error: any) {
-  //     console.log("Error creating post:", error);
-  //     showToast("Failed to create post", "error");
-  //   } finally {
-  //     setIsPosting(false);
-  //   }
-  // };
-
   return (
     <SafeAreaView className="flex-1 bg-white">
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>

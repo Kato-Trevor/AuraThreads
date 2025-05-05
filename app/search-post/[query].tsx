@@ -75,20 +75,6 @@ const Search = () => {
     setRefreshing(false);
   }, [query]);
 
-  // const renderFilePreview = (file: any) => {
-  //   if (file.fileType === "image") {
-  //     return (
-  //       <Image
-  //         source={{ uri: file.file }}
-  //         className="w-12 h-12 rounded"
-  //         resizeMode="cover"
-  //       />
-  //     );
-  //   } else {
-  //     return <Ionicons name="document-text" size={50} color="#00CED1" />;
-  //   }
-  // };
-
   const renderPost = ({ item }: { item: any }) => {
     return <Post post={item} />;
   };

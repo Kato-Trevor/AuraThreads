@@ -171,15 +171,10 @@ const SearchScreen = () => {
 
   return (
     <SafeAreaView edges={['right', 'bottom', 'left']} className="flex-1 bg-white" style={{ paddingTop: 0 }}>
-      {/* Header */}
-      {/* <View className="px-5 pb-2">
-        <Text className="text-2xl font-pbold text-gray-800">Discover</Text>
-      </View> */}
-
       {/* Search Input */}
       <View className="px-5 pt-3">
         <SearchInput
-          placeholderText="Search mental health resources..."
+          placeholderText="Search here..."
           onSearch={handleSearch}
         />
       </View>

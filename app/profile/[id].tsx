@@ -25,11 +25,11 @@ import { sortByCreatedAt } from "@/utils/helpers";
 import {
   MaterialIcons,
   Ionicons,
-  Feather,
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
+import { useGlobalContext } from "@/context/GlobalProvider";
 
 const { width } = Dimensions.get("window");
 const HEADER_HEIGHT = 56;
@@ -37,10 +37,14 @@ const HEADER_HEIGHT = 56;
 export default function Profile() {
   const { id: userId } = useLocalSearchParams();
   const scrollY = useRef(new Animated.Value(0)).current;
+  const { user: currentUser, isLoading: isCurrentUserLoading } =
+    useGlobalContext();
 
   const [user, setUser] = useState<any>(null);
   const [username, setUsername] = useState<any>(null);
-  const [activeTab, setActiveTab] = useState<"posts" | "responses" | "urgent">("posts");
+  const [activeTab, setActiveTab] = useState<"posts" | "responses" | "urgent">(
+    "posts"
+  );
   const [posts, setPosts] = useState<any[]>([]);
   const [responses, setResponses] = useState<any[]>([]);
   const [harmfulPosts, setHarmfulPosts] = useState<any[]>([]);
@@ -101,7 +105,7 @@ export default function Profile() {
       const fetchedResponses = await getResponsesByUserID(`${userId}`);
       const sortedResponses = sortByCreatedAt(fetchedResponses, "desc");
       setResponses(sortedResponses);
-      
+
       // Only fetch harmful posts if user is a counselor
       if (user?.role === "counselor") {
         const fetchedHarmfulPosts = await getPostsByTopic("SelfHarm");
@@ -131,7 +135,7 @@ export default function Profile() {
     } else {
       toValue = 2;
     }
-    
+
     Animated.timing(slideAnim, {
       toValue,
       duration: 300,
@@ -151,11 +155,11 @@ export default function Profile() {
     outputRange: [
       width * (user?.role === "counselor" ? 0.166 : 0.25) - 40,
       width * (user?.role === "counselor" ? 0.5 : 0.75) - 40,
-      width * 0.833 - 40
+      width * 0.833 - 40,
     ],
   });
 
-  if (isLoading) {
+  if (isLoading || isCurrentUserLoading) {
     return (
       <SafeAreaView className="flex-1 justify-center items-center bg-white">
         <LoadingSpinner visible={true} />
@@ -295,7 +299,10 @@ export default function Profile() {
                 <Text className="font-['Poppins-SemiBold'] text-gray-800">
                   Profile Info
                 </Text>
-                <TouchableOpacity  style={{ backgroundColor: '#d0ded8'}} className="px-3 py-1 rounded-full">
+                <TouchableOpacity
+                  style={{ backgroundColor: "#d0ded8" }}
+                  className="px-3 py-1 rounded-full"
+                >
                   <Text className="text-[#18392b] font-['Poppins-Medium'] text-sm">
                     Edit
                   </Text>
@@ -365,7 +372,7 @@ export default function Profile() {
 
           {/* Activity Summary */}
           <LinearGradient
-            colors={["#f9f9f9", "#f3f4f6"]} // #588b76 
+            colors={["#f9f9f9", "#f3f4f6"]} // #588b76
             className="flex-row border-t border-gray-100"
           >
             <View className="flex-1 py-4 items-center">
@@ -384,16 +391,17 @@ export default function Profile() {
                 Responses
               </Text>
             </View>
-            {user?.role === "counselor" && (
-              <View className="flex-1 py-4 items-center border-l border-gray-100">
-                <Text className="text-[#18392b] font-['Poppins-Bold'] text-lg">
-                  {harmfulPosts.length}
-                </Text>
-                <Text className="text-gray-500 text-xs uppercase tracking-wide font-['Poppins-Medium']">
-                  Urgent
-                </Text>
-              </View>
-            )}
+            {currentUser?.role === "counselor" &&
+              user?.role === "counselor" && (
+                <View className="flex-1 py-4 items-center border-l border-gray-100">
+                  <Text className="text-[#18392b] font-['Poppins-Bold'] text-lg">
+                    {harmfulPosts.length}
+                  </Text>
+                  <Text className="text-gray-500 text-xs uppercase tracking-wide font-['Poppins-Medium']">
+                    Urgent
+                  </Text>
+                </View>
+              )}
           </LinearGradient>
         </Animated.View>
 
@@ -450,32 +458,33 @@ export default function Profile() {
               </View>
             </TouchableOpacity>
 
-            {user?.role === "counselor" && (
-              <TouchableOpacity
-                className={`flex-1 py-4 px-2 ${
-                  activeTab === "urgent" ? "bg-green-50" : ""
-                }`}
-                onPress={() => setActiveTab("urgent")}
-                activeOpacity={0.7}
-              >
-                <View className="flex-row items-center justify-center space-x-2">
-                  <MaterialCommunityIcons
-                    name="alert-octagon-outline"
-                    size={18}
-                    color={activeTab === "urgent" ? "#18392b" : "#9CA3AF"}
-                  />
-                  <Text
-                    className={
-                      activeTab === "urgent"
-                        ? "text-[#18392b] font-['Poppins-Bold']"
-                        : "text-gray-400 font-['Poppins-Medium']"
-                    }
-                  >
-                    Urgent
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            )}
+            {currentUser?.role === "counselor" &&
+              user?.role === "counselor" && (
+                <TouchableOpacity
+                  className={`flex-1 py-4 px-2 ${
+                    activeTab === "urgent" ? "bg-green-50" : ""
+                  }`}
+                  onPress={() => setActiveTab("urgent")}
+                  activeOpacity={0.7}
+                >
+                  <View className="flex-row items-center justify-center space-x-2">
+                    <MaterialCommunityIcons
+                      name="alert-octagon-outline"
+                      size={18}
+                      color={activeTab === "urgent" ? "#18392b" : "#9CA3AF"}
+                    />
+                    <Text
+                      className={
+                        activeTab === "urgent"
+                          ? "text-[#18392b] font-['Poppins-Bold']"
+                          : "text-gray-400 font-['Poppins-Medium']"
+                      }
+                    >
+                      Urgent
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              )}
           </View>
         </View>
 
@@ -645,4 +654,3 @@ export default function Profile() {
     </SafeAreaView>
   );
 }
-
