@@ -191,7 +191,7 @@ const Response = ({ response }: { response: ResponseModel }) => {
               {timeAgo}
             </Text>
           </View>
-          <Text className="text-lg text-gray-800 mt-1 font-pregular">
+          <Text className="text-sm text-gray-800 mt-1 font-pregular">
             {response.content}
           </Text>
           <View className="flex-row justify-start mt-2 space-x-4">

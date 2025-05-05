@@ -74,12 +74,11 @@ const RootLayout = () => {
 
             {/* Content section - more compact */}
             <View className="items-center px-2">
-              <Text className="text-2xl font-pbold text-secondary-200 mb-1 text-center">
+              <Text className="text-2xl font-pbold text-secondary-100 mb-1 text-center">
                 Your Safe Space
               </Text>
               <Text className="text-md font-pmedium text-gray-600 text-center">
-                Share your mental health challenges anonymously with fellow
-                students in a supportive community.
+                Enhance you mental health care with online peer support and self-awareness.
               </Text>
             </View>
 

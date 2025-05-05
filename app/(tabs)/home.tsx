@@ -1,9 +1,7 @@
 import { Text, View, FlatList, RefreshControl } from "react-native";
 import React, { useEffect, useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { getAllPostsFromDB } from "@/lib/appwrite/appwrite";
 import Post from "@/components/Post";
-import LoadingSpinner from "@/components/LoadingSpinner";
 import { Feather } from "@expo/vector-icons";
 import { ActivityIndicator, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
@@ -42,7 +40,6 @@ const Home = () => {
       return [];
     }
   };
-
 
   const shouldFetchRecommendations = () => {
     // Fetch if cache is empty or expired
@@ -95,6 +92,12 @@ const Home = () => {
       // Always fetch posts
       const allPosts = await getAllPostsFromDB();
 
+      // If no posts are available, set empty state and return early
+      if (!allPosts || allPosts.length === 0) {
+        setPosts([]);
+        return;
+      }
+
       // Only fetch recommendations if needed
       let recommendations = cachedRecommendedIds;
       if (isRefresh || shouldFetchRecommendations()) {
@@ -123,7 +126,6 @@ const Home = () => {
 
   if (loading && !refreshing && posts.length === 0) {
     return (
-      
       <View className="flex-1 justify-start items-center bg-white pt-40">
         <ActivityIndicator size={40} color="#588b76" />
         <Text className="font-pregular mt-4 text-secondary text-center">
@@ -138,9 +140,9 @@ const Home = () => {
   };
 
   return (
-    <View  className=" flex-1 bg-white">
+    <View className=" flex-1 bg-white">
       <FlatList
-        style={{ backgroundColor: 'white' }}
+        style={{ backgroundColor: "white" }}
         data={posts}
         keyExtractor={(item) => item.$id}
         renderItem={renderPost}
@@ -152,7 +154,7 @@ const Home = () => {
             tintColor="#588b76"
           />
         }
-        contentContainerStyle={{ paddingBottom: 20, backgroundColor: 'white' }}
+        contentContainerStyle={{ paddingBottom: 20, backgroundColor: "white" }}
         ListEmptyComponent={
           <View className="justify-center items-center p-8 bg-white">
             <View className="bg-secondary-100/30 p-4 rounded-full">
@@ -170,22 +172,21 @@ const Home = () => {
 
       <TouchableOpacity
         style={{
-          position: 'absolute',
+          position: "absolute",
           bottom: 30,
           right: 20,
           width: 60,
           height: 60,
           borderRadius: 30,
-          backgroundColor: '#588b76',
-          justifyContent: 'center',
-          alignItems: 'center',
-          shadowColor: '#000',
+          backgroundColor: "#588b76",
+          justifyContent: "center",
+          alignItems: "center",
+          shadowColor: "#000",
           shadowOffset: { width: 0, height: 1 },
           shadowOpacity: 0.1,
           shadowRadius: 2.84,
           elevation: 5,
         }}
-
         onPress={() => router.push("/create-post")}
       >
         <Ionicons name="add" size={24} color="#FFFFFF" />
