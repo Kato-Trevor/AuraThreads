@@ -125,8 +125,8 @@ const Home = () => {
     return (
       
       <View className="flex-1 justify-start items-center bg-white pt-40">
-        <ActivityIndicator size={40} color="#1e4635" />
-        <Text className="font-pregular mt-4 text-secondary-dark text-center">
+        <ActivityIndicator size={40} color="#588b76" />
+        <Text className="font-pregular mt-4 text-secondary text-center">
           Fetching Posts...
         </Text>
       </View>

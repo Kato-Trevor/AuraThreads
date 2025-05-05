@@ -206,8 +206,8 @@ const WordCloud = () => {
           <View style={styles.cloudContainer}>
             {loading.topics ? (
               <View className="justify-center items-center p-8">
-                <ActivityIndicator color="#1e4635" />
-                <Text className="font-pregular mt-4 text-secondary-dark text-center">
+                <ActivityIndicator color="#588b76" /> 
+                <Text className="font-pregular mt-4 text-secondary text-center">
                   Fetching topics...
                 </Text>
               </View>
