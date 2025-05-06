@@ -81,13 +81,9 @@ export default function RootLayout() {
                     </TouchableOpacity>
                   ),
                   headerTitle: () => (
-                    <View className="bg-white rounded-full p-2 shadow-md">
-                      <View className="bg-secondary rounded-full p-2">
-                        <Ionicons
-                          name="leaf-outline"
-                          size={24}
-                          color="#fff"
-                        />
+                    <View className="bg-white w-14 h-14 rounded-full shadow-md items-center justify-center">
+                      <View className="bg-secondary w-10 h-10 rounded-full items-center justify-center">
+                        <Ionicons name="leaf-outline" size={24} color="#fff" />
                       </View>
                     </View>
                   ),

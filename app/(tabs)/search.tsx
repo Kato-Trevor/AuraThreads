@@ -6,12 +6,14 @@ import {
   ActivityIndicator,
   Image,
   Modal,
+  Platform,
+  StatusBar,
 } from "react-native";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import SearchInput from "@/components/SearchInput";
-import { Link, router } from "expo-router";
+import { router } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { articles, Article } from "@/components/Articles";
 import MoodLogModal from "@/components/MoodLog";
@@ -19,6 +21,7 @@ import { getMostUsedTopics } from "@/lib/appwrite/posts";
 import ArticleItem from "@/components/ArticleItem";
 import { getUsersByRole } from "@/lib/appwrite/auth";
 import { FlatList } from "react-native-gesture-handler";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const RECENT_SEARCHES_KEY = "aura_recent_searches";
 const MAX_RECENT_SEARCHES = 5;
@@ -26,6 +29,129 @@ const MAX_RECENT_SEARCHES = 5;
 const getRandomArticles = (articles: Article[], count: number): Article[] => {
   const shuffled = [...articles].sort(() => 0.5 - Math.random());
   return shuffled.slice(0, count);
+};
+
+const CounselorsModal = ({
+  visible,
+  onClose,
+  counselors,
+  isLoading,
+  onCounselorSelect,
+}: any) => {
+  const insets = useSafeAreaInsets();
+
+  const renderCounselor = ({ item }: any) => {
+    return (
+      <TouchableOpacity onPress={() => onCounselorSelect(item.$id)}>
+        <View className="flex-row items-center p-4 rounded-xl mb-3 bg-white border border-gray-100 shadow-sm">
+          <View className="relative mr-4">
+            <Image
+              source={{ uri: item.avatar }}
+              className="w-16 h-16 rounded-lg"
+              resizeMode="cover"
+            />
+            <View className="absolute bottom-0 right-0 w-4 h-4 bg-green-500 rounded-full border-2 border-white" />
+          </View>
+          <View className="flex-1 justify-center">
+            <Text
+              numberOfLines={1}
+              className="text-base font-pbold text-gray-800"
+            >
+              {item.surname} {item.givenNames}
+            </Text>
+            <Text numberOfLines={1} className="text-sm text-gray-500 mb-1">
+              {item.email}
+            </Text>
+          </View>
+          <MaterialCommunityIcons
+            name="chevron-right"
+            size={24}
+            color="#9CA3AF"
+          />
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
+  const keyExtractor = useCallback((item: any) => item.$id, []);
+
+  const ListEmptyComponent = useCallback(() => {
+    if (isLoading) {
+      return (
+        <View className="justify-center items-center p-8">
+          <ActivityIndicator size="large" color="#1e4635" />
+          <Text className="font-pmedium mt-4 text-secondary-dark text-center">
+            Loading counselors...
+          </Text>
+        </View>
+      );
+    }
+
+    return (
+      <View className="justify-center items-center p-8">
+        <View className="bg-secondary-100/30 p-6 rounded-full mb-4">
+          <Feather name="users" size={36} color="#1e4635" />
+        </View>
+        <Text className="font-pbold text-lg text-gray-800 mb-2 text-center">
+          No counselors found
+        </Text>
+        <Text className="font-pregular text-secondary-dark text-center px-8">
+          We couldn't find any counselors at the moment. Please try again later.
+        </Text>
+      </View>
+    );
+  }, [isLoading]);
+
+  return (
+    <Modal
+      animationType="slide"
+      transparent={true}
+      visible={visible}
+      onRequestClose={onClose}
+    >
+      <View
+        className="flex-1 bg-white"
+        style={{
+          paddingTop: Platform.OS === "ios" ? 0 : StatusBar.currentHeight,
+        }}
+      >
+        {/* Header */}
+        <View
+          className="bg-gradient-to-r from-secondary-100 to-secondary-200"
+          style={{ paddingTop: insets.top }}
+        >
+          <View className="flex-row justify-between items-center px-5 py-4">
+            <View>
+              <Text className="text-2xl font-pbold text-gray-900">
+                Counselors
+              </Text>
+              <Text className="text-sm font-pregular text-gray-700">
+                {counselors.length} professionals available
+              </Text>
+            </View>
+            <TouchableOpacity
+              onPress={onClose}
+              className="w-10 h-10 items-center justify-center rounded-full bg-white/90 shadow-sm"
+            >
+              <MaterialCommunityIcons name="close" size={20} color="#4B5563" />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <FlatList
+          data={counselors}
+          keyExtractor={keyExtractor}
+          renderItem={renderCounselor}
+          contentContainerStyle={{ padding: 16 }}
+          showsVerticalScrollIndicator={false}
+          ListEmptyComponent={ListEmptyComponent}
+          initialNumToRender={5}
+          maxToRenderPerBatch={10}
+          windowSize={10}
+        />
+      </View>
+    </Modal>
+  );
 };
 
 const SearchScreen = () => {
@@ -54,9 +180,14 @@ const SearchScreen = () => {
 
   const openCounselorsModal = async () => {
     setIsCounselorsVisible(true);
-    setIsLoadingCounselors(true);
     await fetchCounselors();
-    setIsLoadingCounselors(false);
+  };
+
+  const handleCounselorSelect = (counselorId: string) => {
+    // First close the modal
+    setIsCounselorsVisible(false);
+    // Then navigate to the counselor profile
+    router.push(`/profile/${counselorId}`);
   };
 
   useEffect(() => {
@@ -138,45 +269,15 @@ const SearchScreen = () => {
     setIsShowingMoreArticles(true);
   };
 
-  const renderCounselor = ({ item }: { item: any }) => {
-    return (
-      <Link
-        href={{
-          pathname: "/profile/[id]",
-          params: { id: `${item.$id}` },
-        }}
-      >
-        <View className="flex-row items-center p-4 rounded-xl mb-5 bg-secondary-200/40 border border-secondary-200/10">
-          <View className="relative mr-4">
-            <Image
-              source={{ uri: item.avatar }}
-              className="w-14 h-14 rounded-lg"
-            />
-          </View>
-          <View className="flex-1 justify-center">
-            <Text
-              numberOfLines={1}
-              className="text-base font-pbold text-secondary-darkest"
-            >
-              {item.surname} {item.givenNames}
-            </Text>
-            <Text numberOfLines={1} className="text-sm text-secondary-dark">
-              {item.email}
-            </Text>
-          </View>
-        </View>
-      </Link>
-    );
-  };
-
   return (
-    <SafeAreaView edges={['right', 'bottom', 'left']} className="flex-1 bg-white" style={{ paddingTop: 0 }}>
+    <SafeAreaView
+      edges={["right", "bottom", "left"]}
+      className="flex-1 bg-white"
+      style={{ paddingTop: 0 }}
+    >
       {/* Search Input */}
       <View className="px-5 pt-3">
-        <SearchInput
-          placeholderText="Search here..."
-          onSearch={handleSearch}
-        />
+        <SearchInput placeholderText="Search here..." onSearch={handleSearch} />
       </View>
 
       <ScrollView className="flex-1 px-5">
@@ -327,60 +428,16 @@ const SearchScreen = () => {
           onClose={() => setIsModalVisible(false)}
           onSuccess={() => {
             setIsModalVisible(false);
-            console.log("Mood logged successfully");
           }}
         />
 
-        <Modal
-          animationType="slide"
-          transparent={false}
+        <CounselorsModal
           visible={isCounselorsVisible}
-        >
-          <View className="flex-1 bg-white">
-            {/* Header */}
-            <View className="bg-gradient-to-r from-violet-50 to-indigo-50 pt-safe">
-              <View className="flex-row justify-between items-center px-6 py-4">
-                <Text className="text-xl font-pbold text-gray-900">
-                  Counselors
-                </Text>
-                <TouchableOpacity
-                  onPress={() => {
-                    setIsCounselorsVisible(false);
-                  }}
-                  className="w-9 h-9 items-center justify-center rounded-full bg-white/70 border border-gray-100"
-                >
-                  <MaterialCommunityIcons
-                    name="close"
-                    size={18}
-                    color="#4B5563"
-                  />
-                </TouchableOpacity>
-              </View>
-            </View>
-
-            <FlatList
-              data={counselors}
-              keyExtractor={(item) => item.$id}
-              renderItem={renderCounselor}
-              ListEmptyComponent={
-                isLoadingCounselors ? (
-                  <View className="justify-center items-center p-8">
-                    <ActivityIndicator size="large" color="#1e4635" />
-                  </View>
-                ) : (
-                  <View className="justify-center items-center p-8">
-                    <View className="bg-secondary-100/30 p-4 rounded-full">
-                      <Feather name="search" size={36} color="#1e4635" />
-                    </View>
-                    <Text className="font-pregular mt-4 text-secondary-dark text-center">
-                      No counselors found
-                    </Text>
-                  </View>
-                )
-              }
-            />
-          </View>
-        </Modal>
+          onClose={() => setIsCounselorsVisible(false)}
+          counselors={counselors}
+          isLoading={isLoadingCounselors}
+          onCounselorSelect={handleCounselorSelect}
+        />
       </ScrollView>
     </SafeAreaView>
   );

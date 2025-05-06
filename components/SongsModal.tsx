@@ -1,10 +1,6 @@
-import React, {  } from "react";
-import {
-  View,
-  Text,
-  Modal,
-  TouchableOpacity,
-} from "react-native";
+import React from "react";
+import { View, Text, Modal, TouchableOpacity } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import SongsList from "./SongsList";
 
@@ -21,6 +17,8 @@ const SongsModal: React.FC<SongsModalProps> = ({
   selectedSong,
   setSelectedSong,
 }) => {
+  const insets = useSafeAreaInsets();
+
   return (
     <Modal
       animationType="slide"
@@ -29,8 +27,10 @@ const SongsModal: React.FC<SongsModalProps> = ({
       onRequestClose={onClose}
     >
       <View className="flex-1 bg-white">
-        {/* Header */}
-        <View className="bg-gradient-to-r from-violet-50 to-indigo-50 pt-safe">
+        <View
+          className="bg-gradient-to-r from-violet-50 to-indigo-50"
+          style={{ paddingTop: insets.top }}
+        >
           <View className="flex-row justify-between items-center px-6 py-4">
             <Text className="text-xl font-pbold text-gray-900">Songs</Text>
             <TouchableOpacity
@@ -51,31 +51,36 @@ const SongsModal: React.FC<SongsModalProps> = ({
         </View>
 
         {/* Action Buttons */}
-        <View className="px-6 pb-8 pt-2 border-t border-gray-100">
-          <View className="flex-row space-x-3 mt-3">
-            <TouchableOpacity
-              onPress={onClose}
-              className="flex-1 py-3.5 rounded-xl bg-gray-100 border border-gray-200"
-            >
-              <Text className="text-center font-pbold text-gray-600">
-                Cancel
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => {
-                onClose();
-              }}
-              className={`flex-1 py-3.5 rounded-xl shadow-sm ${
-                selectedSong
-                  ? "bg-secondary hover:bg-secondary-dark"
-                  : "bg-gray-300"
-              }`}
-              disabled={selectedSong === null}
-            >
-              <Text className="text-center font-pbold text-white">
-                Select Song
-              </Text>
-            </TouchableOpacity>
+        <View
+          className="bg-white border-t border-gray-100"
+          style={{ paddingBottom: insets.bottom }}
+        >
+          <View className="px-6 pb-2 pt-2">
+            <View className="flex-row space-x-3 mt-3">
+              <TouchableOpacity
+                onPress={onClose}
+                className="flex-1 py-3.5 rounded-xl bg-gray-100 border border-gray-200"
+              >
+                <Text className="text-center font-pbold text-gray-600">
+                  Cancel
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  onClose();
+                }}
+                className={`flex-1 py-3.5 rounded-xl shadow-sm ${
+                  selectedSong
+                    ? "bg-secondary hover:bg-secondary-dark"
+                    : "bg-gray-300"
+                }`}
+                disabled={selectedSong === null}
+              >
+                <Text className="text-center font-pbold text-white">
+                  Select Song
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </View>

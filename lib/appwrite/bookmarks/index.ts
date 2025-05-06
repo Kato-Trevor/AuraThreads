@@ -1,14 +1,21 @@
 import { databases, appwriteConfig, Query, ID } from "@/lib/appwrite/config";
 
-export async function addBookmarkToDB(userId: string, postId: string) {
+type BookmarkType = "post" | "article" | "journal" | "other";
+
+export async function addBookmarkToDB(
+  userId: string,
+  postId: string,
+  type: BookmarkType = "post"
+) {
   try {
     const newBookmark = await databases.createDocument(
       appwriteConfig.databaseId,
       appwriteConfig.bookmarksCollectionId,
       ID.unique(),
       {
-        userId: userId, 
-        postId: postId   
+        userId: userId,
+        postId: postId,
+        // type: type,
       }
     );
     return newBookmark;
@@ -22,7 +29,7 @@ export async function getBookmarksByUserID(userId: string): Promise<any[]> {
     const result = await databases.listDocuments(
       appwriteConfig.databaseId,
       appwriteConfig.bookmarksCollectionId,
-      [ Query.equal("userId", userId) ]
+      [Query.equal("userId", userId)]
     );
     return result.documents;
   } catch (error: any) {

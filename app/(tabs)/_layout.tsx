@@ -88,7 +88,7 @@ const TabsLayout = () => {
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <TabIcon
-                iconName="flame"
+                iconName="trending-up"
                 color={color}
                 name="Trends"
                 focused={focused}
@@ -97,7 +97,6 @@ const TabsLayout = () => {
           }}
         />
       </Tabs>
-      
     </>
   );
 };
