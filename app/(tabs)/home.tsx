@@ -114,12 +114,15 @@ const Home = () => {
         setLastRecommendationFetchTime(Date.now());
       }
 
-      if (isRefresh) {
-        // Reset post list on refresh
-        setPosts([]);
+      if (!isRefresh) {
+        processRecommendations(allPosts, recommendations);
+      } else {
+        if (recommendations.length > 0) {
+          processRecommendations(allPosts, recommendations);
+        } else {
+          setPosts(allPosts);
+        }
       }
-
-      processRecommendations(allPosts, recommendations);
     } catch (error) {
       console.error("Error loading posts:", error);
       setPosts([]);
