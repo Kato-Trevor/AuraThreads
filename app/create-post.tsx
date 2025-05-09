@@ -15,7 +15,13 @@ import { useToast } from "@/components/ToastProvider";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useGlobalContext } from "@/context/GlobalProvider";
 import Avatar from "@/components/Avatar";
-import { addPostToDB, addAIResponseToDB } from "@/lib/appwrite/appwrite";
+import {
+  addPostToDB,
+  addAIResponseToDB,
+  checkForToxicity,
+  checkForSelfHarm,
+  getUsersByRole,
+} from "@/lib/appwrite/appwrite";
 import { formatTopic } from "@/lib/utils/stringHelpers";
 import {
   FontAwesome,
@@ -65,15 +71,15 @@ const CreatePost = () => {
     setEnableAIResponse(!enableAIResponse);
   };
 
-
   const handlePostCreation = async () => {
     setIsPosting(true);
     try {
       // 1) classify + safety check
       const { topic, contentType, isSafe } = await categorizePost(postContent);
 
-      // 2) prevent unsafe posts
-      if (!isSafe) {
+      // 2) check and prevent toxic content/ unsafe content
+      const isToxic = await checkForToxicity(postContent);
+      if (!isSafe || !isToxic) {
         // optional haptic feedback for warning
         await Haptics.notificationAsync(
           Haptics.NotificationFeedbackType.Warning
@@ -82,10 +88,23 @@ const CreatePost = () => {
         return;
       }
 
-      // 3) proceed with creating the post
-      await Haptics.notificationAsync(
-        Haptics.NotificationFeedbackType.Success
-      );
+      // 3) check for self-harm content
+      const isSelfHarm = await checkForSelfHarm(postContent);
+      if (isSelfHarm) {
+        // 1. get all users with role "counselor"
+        const counselors = await getUsersByRole("counselor");
+        if (counselors.length === 0) {
+          console.log("No counselors available to assist.");
+          showToast("No counselors available to assist.", "info");
+        }
+
+        // 2. send a notification to all counselors
+
+        // 3. show a toast to the user that their post has been
+      }
+
+      // 4) proceed with creating the post
+      await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       const newPost = await addPostToDB(
         postContent,
         user.$id,
@@ -186,19 +205,21 @@ const CreatePost = () => {
                 <TouchableOpacity
                   onPress={handlePostCreation}
                   disabled={isPosting || postContent.trim() === ""}
-                  className={`py-3 px-8 rounded-full shadow-md transition-all duration-200 ${isPosting || postContent.trim() === ""
+                  className={`py-3 px-8 rounded-full shadow-md transition-all duration-200 ${
+                    isPosting || postContent.trim() === ""
                       ? "bg-gray-300"
                       : "bg-secondary hover:bg-secondary-dark"
-                    }`}
+                  }`}
                   style={{
                     opacity: isPosting || postContent.trim() === "" ? 0.6 : 1,
                   }}
                 >
                   <Text
-                    className={`text-base font-psemibold ${isPosting || postContent.trim() === ""
+                    className={`text-base font-psemibold ${
+                      isPosting || postContent.trim() === ""
                         ? "text-gray-500"
                         : "text-white"
-                      }`}
+                    }`}
                   >
                     {isPosting ? "Posting..." : "Post"}
                   </Text>
@@ -228,10 +249,11 @@ const CreatePost = () => {
                 </View>
                 <View className="flex-row justify-end">
                   <Text
-                    className={`text-xs font-pregular ${characterCount > CHARACTER_WARNING
+                    className={`text-xs font-pregular ${
+                      characterCount > CHARACTER_WARNING
                         ? "text-red-500"
                         : "text-gray-500"
-                      }`}
+                    }`}
                   >
                     {characterCount}/{MAX_POST_LENGTH}
                   </Text>
@@ -240,9 +262,7 @@ const CreatePost = () => {
 
               {/* Attach Song */}
               {selectedSong ? (
-                <View
-                  className="flex-row items-center mt-2 mb-3 bg-secondary-100/40 p-3 rounded-lg border border-secondary/10"
-                >
+                <View className="flex-row items-center mt-2 mb-3 bg-secondary-100/40 p-3 rounded-lg border border-secondary/10">
                   <View className="w-9 h-9 bg-secondary rounded-full justify-center items-center mr-3 shadow-sm">
                     {isLoadingSong ? (
                       <ActivityIndicator color="#ffffff" />
@@ -319,8 +339,9 @@ const CreatePost = () => {
                         color={enableAIResponse ? "#588b76" : "#666"}
                       />
                       <Text
-                        className={`ml-2 mr-2 font-pmedium ${enableAIResponse ? "text-[#588b76]" : "text-gray-700"
-                          }`}
+                        className={`ml-2 mr-2 font-pmedium ${
+                          enableAIResponse ? "text-[#588b76]" : "text-gray-700"
+                        }`}
                       >
                         AuraThreads AI Response
                       </Text>

@@ -213,7 +213,6 @@ export async function getExperiencePosts() {
 //   }
 // }
 
-
 export async function getMostUsedTopics() {
   try {
     const posts = await databases.listDocuments(
@@ -225,7 +224,8 @@ export async function getMostUsedTopics() {
     const topicsCount: { [key: string]: number } = {};
 
     posts.documents.forEach((post) => {
-      if (post.topic && post.topic !== "General") {  // Added check for "General"
+      if (post.topic && post.topic !== "General") {
+        // Added check for "General"
         topicsCount[post.topic] = (topicsCount[post.topic] || 0) + 1;
       }
     });
@@ -247,3 +247,61 @@ export async function getMostUsedTopics() {
     console.error("Error fetching most used topics:", error);
   }
 }
+
+// JOSH'S MODLES (SELF-HARM, TOXICITY)
+export const checkForToxicity = async (content: string) => {
+  try {
+    const response = await fetch(
+      "https://toxicity-check.onrender.com/analyze/",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          text: content,
+          ml_threshold: 0.5,
+          confidence_threshold: 0.8,
+        }),
+      }
+    );
+
+    const data = await response.json();
+    console.log("Self-harm check response:", data);
+
+    if (data.is_toxic === true) {
+      return true;
+    }
+
+    return false;
+  } catch (error) {
+    console.error("Error checking for self-harm:", error);
+    throw new Error("Error checking for self-harm");
+  }
+};
+
+export const checkForSelfHarm = async (content: string) => {
+  try {
+    const response = await fetch("https://selfharm-api.onrender.com/analyze/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        text: content,
+      }),
+    });
+
+    const data = await response.json();
+    console.log("Toxicity check response:", data);
+
+    if (data.requires_followup === true) {
+      return true;
+    }
+
+    return false;
+  } catch (error) {
+    console.error("Error checking for toxicity:", error);
+    throw new Error("Error checking for toxicity");
+  }
+};
