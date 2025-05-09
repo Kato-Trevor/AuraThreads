@@ -83,7 +83,14 @@ const Home = () => {
       .filter(Boolean);
 
     // Add new posts to the beginning of the list
-    setPosts((prevPosts) => [...recommendedPosts, ...prevPosts]);
+    setPosts((prevPosts) => {
+      // Ensure we don't have duplicate posts
+      const existingIds = new Set(prevPosts.map((post) => post.$id));
+      const uniqueRecommendedPosts = recommendedPosts.filter(
+        (post) => !existingIds.has(post.$id)
+      );
+      return [...uniqueRecommendedPosts, ...prevPosts];
+    });
   };
 
   const loadPosts = async (isRefresh = false) => {
@@ -105,6 +112,11 @@ const Home = () => {
         recommendations = await fetchRecommendedIds();
         setCachedRecommendedIds(recommendations);
         setLastRecommendationFetchTime(Date.now());
+      }
+
+      if (isRefresh) {
+        // Reset post list on refresh
+        setPosts([]);
       }
 
       processRecommendations(allPosts, recommendations);
@@ -138,8 +150,9 @@ const Home = () => {
     );
   }
 
-  const renderPost = ({ item }: { item: any }) => {
-    return <Post post={item} />;
+  const renderPost = ({ item, index }: { item: any; index: number }) => {
+    // Use both $id and index to ensure uniqueness
+    return <Post key={`${item.$id}-${index}`} post={item} />;
   };
 
   return (
@@ -147,7 +160,7 @@ const Home = () => {
       <FlatList
         style={{ backgroundColor: "white" }}
         data={posts}
-        keyExtractor={(item) => item.$id}
+        keyExtractor={(item, index) => `${item.$id}-${index}`}
         renderItem={renderPost}
         refreshControl={
           <RefreshControl
@@ -199,4 +212,3 @@ const Home = () => {
 };
 
 export default Home;
-
