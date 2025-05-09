@@ -79,7 +79,8 @@ const CreatePost = () => {
 
       // 2) check and prevent toxic content/ unsafe content
       const isToxic = await checkForToxicity(postContent);
-      if (!isSafe || !isToxic) {
+      if (!isSafe || isToxic) {
+        console.log(isSafe, isToxic);
         // optional haptic feedback for warning
         await Haptics.notificationAsync(
           Haptics.NotificationFeedbackType.Warning

@@ -1,11 +1,12 @@
 import { Text, View, FlatList, RefreshControl } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { getAllPostsFromDB } from "@/lib/appwrite/appwrite";
 import Post from "@/components/Post";
 import { Feather } from "@expo/vector-icons";
 import { ActivityIndicator, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import { useFocusEffect } from "expo-router";
 
 const BATCH_SIZE = 30; // Number of recommended posts per batch
 // const RECOMMENDATIONS_API = "http://192.168.74.114:8000/postRecommendations";
@@ -120,9 +121,11 @@ const Home = () => {
     loadPosts(true);
   };
 
-  useEffect(() => {
-    loadPosts();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      loadPosts();
+    }, [])
+  );
 
   if (loading && !refreshing && posts.length === 0) {
     return (
