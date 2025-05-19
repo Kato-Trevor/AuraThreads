@@ -23,7 +23,8 @@ export const appwriteConfig = {
   moodsCollectionId: "67cef98a00360b795eb3",
   reactionsCollectionId: "67da7da70000bd42f55d",
   journalsCollectionId: "67f968be001277e36b11",
-  bookmarksCollectionId: "6809f4db00316d909513"
+  bookmarksCollectionId: "6809f4db00316d909513",
+  messagesCollectionId: "",
 };
 
 export const client = new Client()

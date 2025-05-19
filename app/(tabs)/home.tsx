@@ -1,11 +1,12 @@
 import { Text, View, FlatList, RefreshControl } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { getAllPostsFromDB } from "@/lib/appwrite/appwrite";
 import Post from "@/components/Post";
 import { Feather } from "@expo/vector-icons";
 import { ActivityIndicator, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import { useFocusEffect } from "expo-router";
 
 const BATCH_SIZE = 30; // Number of recommended posts per batch
 // const RECOMMENDATIONS_API = "http://192.168.74.114:8000/postRecommendations";
@@ -82,7 +83,14 @@ const Home = () => {
       .filter(Boolean);
 
     // Add new posts to the beginning of the list
-    setPosts((prevPosts) => [...recommendedPosts, ...prevPosts]);
+    setPosts((prevPosts) => {
+      // Ensure we don't have duplicate posts
+      const existingIds = new Set(prevPosts.map((post) => post.$id));
+      const uniqueRecommendedPosts = recommendedPosts.filter(
+        (post) => !existingIds.has(post.$id)
+      );
+      return [...uniqueRecommendedPosts, ...prevPosts];
+    });
   };
 
   const loadPosts = async (isRefresh = false) => {
@@ -106,7 +114,15 @@ const Home = () => {
         setLastRecommendationFetchTime(Date.now());
       }
 
-      processRecommendations(allPosts, recommendations);
+      if (!isRefresh) {
+        processRecommendations(allPosts, recommendations);
+      } else {
+        if (recommendations.length > 0) {
+          processRecommendations(allPosts, recommendations);
+        } else {
+          setPosts(allPosts);
+        }
+      }
     } catch (error) {
       console.error("Error loading posts:", error);
       setPosts([]);
@@ -120,9 +136,11 @@ const Home = () => {
     loadPosts(true);
   };
 
-  useEffect(() => {
-    loadPosts();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      loadPosts();
+    }, [])
+  );
 
   if (loading && !refreshing && posts.length === 0) {
     return (
@@ -135,8 +153,9 @@ const Home = () => {
     );
   }
 
-  const renderPost = ({ item }: { item: any }) => {
-    return <Post post={item} />;
+  const renderPost = ({ item, index }: { item: any; index: number }) => {
+    // Use both $id and index to ensure uniqueness
+    return <Post key={`${item.$id}-${index}`} post={item} />;
   };
 
   return (
@@ -144,7 +163,7 @@ const Home = () => {
       <FlatList
         style={{ backgroundColor: "white" }}
         data={posts}
-        keyExtractor={(item) => item.$id}
+        keyExtractor={(item, index) => `${item.$id}-${index}`}
         renderItem={renderPost}
         refreshControl={
           <RefreshControl
@@ -196,4 +215,3 @@ const Home = () => {
 };
 
 export default Home;
-

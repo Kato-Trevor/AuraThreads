@@ -299,14 +299,6 @@ export default function Profile() {
                 <Text className="font-['Poppins-SemiBold'] text-gray-800">
                   Profile Info
                 </Text>
-                <TouchableOpacity
-                  style={{ backgroundColor: "#d0ded8" }}
-                  className="px-3 py-1 rounded-full"
-                >
-                  <Text className="text-[#18392b] font-['Poppins-Medium'] text-sm">
-                    Edit
-                  </Text>
-                </TouchableOpacity>
               </View>
 
               <View className="space-y-3">
