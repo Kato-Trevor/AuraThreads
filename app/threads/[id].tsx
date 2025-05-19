@@ -182,7 +182,7 @@ export default function Thread() {
       const result = await categorizeResponse(response);
 
       if (!result.isSafe) {
-        showToast("This response is toxic!", "error");
+        showToast("Harmful content detected!", "error");
         setIsSubmittingResponse(false);
         return;
       }
